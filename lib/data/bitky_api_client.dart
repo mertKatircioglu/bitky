@@ -2,9 +2,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bitky/models/bitky_data_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+
+import '../models/bitky_data_model.dart';
 
 
 
@@ -13,7 +14,7 @@ class BitkyApiClient{
   final http.Client httpClient = http.Client();
 
 
-  Future<BitckyDataModel> getPlanet(List<XFile> images) async {
+  Future<BitkyDataModel> getPlanet(List<XFile> images) async {
     const finalUrl = "${baseUrl}all?api-key=2b10GyjZGQHnv2pqhtXuztXPO";
 
     var request = http.MultipartRequest('POST', Uri.parse(finalUrl));
@@ -28,8 +29,8 @@ class BitkyApiClient{
     final response = await http.Response.fromStream(res);
     final responseJson = (jsonDecode(response.body));
     if(response.statusCode == 200){
-      print("SORGUDAN GELEN CEVAP: ${responseJson["results"]}");
-      return BitckyDataModel.fromJson(responseJson["results"]);
+      print("SORGUDAN GELEN CEVAP: ${responseJson.toString()}");
+      return BitkyDataModel.fromJson(responseJson);
     }else{
       throw Exception("Veri getirelemedi");
     }

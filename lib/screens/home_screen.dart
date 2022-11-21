@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bitky/globals/globals.dart';
+import 'package:bitky/models/bitky_data_model.dart';
 import 'package:bitky/view_models/planet_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -86,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {
                     datasContainer = true;
                   });
+                  print("HOME SCREEN GELEN VERİLER: ${_bitkyViewModel!.getPlanet.results!.length.toString()}");
                 });
               },
               child:const Text("Sorgula"))),
@@ -93,8 +95,11 @@ class _HomeScreenState extends State<HomeScreen> {
               visible: datasContainer!,
               child: Column(
                 children: [
+
                 ],
-              ))
+              ),
+
+          )
         ],
       ),
     );

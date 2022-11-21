@@ -1,141 +1,153 @@
-class BitckyDataModel {
-  Query? query;
-  String? language;
-  String? preferedReferential;
-  List<Results>? results;
-  int? remainingIdentificationRequests;
+class BitkyDataModel {
+  BitkyDataModel({
+     this.query,
+     this.language,
+     this.preferedReferential,
+     this.results,
+     this.remainingIdentificationRequests,
+  });
+  late final Query? query;
+  late final String? language;
+  late final String? preferedReferential;
+  late final List<Results>? results;
+  late final int? remainingIdentificationRequests;
 
-  BitckyDataModel(
-      {this.query,
-        this.language,
-        this.preferedReferential,
-        this.results,
-        this.remainingIdentificationRequests});
-
-  BitckyDataModel.fromJson(Map<String, dynamic> json) {
-    query = json['query'] != null ?  Query.fromJson(json['query']) : null;
+  BitkyDataModel.fromJson(Map<String, dynamic> json){
+    query = Query.fromJson(json['query']);
     language = json['language'];
     preferedReferential = json['preferedReferential'];
-    if (json['results'] != null) {
-      results = <Results>[];
-      json['results'].forEach((v) {
-        results!.add( Results.fromJson(v));
-      });
-    }
+    results = List.from(json['results']).map((e)=>Results.fromJson(e)).toList();
     remainingIdentificationRequests = json['remainingIdentificationRequests'];
   }
+
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  Map<String, dynamic>();
-    if (query != null) {
-      data['query'] = query!.toJson();
-    }
-    data['language'] = language;
-    data['preferedReferential'] = preferedReferential;
-    if (results != null) {
-      data['results'] = results!.map((v) => v.toJson()).toList();
-    }
-    data['remainingIdentificationRequests'] =
-        remainingIdentificationRequests;
-    return data;
+    final _data = <String, dynamic>{};
+    _data['query'] = query!.toJson();
+    _data['language'] = language;
+    _data['preferedReferential'] = preferedReferential;
+    _data['results'] = results!.map((e)=>e.toJson()).toList();
+    _data['remainingIdentificationRequests'] = remainingIdentificationRequests;
+    return _data;
   }
 }
 
 class Query {
-  String? project;
-  List<String>? images;
-  List<String>? organs;
+  Query({
+    required this.project,
+    required this.images,
+    required this.organs,
+  });
+  late final String project;
+  late final List<String> images;
+  late final List<String> organs;
 
-  Query({this.project, this.images, this.organs});
-
-  Query.fromJson(Map<String, dynamic> json) {
+  Query.fromJson(Map<String, dynamic> json){
     project = json['project'];
-    images = json['images'].cast<String>();
-    organs = json['organs'].cast<String>();
+    images = List.castFrom<dynamic, String>(json['images']);
+    organs = List.castFrom<dynamic, String>(json['organs']);
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  Map<String, dynamic>();
-    data['project'] = project;
-    data['images'] = images;
-    data['organs'] = organs;
-    return data;
+    final _data = <String, dynamic>{};
+    _data['project'] = project;
+    _data['images'] = images;
+    _data['organs'] = organs;
+    return _data;
   }
 }
 
 class Results {
-  double? score;
-  Species? species;
+  Results({
+    required this.score,
+    required this.species,
+  });
+  late final double score;
+  late final Species species;
 
-  Results({this.score, this.species});
-
-  Results.fromJson(Map<String, dynamic> json) {
+  Results.fromJson(Map<String, dynamic> json){
     score = json['score'];
-    species =
-    json['species'] != null ?  Species.fromJson(json['species']) : null;
+    species = Species.fromJson(json['species']);
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  Map<String, dynamic>();
-    data['score'] = score;
-    if (species != null) {
-      data['species'] = species!.toJson();
-    }
-    return data;
+    final _data = <String, dynamic>{};
+    _data['score'] = score;
+    _data['species'] = species.toJson();
+    return _data;
   }
 }
 
 class Species {
-  String? scientificNameWithoutAuthor;
-  String? scientificNameAuthorship;
-  Genus? genus;
-  Genus? family;
-  List<String>? commonNames;
+  Species({
+    required this.scientificNameWithoutAuthor,
+    required this.scientificNameAuthorship,
+    required this.genus,
+    required this.family,
+    required this.commonNames,
+  });
+  late final String scientificNameWithoutAuthor;
+  late final String scientificNameAuthorship;
+  late final Genus genus;
+  late final Family family;
+  late final List<String> commonNames;
 
-  Species(
-      {this.scientificNameWithoutAuthor,
-        this.scientificNameAuthorship,
-        this.genus,
-        this.family,
-        this.commonNames});
-
-  Species.fromJson(Map<String, dynamic> json) {
+  Species.fromJson(Map<String, dynamic> json){
     scientificNameWithoutAuthor = json['scientificNameWithoutAuthor'];
     scientificNameAuthorship = json['scientificNameAuthorship'];
-    genus = json['genus'] != null ?  Genus.fromJson(json['genus']) : null;
-    family = json['family'] != null ?  Genus.fromJson(json['family']) : null;
-    commonNames = json['commonNames'].cast<String>();
+    genus = Genus.fromJson(json['genus']);
+    family = Family.fromJson(json['family']);
+    commonNames = List.castFrom<dynamic, String>(json['commonNames']);
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  Map<String, dynamic>();
-    data['scientificNameWithoutAuthor'] = scientificNameWithoutAuthor;
-    data['scientificNameAuthorship'] = scientificNameAuthorship;
-    if (genus != null) {
-      data['genus'] = genus!.toJson();
-    }
-    if (family != null) {
-      data['family'] = family!.toJson();
-    }
-    data['commonNames'] = commonNames;
-    return data;
+    final _data = <String, dynamic>{};
+    _data['scientificNameWithoutAuthor'] = scientificNameWithoutAuthor;
+    _data['scientificNameAuthorship'] = scientificNameAuthorship;
+    _data['genus'] = genus.toJson();
+    _data['family'] = family.toJson();
+    _data['commonNames'] = commonNames;
+    return _data;
   }
 }
 
 class Genus {
-  String? scientificNameWithoutAuthor;
-  String? scientificNameAuthorship;
+  Genus({
+    required this.scientificNameWithoutAuthor,
+    required this.scientificNameAuthorship,
+  });
+  late final String scientificNameWithoutAuthor;
+  late final String scientificNameAuthorship;
 
-  Genus({this.scientificNameWithoutAuthor, this.scientificNameAuthorship});
-
-  Genus.fromJson(Map<String, dynamic> json) {
+  Genus.fromJson(Map<String, dynamic> json){
     scientificNameWithoutAuthor = json['scientificNameWithoutAuthor'];
     scientificNameAuthorship = json['scientificNameAuthorship'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['scientificNameWithoutAuthor'] = scientificNameWithoutAuthor;
-    data['scientificNameAuthorship'] = scientificNameAuthorship;
-    return data;
+    final _data = <String, dynamic>{};
+    _data['scientificNameWithoutAuthor'] = scientificNameWithoutAuthor;
+    _data['scientificNameAuthorship'] = scientificNameAuthorship;
+    return _data;
+  }
+}
+
+class Family {
+  Family({
+    required this.scientificNameWithoutAuthor,
+    required this.scientificNameAuthorship,
+  });
+  late final String scientificNameWithoutAuthor;
+  late final String scientificNameAuthorship;
+
+  Family.fromJson(Map<String, dynamic> json){
+    scientificNameWithoutAuthor = json['scientificNameWithoutAuthor'];
+    scientificNameAuthorship = json['scientificNameAuthorship'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['scientificNameWithoutAuthor'] = scientificNameWithoutAuthor;
+    _data['scientificNameAuthorship'] = scientificNameAuthorship;
+    return _data;
   }
 }
