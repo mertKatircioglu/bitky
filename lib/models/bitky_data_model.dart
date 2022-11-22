@@ -4,10 +4,12 @@ class BitkyDataModel {
      this.language,
      this.preferedReferential,
      this.results,
+     this.bestMatch,
      this.remainingIdentificationRequests,
   });
   late final Query? query;
   late final String? language;
+  late final String? bestMatch;
   late final String? preferedReferential;
   late final List<Results>? results;
   late final int? remainingIdentificationRequests;
@@ -15,6 +17,7 @@ class BitkyDataModel {
   BitkyDataModel.fromJson(Map<String, dynamic> json){
     query = Query.fromJson(json['query']);
     language = json['language'];
+    bestMatch = json['bestMatch'];
     preferedReferential = json['preferedReferential'];
     results = List.from(json['results']).map((e)=>Results.fromJson(e)).toList();
     remainingIdentificationRequests = json['remainingIdentificationRequests'];
@@ -24,6 +27,7 @@ class BitkyDataModel {
     final _data = <String, dynamic>{};
     _data['query'] = query!.toJson();
     _data['language'] = language;
+    _data['bestMatch'] = bestMatch;
     _data['preferedReferential'] = preferedReferential;
     _data['results'] = results!.map((e)=>e.toJson()).toList();
     _data['remainingIdentificationRequests'] = remainingIdentificationRequests;
@@ -83,10 +87,12 @@ class Species {
     required this.scientificNameAuthorship,
     required this.genus,
     required this.family,
+    required this.scientificName,
     required this.commonNames,
   });
   late final String scientificNameWithoutAuthor;
   late final String scientificNameAuthorship;
+  late final String scientificName;
   late final Genus genus;
   late final Family family;
   late final List<String> commonNames;
@@ -94,6 +100,7 @@ class Species {
   Species.fromJson(Map<String, dynamic> json){
     scientificNameWithoutAuthor = json['scientificNameWithoutAuthor'];
     scientificNameAuthorship = json['scientificNameAuthorship'];
+    scientificName = json['scientificName'];
     genus = Genus.fromJson(json['genus']);
     family = Family.fromJson(json['family']);
     commonNames = List.castFrom<dynamic, String>(json['commonNames']);
@@ -103,6 +110,7 @@ class Species {
     final _data = <String, dynamic>{};
     _data['scientificNameWithoutAuthor'] = scientificNameWithoutAuthor;
     _data['scientificNameAuthorship'] = scientificNameAuthorship;
+    _data['scientificName'] = scientificName;
     _data['genus'] = genus.toJson();
     _data['family'] = family.toJson();
     _data['commonNames'] = commonNames;
