@@ -1,4 +1,3 @@
-
 import 'package:bitky/data/bitky_repository.dart';
 import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:flutter/material.dart';
@@ -7,26 +6,20 @@ import 'package:image_picker/image_picker.dart';
 import '../locator.dart';
 import '../models/bitky_data_model.dart';
 
-enum DataState{
-  initialPlantState,
-  loadingState,
-  loadedState,
-  errorState
-}
+enum DataState { initialPlantState, loadingState, loadedState, errorState }
 
-
-class BitkyViewModel with ChangeNotifier{
+class BitkyViewModel with ChangeNotifier {
   DataState? _state;
 
-  PlanetRepository _repository= locator<PlanetRepository>();
+  PlanetRepository _repository = locator<PlanetRepository>();
   BitkyDataModel? _bitkyDataModel;
   HealthDataModel? _healthDataModel;
   List? _bitkyHealthList;
 
-  BitkyViewModel(){
+  BitkyViewModel() {
     _bitkyDataModel = BitkyDataModel();
     _healthDataModel = HealthDataModel();
-    _bitkyHealthList=[];
+    _bitkyHealthList = [];
     _state = DataState.initialPlantState;
   }
 
@@ -41,24 +34,24 @@ class BitkyViewModel with ChangeNotifier{
   }
 
   Future<BitkyDataModel> getPlanetFromUi(List<XFile> images) async {
-    try{
+    try {
       state = DataState.loadingState;
       _bitkyDataModel = await _repository.getPlanetFromRepository(images);
       state = DataState.loadedState;
-    }catch (e){
-      state= DataState.errorState;
+    } catch (e) {
+      state = DataState.errorState;
       print("Model View Hata: $e");
     }
     return _bitkyDataModel!;
   }
 
   Future<HealthDataModel> getPlantHealthFromUi(List<String> images) async {
-    try{
+    try {
       state = DataState.loadingState;
       _healthDataModel = await _repository.getPlantHealthFromRepository(images);
       state = DataState.loadedState;
-    }catch (e){
-      state= DataState.errorState;
+    } catch (e) {
+      state = DataState.errorState;
       print("Model View Hata: $e");
     }
     return _healthDataModel!;
