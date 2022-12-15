@@ -1,6 +1,6 @@
-import 'dart:io';
 
 import 'package:bitky/data/bitky_repository.dart';
+import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -20,14 +20,19 @@ class BitkyViewModel with ChangeNotifier{
 
   PlanetRepository _repository= locator<PlanetRepository>();
   BitkyDataModel? _bitkyDataModel;
+  HealthDataModel? _healthDataModel;
+  List? _bitkyHealthList;
 
   BitkyViewModel(){
     _bitkyDataModel = BitkyDataModel();
+    _healthDataModel = HealthDataModel();
+    _bitkyHealthList=[];
     _state = DataState.initialPlantState;
   }
 
   BitkyDataModel get getPlanet => _bitkyDataModel!;
-
+  HealthDataModel get getPlantHealth => _healthDataModel!;
+  List get getBitkyHealths => _bitkyHealthList!;
   DataState get state => _state!;
 
   set state(DataState value) {
@@ -47,4 +52,15 @@ class BitkyViewModel with ChangeNotifier{
     return _bitkyDataModel!;
   }
 
+  Future<HealthDataModel> getPlantHealthFromUi(List<String> images) async {
+    try{
+      state = DataState.loadingState;
+      _healthDataModel = await _repository.getPlantHealthFromRepository(images);
+      state = DataState.loadedState;
+    }catch (e){
+      state= DataState.errorState;
+      print("Model View Hata: $e");
+    }
+    return _healthDataModel!;
+  }
 }

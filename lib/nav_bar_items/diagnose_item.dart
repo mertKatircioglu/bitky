@@ -1,12 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
+import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../globals/globals.dart';
-import '../models/bitky_data_model.dart';
 import '../view_models/planet_view_model.dart';
 import '../widgets/primary_button_widget.dart';
 import '../widgets/settings_button_widget.dart';
@@ -23,10 +25,12 @@ class _DiagnosePageState extends State<DiagnosePage> {
   List<XFile>? imagefiles;
   BitkyViewModel? _bitkyViewModel;
   bool? datasContainer = false;
-  List<Results> _response = [];
+  List? _response = [];
   List<String> imagesPaths = [];
-  String? bestMatch;
-
+  HealthDataModel _diseases = HealthDataModel();
+  List<String> base64ImgList = [];
+  List<Diseases> _diseasesList = [];
+  bool isLoading = false;
 
   List<String> commonsList = [
     "Deneme1",
@@ -39,87 +43,132 @@ class _DiagnosePageState extends State<DiagnosePage> {
     "Deneme8",
   ];
 
-
   openImages() async {
-    showDialog(context: context, builder: (BuildContext context){
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15)
-        ),
-        elevation: 0,
-        title: const Center(child: Text("Add Pictures",)),
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Card(
-              shape: RoundedRectangleBorder(
-                  side: const BorderSide(color: kPrymaryColor,width: 1.0),
-                  borderRadius: BorderRadius.circular(10)
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.camera_alt_outlined, color: kPrymaryColor,),
-                onPressed: () {
-                  _addImageFromCamera();
-                  Navigator.pop(context);
-                },
-              ),
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            elevation: 0,
+            title: const Center(
+                child: Text(
+              "Add Pictures",
+            )),
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Card(
+                  shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: kPrymaryColor, width: 1.0),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.camera_alt_outlined,
+                      color: kPrymaryColor,
+                    ),
+                    onPressed: () {
+                      _addImageFromCamera();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Card(
+                  shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: kPrymaryColor, width: 1.0),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.photo_library_outlined,
+                      color: kPrymaryColor,
+                    ),
+                    onPressed: () {
+                      _addImageFromGallery();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ],
             ),
-            Card(
-              shape: RoundedRectangleBorder(
-                  side: const BorderSide(color: kPrymaryColor,width: 1.0),
-                  borderRadius: BorderRadius.circular(10)
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.photo_library_outlined, color: kPrymaryColor,),
-                onPressed: () {
-                  _addImageFromGallery();
-                  Navigator.pop(context);
-
-                },
-              ),
-            ),
-          ],
-        ),
-
-      );
-    });
+          );
+        });
   }
 
- Future _addImageFromGallery()async{
-   try {
-     var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 90);
-     if (pickedfiles != null) {
-       imagefiles = pickedfiles;
-       pickedfiles.forEach((element) {
-         imagesPaths.add(element.path);
-       });
-       setState(() {});
-     } else {
-       print("No image is selected.");
-     }
-   } catch (e) {
-     print("error while picking file.");
-   }
-  }
-
-  Future _addImageFromCamera()async{
+  Future _addImageFromGallery() async {
     try {
-    XFile? photos = await imgpicker.pickImage(source: ImageSource.camera, imageQuality: 90);
-    if(photos !=null){
-      imagesPaths.add(photos.path) ;
-    }
-    setState(() {
+      var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 90);
+      if (pickedfiles != null) {
+        imagefiles = pickedfiles;
+        pickedfiles.forEach((element) async {
+          imagesPaths.add(element.path);
+        });
+        for (var element in pickedfiles) {
+          var bytes = await element.readAsBytes();
+          var base64img = base64Encode(bytes);
+          base64ImgList.add(base64img);
+        }
 
-    });
-
-      print("AKMERAAA: "+imagefiles!.length.toString());
+        setState(() {});
+        print("GALLERYYYY: " + base64ImgList.length.toString());
+      } else {
+        print("No image is selected.");
+      }
     } catch (e) {
       print("error while picking file.");
     }
   }
 
+  Future _addImageFromCamera() async {
+    try {
+      XFile? photos = await imgpicker.pickImage(
+          source: ImageSource.camera, imageQuality: 90);
+      if (photos != null) {
+        var bytes = await photos.readAsBytes();
+        var base64img = base64Encode(bytes);
+        imagesPaths.add(photos.path);
+        base64ImgList.add(base64img);
 
+        print("SAYIIII: " + base64ImgList.length.toString());
+      }
+      setState(() {});
 
+      print("AKMERAAA: " + imagefiles!.length.toString());
+    } catch (e) {
+      print("error while picking file.");
+    }
+  }
+
+/*
+  Future commonsHealth() async {
+    const finalUrl = "https://api.plant.id/v2/health_assessment";
+    Map<String, String> requestHeaders = {
+      'Api-Key': '0fcD9Gc8MZchH729J2YmWqjCEtIu2LPmCx5lAG7zOjHUB0O4IP',
+      'content-type': 'application/json',
+    };
+
+    var request = http.post(Uri.parse(finalUrl), headers: requestHeaders);
+
+    print(request.toString());
+    var res = await request;
+    //  final response = await http.Response.fromStream(request);
+
+    final responseJson = (jsonDecode(res.body));
+    if(res.statusCode == 200){
+      debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
+      return HealthDataModel.fromJson(responseJson);
+    }else{
+      throw Exception("Veri getirelemedi");
+    }
+
+  }
+*/
+
+  @override
+  void initState() {
+    super.initState();
+    _diseases = HealthDataModel();
+    //commonsHealth();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +224,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     height: 10,
                   ),
                   Visibility(
-                    visible: imagesPaths.length >=5 ? false : true,
+                    visible: imagesPaths.length >= 5 ? false : true,
                     child: CustomPrimaryButton(
                       text: "Take a photo",
                       function: () {
@@ -186,24 +235,21 @@ class _DiagnosePageState extends State<DiagnosePage> {
                   const SizedBox(
                     height: 10,
                   ),
-
-                   Container(
+                  Container(
                     alignment: Alignment.center,
                     height: 80,
-                    child:  Wrap(
+                    child: Wrap(
                       alignment: WrapAlignment.center,
                       direction: Axis.horizontal,
                       children: List.generate(
-                          (imagesPaths.isNotEmpty ?  imagesPaths.length : 5), (index) {
+                          (imagesPaths.isNotEmpty ? imagesPaths.length : 5),
+                          (index) {
                         if (imagesPaths.isNotEmpty) {
                           return Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: const BorderSide(
-                                color: kPrymaryColor,
-                                width: 1.0
-                              )
-                            ),
+                                borderRadius: BorderRadius.circular(20),
+                                side: const BorderSide(
+                                    color: kPrymaryColor, width: 1.0)),
                             elevation: 0,
                             color: Colors.transparent,
                             clipBehavior: Clip.antiAlias,
@@ -236,11 +282,14 @@ class _DiagnosePageState extends State<DiagnosePage> {
                         } else {
                           return Card(
                             shape: RoundedRectangleBorder(
-                                side: const BorderSide(color: kPrymaryColor,width: 1.0),
-                                borderRadius: BorderRadius.circular(10)
-                            ),
+                                side: const BorderSide(
+                                    color: kPrymaryColor, width: 1.0),
+                                borderRadius: BorderRadius.circular(10)),
                             child: IconButton(
-                              icon: Icon(Icons.add, color: kPrymaryColor,),
+                              icon: Icon(
+                                Icons.add,
+                                color: kPrymaryColor,
+                              ),
                               onPressed: () {
                                 openImages();
                               },
@@ -269,52 +318,79 @@ class _DiagnosePageState extends State<DiagnosePage> {
               (_bitkyViewModel!.state == DataState.loadingState) ? const Center(child: CupertinoActivityIndicator(),):
               (_bitkyViewModel!.state == DataState.errorState) ? const Center(child: Text("Bir Hata Meydana Geldi"),) : Container(),*/
                   Visibility(
-                    visible: imagesPaths.length >0 ? true : false,
-                    child:Column(
+                    visible: imagesPaths.length > 0 ? true : false,
+                    child: Column(
                       children: [
-                        imagesPaths.length >0 ?   Container(
-                          height: 10,
-                          width: imagesPaths.length *100,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              gradient:   LinearGradient(
-                                  colors: [
-                                    Colors.white54,
-                                    imagesPaths.length >=1 ? Colors.yellowAccent:Colors.white54,
-                                    imagesPaths.length >2 ? Colors.yellow:Colors.yellowAccent,
-                                    imagesPaths.length >3 ? Colors.yellow:Colors.yellow,
-                                    imagesPaths.length >=4 ? Colors.greenAccent: Colors.greenAccent,
-                                    imagesPaths.length >=5 ?Colors.green :Colors.greenAccent
-                                  ]
+                        imagesPaths.length > 0
+                            ? Container(
+                                height: 10,
+                                width: imagesPaths.length * 100,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    gradient: LinearGradient(colors: [
+                                      Colors.white54,
+                                      imagesPaths.length >= 1
+                                          ? Colors.yellowAccent
+                                          : Colors.white54,
+                                      imagesPaths.length > 2
+                                          ? Colors.yellow
+                                          : Colors.yellowAccent,
+                                      imagesPaths.length > 3
+                                          ? Colors.yellow
+                                          : Colors.yellow,
+                                      imagesPaths.length >= 4
+                                          ? Colors.greenAccent
+                                          : Colors.greenAccent,
+                                      imagesPaths.length >= 5
+                                          ? Colors.green
+                                          : Colors.greenAccent
+                                    ])),
                               )
-
-                          ),
-                        ):Container(),
-                        const SizedBox(height: 20,),
+                            : Container(),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         InkWell(
-                          onTap: (){
-                            _bitkyViewModel!.getPlanetFromUi(imagefiles!).whenComplete(() {
-                              setState(() {
-                                datasContainer = true;
-                              });
-                              _response = _bitkyViewModel!.getPlanet.results!;
-                              bestMatch = _bitkyViewModel!.getPlanet.bestMatch;
+                          onTap: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            _bitkyViewModel!
+                                .getPlantHealthFromUi(base64ImgList)
+                                .then((value) {
+                              _diseases = value;
+                            }).whenComplete(() {
+                              print(_diseases.isPlantProbability);
 
+                              // print("GGGGGGGGGGGGG:    "+_response!.length.toString());
+                              setState(() {
+                                isLoading = false;
+                              });
                             });
                           },
                           child: Row(
-                            mainAxisAlignment:MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
-                              Icon(Icons.search, color: kPrymaryColor,),
-                              SizedBox(width: 5,),
-                              Text("Search",style: TextStyle(color: kPrymaryColor),)
+                              Icon(
+                                Icons.search,
+                                color: kPrymaryColor,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Search",
+                                style: TextStyle(color: kPrymaryColor),
+                              )
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20,),
+                    const SizedBox(
+                    height: 10,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
@@ -333,77 +409,161 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       )
                     ],
                   ),
-
                 ],
               ),
             ),
 
-
-            const Spacer(),
-            Expanded(
-                child: Align(
-              alignment: FractionalOffset.bottomCenter,
-                  child: Column(
-                    children: [
-                      Visibility(
-                        visible:true,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text("Common problems",style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
-                            InkWell(child: Text('See all',style: TextStyle(color: kPrymaryColor),))
+            (isLoading == true)
+                ? Column(
+                    children: const [
+                      Center(child: CupertinoActivityIndicator()),
+                      SizedBox(
+                        height: 150,
+                      )
+                    ],
+                  )
+                : Container(),
+            Visibility(
+              visible: _diseases.id !=null,
+              child: Expanded(
+                  child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: Column(
+                  children: [
+                    Expanded(
+                child: Container(
+                padding:const EdgeInsets.all(12),
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Card(
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                               const Text("is healty: ", style: TextStyle(color: kPrymaryColor),),
+                                Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
+                                "images/smile.png":"images/sad.png":"images/sad.png", width: 20,height: 20,)
+                              ],
+                            ),
+                            const SizedBox(height: 3,),
+                            const Divider(height: 0.2, color: Colors.deepOrange,)
                           ],
                         ),
                       ),
-                      const Divider(color: kPrymaryColor),
-                      Visibility(
-                        visible: true,
-                        child: Container(
-                          height: 100,
-                          decoration: const BoxDecoration(
-
+                    ),
+                  ),
+              ),
+                    Visibility(
+                      visible: true,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text(
+                            "Common problems",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 0.0,bottom: 0.0),
-                            child: GridView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: commonsList.length,
-                                gridDelegate:  const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 1, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                                itemBuilder: (ctx, index)=>Container(
+                          InkWell(
+                              child: Text(
+                            'See all',
+                            style: TextStyle(color: kPrymaryColor),
+                          ))
+                        ],
+                      ),
+                    ),
+                    const Divider(color: kPrymaryColor),
+                    Visibility(
+                      visible: true,
+                      child: Expanded(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height,
+                          decoration: const BoxDecoration(),
+                          child: GridView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount:_diseases.id !=null ? _diseases.healthAssessment!.diseases!.length:0,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 1,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 10),
+                              itemBuilder: (ctx, index) {
+                                return InkWell(
+                                  onTap: () {},
                                   child: Card(
                                     shadowColor: kPrymaryColor,
                                     elevation: 0.5,
-                                    shape:  RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15.0)),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0)),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(0.0),
+                                      padding: const EdgeInsets.all(8.0),
                                       child: Column(
                                         children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 2.0,right: 2.0, top: 1.0,bottom: 3.0),
+                                       /*   Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 2.0,
+                                                right: 2.0,
+                                                top: 1.0,
+                                                bottom: 3.0),
                                             child: ClipRRect(
-                                                borderRadius: const BorderRadius.only(topRight:Radius.circular(15),topLeft: Radius.circular(15) ),
-                                                child: Image.asset("images/gg.jpg", fit: BoxFit.cover,)),
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                        topRight:
+                                                            Radius.circular(15),
+                                                        topLeft:
+                                                            Radius.circular(15)),
+                                                child: _response![index] == null
+                                                    ? Image.asset(
+                                                        "images/leaf.png",
+                                                        height: 70,
+                                                        width: 70,
+                                                        fit: BoxFit.cover)
+                                                    : Image.network(
+                                                        _response![index],
+                                                        height: 70,
+                                                        width: 70,
+                                                        fit: BoxFit.cover,
+                                                      )),
+                                          ),*/
+                                          Text(
+                                            _diseases.healthAssessment!.diseases![index].name.toString(),
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          Text(commonsList[index], style:const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
                                         ],
                                       ),
-                                    ),),
-                                )),
-                          ),
+                                    ),
+                                  ),
+                                );
+                              }),
                         ),
-                      )
-                    ],
-                  ),
-            ))
+                      ),
+                    )
+                  ],
+                ),
+              )),
+            ),
+            const SizedBox(
+              height: 25,
+            )
           ],
         ),
       ),
     );
   }
 
+/*
   Visibility getDatas(BuildContext context) {
     return Visibility(
       visible: datasContainer!,
@@ -484,4 +644,5 @@ class _DiagnosePageState extends State<DiagnosePage> {
       ),
     );
   }
+*/
 }
