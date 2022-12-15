@@ -27,18 +27,15 @@ class BitkyApiClient{
     //print("RESPONSE :"+res.toString());
     final responseJson = (jsonDecode(response.body));
     if(response.statusCode == 200){
-     // debugPrint("SORGUDAN GELEN CEVAP: ${responseJson.toString()}", wrapWidth: 1024);
+      debugPrint("SORGUDAN GELEN CEVAP: ${responseJson.toString()}", wrapWidth: 1024);
       return BitkyDataModel.fromJson(responseJson);
     }else{
       throw Exception("Veri getirelemedi");
     }
-
   }
-
 
   Future<HealthDataModel> getPlanetHealth(List<String> images) async {
     const finalUrl = "https://api.plant.id/v2/health_assessment";
-
     Map<String, String> requestHeaders = {
       'Api-Key': '4FevuT7eMgLKdMqvSO8l6jdaNCixmhQQbNH1Ey7Ym57AHUMx86',
       'content-type': 'application/json',
@@ -46,9 +43,7 @@ class BitkyApiClient{
     var body = json.encode({
       "images": images,
     });
-
     var request = http.post(Uri.parse(finalUrl), headers: requestHeaders, body: body);
-
     var res = await request;
     final responseJson = (jsonDecode(res.body));
     if(res.statusCode == 200){
@@ -58,10 +53,7 @@ class BitkyApiClient{
     }else{
       throw Exception("Veri getirelemedi");
     }
-
   }
-
-
 }
 
 

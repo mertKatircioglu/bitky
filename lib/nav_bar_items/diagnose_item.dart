@@ -163,12 +163,6 @@ class _DiagnosePageState extends State<DiagnosePage> {
   }
 */
 
-  @override
-  void initState() {
-    super.initState();
-    _diseases = HealthDataModel();
-    //commonsHealth();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +174,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
         gradient: LinearGradient(
             colors: [
               Color(0xFFFFFFFF),
-              Color(0xFFCDF0EA),
+              Color(0xFFA5EFB0),
             ],
             begin: FractionalOffset(0.0, 0.0),
             end: FractionalOffset(3.0, 2.0),
@@ -272,6 +266,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                     onTap: () {
                                       setState(() {
                                         imagesPaths.removeAt(index);
+                                        base64ImgList.removeAt(index);
                                       });
                                     },
                                   ),

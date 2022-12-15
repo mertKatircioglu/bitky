@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "825130866332",
+    "project_id": "bitkyapp",
+    "storage_bucket": "bitkyapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825130866332:android:70d79f9a22a3ee9f44bf59",
+        "android_client_info": {
+          "package_name": "com.bitky.bitky"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825130866332-5ubndte2717vj16j559ivhenv8e2bv0r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBULZfF_QowlCtBYUgPtUSW2P9_GfHIZ-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825130866332-5ubndte2717vj16j559ivhenv8e2bv0r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
