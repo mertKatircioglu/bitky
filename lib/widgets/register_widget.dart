@@ -28,8 +28,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   TextEditingController confirmPasswordController = TextEditingController();
 
   Future<void> formValidation() async{
-
-
     if(passwordController.text == confirmPasswordController.text){
       if(passwordController.text.length <5 && confirmPasswordController.text.length <5){
         showDialog(context: context,
@@ -74,15 +72,33 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     if(currentUser != null){
       saveDataToFirestore(currentUser!).then((value) => {
         Navigator.pop(context),
-      Navigator.push(context, MaterialPageRoute(builder: (c){
-      return ChangeNotifierProvider<BitkyViewModel>(
-      create: (context)=>locator<BitkyViewModel>(),
-      child:const HomeScreen());
-      }))
-
+        Navigator.of(context).push(_createRoute())
       });
     }
   }
+
+
+  Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return ChangeNotifierProvider<BitkyViewModel>(
+            create: (context)=>locator<BitkyViewModel>(),
+            child:const HomeScreen());
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+
   Future saveDataToFirestore(User currentUser) async{
     FirebaseFirestore.instance.collection("users").doc(currentUser.uid).
     set({
@@ -105,9 +121,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        const SizedBox(height: 20,),
        const Text("Register with email & password",
          textAlign: TextAlign.center,
          style: TextStyle(
@@ -115,7 +130,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           fontWeight: FontWeight.w500,
           fontSize: 16
         ),),
-       const SizedBox(height: 15,),
+       const SizedBox(height: 10,),
         Form(
             key: _formKey,
             child: Padding(
@@ -129,7 +144,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                       controller: nameController,
                       hintText: 'Name & surname',
                       isObscreen: false,
-                      height: 30,
+                      height: 25,
                     ),
                   ),
                   const SizedBox(height: 5,),
@@ -138,7 +153,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                       iconData: Icons.email,
                       controller: emailController,
                       hintText: 'e-mail',
-                      height: 30,
+                      height: 25,
                       isObscreen: false,
                     ),
                   ),
@@ -155,7 +170,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   const SizedBox(height: 5,),
                   Card(
                     child: CustomTextField(
-                      height: 30,
+                      height: 25,
                       controller: confirmPasswordController,
                       iconData: Icons.key,
                       hintText: 'Confirm password',
@@ -166,13 +181,44 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 ],
               ),
             )),
-        const SizedBox(height: 15,),
+        const SizedBox(height: 10,),
         Padding(
           padding: const EdgeInsets.all(0.0),
-          child: CustomPrimaryButton(
-            text: "Register",
-            radius: 3.0,
-            function: formValidation,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: CustomPrimaryButton(
+                  text: "Register",
+                  radius: 3.0,
+                  function: formValidation,
+                ),
+              ),
+              const SizedBox(width: 15,),
+              Expanded(
+                child: Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                      gradient: const LinearGradient(colors: [Color(0xfffD7816A),Color(0xfffBD4F6C)]),
+                      borderRadius:BorderRadius.circular(3.0)
+                  ),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25)
+                          )
+                      ),
+                      onPressed:(){
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        "Cancel", style: TextStyle(color: Colors.white),
+                      )),
+                ),
+              ),
+            ],
           ),
         ),
       ],

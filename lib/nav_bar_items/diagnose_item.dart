@@ -206,12 +206,15 @@ class _DiagnosePageState extends State<DiagnosePage> {
                   ),
                   Visibility(
                     visible: imagesPaths.length >= 5 ? false : true,
-                    child: CustomPrimaryButton(
-                      text: "Take a photo",
-                      radius: 15.0,
-                      function: () {
-                        openImages();
-                      },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width /1.5,
+                      child: CustomPrimaryButton(
+                        text: "Take a photo",
+                        radius: 15.0,
+                        function: () {
+                          openImages();
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(

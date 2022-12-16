@@ -30,6 +30,28 @@ class _AuthScreenState extends State<AuthScreen> {
   TextEditingController emailController = TextEditingController();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+
+  Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return ChangeNotifierProvider<BitkyViewModel>(
+            create: (context)=>locator<BitkyViewModel>(),
+            child:const HomeScreen());
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+
   Future loginUser() async {
     if(emailController.text.isNotEmpty && passwordController.text.isNotEmpty){
       showDialog(context: context, builder: (c){
@@ -40,12 +62,7 @@ class _AuthScreenState extends State<AuthScreen> {
         User? currentUser;
         currentUser = auth.user!;
         if(currentUser != null){
-          Navigator.push(context, MaterialPageRoute(builder: (c){
-            return ChangeNotifierProvider<BitkyViewModel>(
-                create: (context)=>locator<BitkyViewModel>(),
-                child:const HomeScreen());
-          }));
-
+          Navigator.of(context).push(_createRoute());
         } else{
           showDialog(context: context, builder: (c){
             return CustomErrorDialog(message: "User is not found.");
@@ -64,6 +81,41 @@ class _AuthScreenState extends State<AuthScreen> {
         return CustomErrorDialog(message: "Please fill all fields",);
       });
     }
+  }
+  Widget _dialog(BuildContext context){
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15)),
+    elevation: 0,
+      content: Padding(
+          padding: const EdgeInsets.all(1.0),
+          child: Container(
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                    Radius.circular(15))),
+            child: const RegisterWidget(),
+          ),
+        ),
+
+    );
+  }
+
+  void _scaleDialog(Widget dialog) {
+    showGeneralDialog(
+      context: context,
+      pageBuilder: (ctx, a1, a2) {
+        return Container();
+      },
+      transitionBuilder: (ctx, a1, a2, child) {
+        var curve = Curves.easeInOut.transform(a1.value);
+        return Transform.scale(
+          scale: curve,
+          child:dialog,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 300),
+    );
   }
 
   Future<void> signupWithGoogle(BuildContext context) async {
@@ -198,28 +250,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   Buttons.Email,
                   mini: true,
                   onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (c) {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
 
-                            elevation: 0,
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 130.0, horizontal: 60.0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(1.0),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(15))),
-                                child: const RegisterWidget(),
-                              ),
-                            ),
-                          );
-                        });
+                    _scaleDialog(_dialog(context));
                   },
                 ),
               ],

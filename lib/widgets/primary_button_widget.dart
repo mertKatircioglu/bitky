@@ -9,7 +9,6 @@ class CustomPrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:const EdgeInsets.symmetric(horizontal: 70),
       height: 40,
       decoration: BoxDecoration(
         gradient: const LinearGradient(colors: [Color(0xfff4fe58a),Color(0xfff19C179)]),

@@ -17,20 +17,53 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return ChangeNotifierProvider<BitkyViewModel>(
+          create: (context)=>locator<BitkyViewModel>(),
+          child:const HomeScreen());
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+Route _createRouteAuth() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>const AuthScreen(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+
 class _SplashScreenState extends State<SplashScreen> {
   startTimer(BuildContext context){
     Timer(const Duration(seconds: 3), () async {
 
       if(authUser.currentUser != null){
-        if (!mounted) return;
-        Navigator.push(context, MaterialPageRoute(builder: (c){
-          return ChangeNotifierProvider<BitkyViewModel>(
-              create: (context)=>locator<BitkyViewModel>(),
-              child:const HomeScreen());
-        }));
+        Navigator.of(context).push(_createRoute());
       }else{
-        if (!mounted) return;
-        Navigator.push(context, MaterialPageRoute(builder: (c)=>const AuthScreen()));
+        Navigator.of(context).push(_createRouteAuth());
+
       }
     });
   }
