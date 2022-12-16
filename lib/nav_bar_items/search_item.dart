@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 import 'dart:io';
 
 import 'package:bitky/globals/globals.dart';
@@ -6,6 +6,7 @@ import 'package:bitky/models/bitky_data_model.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+
 
 import '../view_models/planet_view_model.dart';
 import '../widgets/settings_button_widget.dart';
@@ -16,9 +17,7 @@ class CurvePainter extends CustomPainter {
     var paint = Paint();
     paint.color = Colors.green[50]!;
     paint.style = PaintingStyle.fill; // Change this to fill
-
     var path = Path();
-
     path.moveTo(0, size.height * 0.75);
     path.quadraticBezierTo(
         size.width / 2, size.height / 1.10, size.width, size.height * 0.75);
@@ -143,7 +142,6 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     _bitkyViewModel = Provider.of<BitkyViewModel>(context);
-
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -214,8 +212,8 @@ class _SearchState extends State<Search> {
                 },
                 child: Center(
                   child:Card(
-                    elevation: 4,
-                    shadowColor: Colors.green,
+                    elevation: 5,
+                    shadowColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(70)
                     ),
@@ -224,7 +222,7 @@ class _SearchState extends State<Search> {
                       width: 120,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(70),
-                        color: Colors.green[400],
+                        gradient: const LinearGradient(colors: [Color(0xfff4FE58A),Color(0xfff19C179)]),
                       ),
                       child: const Icon(Icons.camera_alt, color: Colors.white, size: 50,),
                     ),

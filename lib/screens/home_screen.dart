@@ -1,6 +1,7 @@
 
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/nav_bar_items/my_garden_item.dart';
+import 'package:bitky/nav_bar_items/profile_item.dart';
 import 'package:bitky/nav_bar_items/reminders_item.dart';
 import 'package:bitky/nav_bar_items/search_item.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,7 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
       const DiagnosePage(),
         const Search(),
       const Reminder(),
-      const MyGarden()
+      const MyGarden(),
+       const ProfileItem()
     ];
   }
   List<PersistentBottomNavBarItem> _navBarsItems() {
@@ -71,7 +73,12 @@ class _HomeScreenState extends State<HomeScreen> {
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
-
+      PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.person),
+        title: ("Profile"),
+        activeColorPrimary: kPrymaryColor,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
 
     ];
   }
@@ -79,7 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body:PersistentTabView(
         context,
         controller: _controller,

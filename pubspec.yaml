@@ -44,6 +44,14 @@ dependencies:
   flutter_emoji: ^2.4.0
   flutter_rating_bar: ^4.0.1
   persistent_bottom_nav_bar: ^5.0.2
+  flutter_signin_button: ^2.0.0
+  google_fonts: ^3.0.1
+  firebase_core: ^2.4.0
+  firebase_auth: ^4.2.1
+  cloud_firestore: ^4.2.0
+  flutter_exit_app: ^1.0.4
+  google_sign_in: ^5.4.2
+
 
 
 dev_dependencies:

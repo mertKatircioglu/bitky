@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-
 import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,17 +29,6 @@ class _DiagnosePageState extends State<DiagnosePage> {
   List<String> base64ImgList = [];
   List<Diseases> _diseasesList = [];
   bool isLoading = false;
-
-  List<String> commonsList = [
-    "Deneme1",
-    "Deneme2",
-    "Deneme3",
-    "Deneme4",
-    "Deneme5",
-    "Deneme6",
-    "Deneme7",
-    "Deneme8",
-  ];
 
   openImages() async {
     showDialog(
@@ -167,7 +154,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
   @override
   Widget build(BuildContext context) {
     _bitkyViewModel = Provider.of<BitkyViewModel>(context);
-    return Container(
+    return  Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
@@ -221,6 +208,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     visible: imagesPaths.length >= 5 ? false : true,
                     child: CustomPrimaryButton(
                       text: "Take a photo",
+                      radius: 15.0,
                       function: () {
                         openImages();
                       },
@@ -237,61 +225,61 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       direction: Axis.horizontal,
                       children: List.generate(
                           (imagesPaths.isNotEmpty ? imagesPaths.length : 5),
-                          (index) {
-                        if (imagesPaths.isNotEmpty) {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                side: const BorderSide(
-                                    color: kPrymaryColor, width: 1.0)),
-                            elevation: 0,
-                            color: Colors.transparent,
-                            clipBehavior: Clip.antiAlias,
-                            child: Stack(
-                              children: <Widget>[
-                                Image.file(
-                                  File(imagesPaths[index]),
-                                  fit: BoxFit.cover,
-                                  width: 60,
-                                  height: 60,
-                                ),
-                                Positioned(
-                                  right: 5,
-                                  child: InkWell(
-                                    child: const Icon(
-                                      Icons.remove_circle_rounded,
-                                      size: 20,
-                                      color: Colors.red,
+                              (index) {
+                            if (imagesPaths.isNotEmpty) {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: const BorderSide(
+                                        color: kPrymaryColor, width: 1.0)),
+                                elevation: 0,
+                                color: Colors.transparent,
+                                clipBehavior: Clip.antiAlias,
+                                child: Stack(
+                                  children: <Widget>[
+                                    Image.file(
+                                      File(imagesPaths[index]),
+                                      fit: BoxFit.cover,
+                                      width: 60,
+                                      height: 60,
                                     ),
-                                    onTap: () {
-                                      setState(() {
-                                        imagesPaths.removeAt(index);
-                                        base64ImgList.removeAt(index);
-                                      });
-                                    },
-                                  ),
+                                    Positioned(
+                                      right: 5,
+                                      child: InkWell(
+                                        child: const Icon(
+                                          Icons.remove_circle_rounded,
+                                          size: 20,
+                                          color: Colors.red,
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            imagesPaths.removeAt(index);
+                                            base64ImgList.removeAt(index);
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    color: kPrymaryColor, width: 1.0),
-                                borderRadius: BorderRadius.circular(10)),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.add,
-                                color: kPrymaryColor,
-                              ),
-                              onPressed: () {
-                                openImages();
-                              },
-                            ),
-                          );
-                        }
-                      }),
+                              );
+                            } else {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    side: const BorderSide(
+                                        color: kPrymaryColor, width: 1.0),
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.add,
+                                    color: kPrymaryColor,
+                                  ),
+                                  onPressed: () {
+                                    openImages();
+                                  },
+                                ),
+                              );
+                            }
+                          }),
                     ),
                   ),
                   /*Visibility(
@@ -318,29 +306,29 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       children: [
                         imagesPaths.length > 0
                             ? Container(
-                                height: 10,
-                                width: imagesPaths.length * 100,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    gradient: LinearGradient(colors: [
-                                      Colors.white54,
-                                      imagesPaths.length >= 1
-                                          ? Colors.yellowAccent
-                                          : Colors.white54,
-                                      imagesPaths.length > 2
-                                          ? Colors.yellow
-                                          : Colors.yellowAccent,
-                                      imagesPaths.length > 3
-                                          ? Colors.yellow
-                                          : Colors.yellow,
-                                      imagesPaths.length >= 4
-                                          ? Colors.greenAccent
-                                          : Colors.greenAccent,
-                                      imagesPaths.length >= 5
-                                          ? Colors.green
-                                          : Colors.greenAccent
-                                    ])),
-                              )
+                          height: 10,
+                          width: imagesPaths.length * 100,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: LinearGradient(colors: [
+                                Colors.white54,
+                                imagesPaths.length >= 1
+                                    ? Colors.yellowAccent
+                                    : Colors.white54,
+                                imagesPaths.length > 2
+                                    ? Colors.yellow
+                                    : Colors.yellowAccent,
+                                imagesPaths.length > 3
+                                    ? Colors.yellow
+                                    : Colors.yellow,
+                                imagesPaths.length >= 4
+                                    ? Colors.greenAccent
+                                    : Colors.greenAccent,
+                                imagesPaths.length >= 5
+                                    ? Colors.green
+                                    : Colors.greenAccent
+                              ])),
+                        )
                             : Container(),
                         const SizedBox(
                           height: 10,
@@ -383,7 +371,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       ],
                     ),
                   ),
-                    const SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Row(
@@ -410,101 +398,101 @@ class _DiagnosePageState extends State<DiagnosePage> {
 
             (isLoading == true)
                 ? Column(
-                    children: const [
-                      Center(child: CupertinoActivityIndicator()),
-                      SizedBox(
-                        height: 150,
-                      )
-                    ],
-                  )
+              children: const [
+                Center(child: CupertinoActivityIndicator()),
+                SizedBox(
+                  height: 150,
+                )
+              ],
+            )
                 : Container(),
             Visibility(
               visible: _diseases.id !=null,
               child: Expanded(
                   child: Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: Column(
-                  children: [
-                    Expanded(
-                child: Container(
-                padding:const EdgeInsets.all(12),
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Card(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                               const Text("is healty: ", style: TextStyle(color: kPrymaryColor),),
-                                Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
-                                "images/smile.png":"images/sad.png":"images/sad.png", width: 20,height: 20,)
-                              ],
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding:const EdgeInsets.all(12),
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            const SizedBox(height: 3,),
-                            const Divider(height: 0.2, color: Colors.deepOrange,)
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-              ),
-                    Visibility(
-                      visible: true,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
-                            "Common problems",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
+                            child: Card(
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text("is healty: ", style: TextStyle(color: kPrymaryColor),),
+                                        Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
+                                        "images/smile.png":"images/sad.png":"images/sad.png", width: 20,height: 20,)
+                                      ],
+                                    ),
+                                    const SizedBox(height: 3,),
+                                    const Divider(height: 0.2, color: Colors.deepOrange,)
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                          InkWell(
-                              child: Text(
-                            'See all',
-                            style: TextStyle(color: kPrymaryColor),
-                          ))
-                        ],
-                      ),
-                    ),
-                    const Divider(color: kPrymaryColor),
-                    Visibility(
-                      visible: true,
-                      child: Expanded(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height,
-                          decoration: const BoxDecoration(),
-                          child: GridView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount:_diseases.id !=null ? _diseases.healthAssessment!.diseases!.length:0,
-                              gridDelegate:
+                        ),
+                        Visibility(
+                          visible: true,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [
+                              Text(
+                                "Common problems",
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                              InkWell(
+                                  child: Text(
+                                    'See all',
+                                    style: TextStyle(color: kPrymaryColor),
+                                  ))
+                            ],
+                          ),
+                        ),
+                        const Divider(color: kPrymaryColor),
+                        Visibility(
+                          visible: true,
+                          child: Expanded(
+                            child: Container(
+                              height: MediaQuery.of(context).size.height,
+                              decoration: const BoxDecoration(),
+                              child: GridView.builder(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount:_diseases.id !=null ? _diseases.healthAssessment!.diseases!.length:0,
+                                  gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 1,
                                       crossAxisSpacing: 10,
                                       mainAxisSpacing: 10),
-                              itemBuilder: (ctx, index) {
-                                return InkWell(
-                                  onTap: () {},
-                                  child: Card(
-                                    shadowColor: kPrymaryColor,
-                                    elevation: 0.5,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
+                                  itemBuilder: (ctx, index) {
+                                    return InkWell(
+                                      onTap: () {},
+                                      child: Card(
+                                        shadowColor: kPrymaryColor,
+                                        elevation: 0.5,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
                                             BorderRadius.circular(15.0)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        children: [
-                                       /*   Padding(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            children: [
+                                              /*   Padding(
                                             padding: const EdgeInsets.only(
                                                 left: 2.0,
                                                 right: 2.0,
@@ -530,24 +518,24 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                                         fit: BoxFit.cover,
                                                       )),
                                           ),*/
-                                          Text(
-                                            _diseases.healthAssessment!.diseases![index].name.toString(),
-                                            style: const TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold),
+                                              Text(
+                                                _diseases.healthAssessment!.diseases![index].name.toString(),
+                                                style: const TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ],
                                           ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              )),
+                                    );
+                                  }),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )),
             ),
             const SizedBox(
               height: 25,
