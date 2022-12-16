@@ -1,15 +1,12 @@
-
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/nav_bar_items/my_garden_item.dart';
-import 'package:bitky/nav_bar_items/profile_item.dart';
 import 'package:bitky/nav_bar_items/reminders_item.dart';
 import 'package:bitky/nav_bar_items/search_item.dart';
+import 'package:bitky/nav_bar_items/settings_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../nav_bar_items/diagnose_item.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -19,34 +16,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-
   PersistentTabController? _controller;
-  bool? _hideNavBar;
-
 
   @override
   void initState() {
     super.initState();
     _controller = PersistentTabController(initialIndex: 0);
-    _hideNavBar = false;
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      statusBarIconBrightness: Brightness.dark
-    ));
   }
 
   List<Widget> _buildScreens() {
     return [
       const DiagnosePage(),
-        const Search(),
+      const Search(),
       const Reminder(),
       const MyGarden(),
-       const ProfileItem()
+      const SettingsItem()
     ];
   }
+
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
@@ -57,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.search),
-          title: ("Search"),
+        title: ("Search"),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
@@ -74,21 +61,21 @@ class _HomeScreenState extends State<HomeScreen> {
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.person),
-        title: ("Profile"),
+        icon: const Icon(CupertinoIcons.settings),
+        title: ("Settings"),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
-
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:PersistentTabView(
+      body: PersistentTabView(
         context,
         controller: _controller,
+        hideNavigationBar: hideNavBar,
         screens: _buildScreens(),
         items: _navBarsItems(),
         confineInSafeArea: true,
@@ -100,18 +87,13 @@ class _HomeScreenState extends State<HomeScreen> {
           colorBehindNavBar: Colors.white,
 
         ),
-        screenTransitionAnimation: ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
+        screenTransitionAnimation: ScreenTransitionAnimation(
+          // Screen transition animation on change of selected tab.
           animateTabTransition: true,
           curve: Curves.bounceIn,
           duration: Duration(milliseconds: 200),
         ),
-
       ),
-
-
     );
   }
-
-
 }
-

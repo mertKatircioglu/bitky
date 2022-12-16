@@ -182,7 +182,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                   'Diagnose',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
-                CustomSettingsButton(),
+
               ],
             ),
             const SizedBox(

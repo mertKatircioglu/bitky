@@ -152,20 +152,9 @@ class _SearchState extends State<Search> {
           child: Column(
             children: [
               const SizedBox(
-                height: 50,
+                height: 100,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    '',
-                  ),
-                  CustomSettingsButton(),
-                ],
-              ),
-              const SizedBox(
-                height: 40,
-              ),
+
               const Text(
                 "Find Perfect Plants & Veggies",
                 style: TextStyle(

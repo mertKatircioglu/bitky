@@ -83,7 +83,6 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               CupertinoActivityIndicator(),
-
             ],
           ),
         ),

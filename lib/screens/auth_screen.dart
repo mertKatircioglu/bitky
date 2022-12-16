@@ -26,7 +26,6 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   Color okeyColor = Colors.grey;
   TextEditingController passwordController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -259,7 +258,7 @@ class _AuthScreenState extends State<AuthScreen> {
             const SizedBox(height: 50,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 Text("Forgot password? ", style:TextStyle(color: Colors.black45)),
                 Text("Click here", style:TextStyle(color: Colors.blueAccent),)
               ],
