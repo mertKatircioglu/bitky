@@ -60,9 +60,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 3), () async {
 
       if(authUser.currentUser != null){
-        Navigator.of(context).push(_createRoute());
+        Navigator.of(context).pushReplacement(_createRoute());
       }else{
-        Navigator.of(context).push(_createRouteAuth());
+        Navigator.of(context).pushReplacement(_createRouteAuth());
 
       }
     });
@@ -81,8 +81,14 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              CupertinoActivityIndicator(),
+            children:  [
+              Image.asset("images/plant.png", width: 70, height: 70,),
+            const Text("Bitky", style: TextStyle(fontSize: 18, color: kPrymaryColor),),
+            const Text("Identify a plant or plant problem",style: TextStyle(fontSize: 12,)),
+            const SizedBox(height: 20,),
+            const CupertinoActivityIndicator(
+                radius: 15,
+              ),
             ],
           ),
         ),

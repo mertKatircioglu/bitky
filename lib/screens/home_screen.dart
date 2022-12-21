@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PersistentTabController? _controller;
-
+  bool? _hideBar=false;
   @override
   void initState() {
     super.initState();
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: PersistentTabView(
         context,
         controller: _controller,
-        hideNavigationBar: hideNavBar,
+        hideNavigationBar: _controller!.index.isNegative,
         screens: _buildScreens(),
         items: _navBarsItems(),
         confineInSafeArea: true,
@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
           colorBehindNavBar: Colors.white,
 
         ),
-        screenTransitionAnimation: ScreenTransitionAnimation(
+        screenTransitionAnimation:const ScreenTransitionAnimation(
           // Screen transition animation on change of selected tab.
           animateTabTransition: true,
           curve: Curves.bounceIn,

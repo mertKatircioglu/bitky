@@ -48,7 +48,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               });
         }
       }
-
     } else{
       showDialog(context: context,
           builder: (c){
@@ -72,7 +71,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     if(currentUser != null){
       saveDataToFirestore(currentUser!).then((value) => {
         Navigator.pop(context),
-        Navigator.of(context).push(_createRoute())
+        Navigator.of(context).pushReplacement(_createRoute())
       });
     }
   }

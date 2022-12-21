@@ -27,7 +27,6 @@ class _AuthScreenState extends State<AuthScreen> {
   Color okeyColor = Colors.grey;
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 
   Route _createRoute() {
@@ -66,7 +65,7 @@ class _AuthScreenState extends State<AuthScreen> {
           showDialog(context: context, builder: (c){
             return CustomErrorDialog(message: "User is not found.");
           });
-          Navigator.push(context, MaterialPageRoute(builder: (c)=>const AuthScreen()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (c)=>const AuthScreen()));
 
         }
       }).catchError((err){
@@ -103,6 +102,8 @@ class _AuthScreenState extends State<AuthScreen> {
   void _scaleDialog(Widget dialog) {
     showGeneralDialog(
       context: context,
+      barrierDismissible: true,
+      barrierLabel: "go",
       pageBuilder: (ctx, a1, a2) {
         return Container();
       },
@@ -118,6 +119,9 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> signupWithGoogle(BuildContext context) async {
+    showDialog(context: context, builder: (c){
+      return const CupertinoActivityIndicator();
+    });
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
     if (googleSignInAccount != null) {
@@ -137,7 +141,8 @@ class _AuthScreenState extends State<AuthScreen> {
           "userEmail": user.email,
           "createDate": DateTime.now()
         });
-        Navigator.push(context, MaterialPageRoute(builder: (c){
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (c){
           return ChangeNotifierProvider<BitkyViewModel>(
               create: (context)=>locator<BitkyViewModel>(),
               child:const HomeScreen());
@@ -249,7 +254,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   Buttons.Email,
                   mini: true,
                   onPressed: () {
-
                     _scaleDialog(_dialog(context));
                   },
                 ),

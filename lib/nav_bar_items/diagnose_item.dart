@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:bitky/models/bitky_health_data_model.dart';
+import 'package:bitky/screens/recent_snaps.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
-
 import '../globals/globals.dart';
 import '../view_models/planet_view_model.dart';
 import '../widgets/primary_button_widget.dart';
-import '../widgets/settings_button_widget.dart';
 
 class DiagnosePage extends StatefulWidget {
   const DiagnosePage({Key? key}) : super(key: key);
@@ -23,11 +24,9 @@ class _DiagnosePageState extends State<DiagnosePage> {
   List<XFile>? imagefiles;
   BitkyViewModel? _bitkyViewModel;
   bool? datasContainer = false;
-  List? _response = [];
   List<String> imagesPaths = [];
   HealthDataModel _diseases = HealthDataModel();
   List<String> base64ImgList = [];
-  List<Diseases> _diseasesList = [];
   bool isLoading = false;
 
   openImages() async {
@@ -272,7 +271,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                         color: kPrymaryColor, width: 1.0),
                                     borderRadius: BorderRadius.circular(10)),
                                 child: IconButton(
-                                  icon: Icon(
+                                  icon:const Icon(
                                     Icons.add,
                                     color: kPrymaryColor,
                                   ),
@@ -309,7 +308,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       children: [
                         imagesPaths.length > 0
                             ? Container(
-                          height: 10,
+                          height: 6,
                           width: imagesPaths.length * 100,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -346,7 +345,18 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                 .then((value) {
                               _diseases = value;
                             }).whenComplete(() {
-                              print(_diseases.isPlantProbability);
+                             List<String> disasNames =[];
+                              _diseases.healthAssessment!.diseases!.forEach((element) {
+                                disasNames.add(element.name!);
+                                //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
+                              });
+                             FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
+                              set({
+                                "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
+                                "problemName":disasNames,
+                                "createdAt": DateTime.now(),
+                                "isHealty":_diseases.healthAssessment!.isHealthy
+                              });
 
                               // print("GGGGGGGGGGGGG:    "+_response!.length.toString());
                               setState(() {
@@ -377,23 +387,33 @@ class _DiagnosePageState extends State<DiagnosePage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.access_time_outlined,
-                        color: kPrymaryColor,
-                        size: 15,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Recent Snaps",
-                        style: TextStyle(
-                            color: kPrymaryColor, fontWeight: FontWeight.w500),
-                      )
-                    ],
+                  InkWell(
+                    onTap: (){
+                      PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen: RecentSnapsScreen(),
+                        withNavBar: false,
+                        pageTransitionAnimation:PageTransitionAnimation.cupertino,
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(
+                          Icons.access_time_outlined,
+                          color: kPrymaryColor,
+                          size: 15,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Recent Snaps",
+                          style: TextStyle(
+                              color: kPrymaryColor, fontWeight: FontWeight.w500),
+                        )
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -527,6 +547,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                                     fontSize: 10,
                                                     fontWeight: FontWeight.bold),
                                               ),
+
                                             ],
                                           ),
                                         ),
