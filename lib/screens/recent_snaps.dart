@@ -48,7 +48,7 @@ class RecentSnapsScreen extends StatelessWidget {
                         itemBuilder: (context, index) => Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
-                                height: 150,
+                                height: 180,
                                 child: Card(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -101,12 +101,22 @@ class RecentSnapsScreen extends StatelessWidget {
                                         Row(
                                           children: [
                                             const Text(
-                                              "Reason: ",
+                                              "Reasons: ",
                                               style:
                                                   TextStyle(color: kPrymaryColor),
                                             ),
-                                            Text((recentDocs[index]['problemName']
-                                                [0])),
+                                            Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text((recentDocs[index]['problemName']
+                                                    [0])+","),
+                                                Text((recentDocs[index]['problemName']
+                                                [1])+","),
+                                                Text((recentDocs[index]['problemName']
+                                                [2])),
+                                              ],
+                                            ),
                                           ],
                                         ),
                                         const SizedBox(
