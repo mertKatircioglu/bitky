@@ -58,6 +58,11 @@ class RecentSnapsScreen extends StatelessWidget {
                                       children: [
                                         Row(
                                           children: [
+                                            const Text(
+                                              "Date: ",
+                                              style:
+                                              TextStyle(color: kPrymaryColor),
+                                            ),
                                             Text((recentDocs[index]['createdAt']
                                                     as Timestamp)
                                                 .toDate()
@@ -77,6 +82,11 @@ class RecentSnapsScreen extends StatelessWidget {
                                                 .toString()),
                                             const SizedBox(
                                               width: 10,
+                                            ),
+                                            const Text(
+                                              "Hour: ",
+                                              style:
+                                              TextStyle(color: kPrymaryColor),
                                             ),
                                             Text((recentDocs[index]['createdAt']
                                                     as Timestamp)
@@ -110,11 +120,11 @@ class RecentSnapsScreen extends StatelessWidget {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text((recentDocs[index]['problemName']
-                                                    [0])+","),
+                                                    [0].toUpperCase())+","),
                                                 Text((recentDocs[index]['problemName']
-                                                [1])+","),
+                                                [1].toUpperCase())+","),
                                                 Text((recentDocs[index]['problemName']
-                                                [2])),
+                                                [2].toUpperCase())),
                                               ],
                                             ),
                                           ],
