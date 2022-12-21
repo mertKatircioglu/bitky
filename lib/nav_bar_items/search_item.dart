@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 
 
 import '../view_models/planet_view_model.dart';
-import '../widgets/settings_button_widget.dart';
 
 class CurvePainter extends CustomPainter {
   @override
@@ -115,10 +114,10 @@ class _SearchState extends State<Search> {
 
         setState(() {});
       } else {
-        print("No image is selected.");
+       // print("No image is selected.");
       }
     } catch (e) {
-      print("error while picking file.");
+     // print("error while picking file.");
     }
   }
 
@@ -129,13 +128,13 @@ class _SearchState extends State<Search> {
       if (photos != null) {
         _imagesXfile.add(photos);
         imagesPaths.add(photos.path);
-        print("SAYIIII: " + base64ImgList.length.toString());
+        //print("SAYIIII: " + base64ImgList.length.toString());
       }
       setState(() {});
 
-      print("AKMERAAA: " + imagefiles!.length.toString());
+     // print("AKMERAAA: " + imagefiles!.length.toString());
     } catch (e) {
-      print("error while picking file.");
+     // print("error while picking file.");
     }
   }
 
@@ -270,7 +269,7 @@ class _SearchState extends State<Search> {
                                     color: kPrymaryColor, width: 1.0),
                                 borderRadius: BorderRadius.circular(10)),
                             child: IconButton(
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.add,
                                 color: kPrymaryColor,
                               ),
