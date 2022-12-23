@@ -1,108 +1,90 @@
 class HealthDataModel {
   int? id;
-  Null? customId;
   MetaData? metaData;
   double? uploadedDatetime;
   double? finishedDatetime;
   List<Images>? images;
   List<String>? modifiers;
   String? secret;
-  Null? failCause;
   bool? countable;
-  Null? feedback;
   double? isPlantProbability;
   bool? isPlant;
   HealthAssessment? healthAssessment;
 
   HealthDataModel(
       {this.id,
-        this.customId,
         this.metaData,
         this.uploadedDatetime,
         this.finishedDatetime,
         this.images,
         this.modifiers,
         this.secret,
-        this.failCause,
         this.countable,
-        this.feedback,
         this.isPlantProbability,
         this.isPlant,
         this.healthAssessment});
 
   HealthDataModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    customId = json['custom_id'];
     metaData = json['meta_data'] != null
-        ? new MetaData.fromJson(json['meta_data'])
+        ? MetaData.fromJson(json['meta_data'])
         : null;
     uploadedDatetime = json['uploaded_datetime'];
     finishedDatetime = json['finished_datetime'];
     if (json['images'] != null) {
       images = <Images>[];
       json['images'].forEach((v) {
-        images!.add(new Images.fromJson(v));
+        images!.add(Images.fromJson(v));
       });
     }
     modifiers = json['modifiers'].cast<String>();
     secret = json['secret'];
-    failCause = json['fail_cause'];
     countable = json['countable'];
-    feedback = json['feedback'];
     isPlantProbability = json['is_plant_probability'];
     isPlant = json['is_plant'];
     healthAssessment = json['health_assessment'] != null
-        ? new HealthAssessment.fromJson(json['health_assessment'])
+        ? HealthAssessment.fromJson(json['health_assessment'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['custom_id'] = this.customId;
-    if (this.metaData != null) {
-      data['meta_data'] = this.metaData!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    if (metaData != null) {
+      data['meta_data'] = metaData!.toJson();
     }
-    data['uploaded_datetime'] = this.uploadedDatetime;
-    data['finished_datetime'] = this.finishedDatetime;
-    if (this.images != null) {
-      data['images'] = this.images!.map((v) => v.toJson()).toList();
+    data['uploaded_datetime'] = uploadedDatetime;
+    data['finished_datetime'] = finishedDatetime;
+    if (images != null) {
+      data['images'] = images!.map((v) => v.toJson()).toList();
     }
-    data['modifiers'] = this.modifiers;
-    data['secret'] = this.secret;
-    data['fail_cause'] = this.failCause;
-    data['countable'] = this.countable;
-    data['feedback'] = this.feedback;
-    data['is_plant_probability'] = this.isPlantProbability;
-    data['is_plant'] = this.isPlant;
-    if (this.healthAssessment != null) {
-      data['health_assessment'] = this.healthAssessment!.toJson();
+    data['modifiers'] = modifiers;
+    data['secret'] = secret;
+    data['countable'] = countable;
+    data['is_plant_probability'] = isPlantProbability;
+    data['is_plant'] = isPlant;
+    if (healthAssessment != null) {
+      data['health_assessment'] = healthAssessment!.toJson();
     }
     return data;
   }
 }
 
 class MetaData {
-  Null? latitude;
-  Null? longitude;
   String? date;
   String? datetime;
 
-  MetaData({this.latitude, this.longitude, this.date, this.datetime});
+  MetaData({this.date, this.datetime});
 
   MetaData.fromJson(Map<String, dynamic> json) {
-    latitude = json['latitude'];
-    longitude = json['longitude'];
     date = json['date'];
     datetime = json['datetime'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['latitude'] = this.latitude;
-    data['longitude'] = this.longitude;
-    data['date'] = this.date;
-    data['datetime'] = this.datetime;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['date'] = date;
+    data['datetime'] = datetime;
     return data;
   }
 }
@@ -119,9 +101,9 @@ class Images {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['file_name'] = this.fileName;
-    data['url'] = this.url;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['file_name'] = fileName;
+    data['url'] = url;
     return data;
   }
 }
@@ -139,17 +121,17 @@ class HealthAssessment {
     if (json['diseases'] != null) {
       diseases = <Diseases>[];
       json['diseases'].forEach((v) {
-        diseases!.add(new Diseases.fromJson(v));
+        diseases!.add(Diseases.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['is_healthy_probability'] = this.isHealthyProbability;
-    data['is_healthy'] = this.isHealthy;
-    if (this.diseases != null) {
-      data['diseases'] = this.diseases!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['is_healthy_probability'] = isHealthyProbability;
+    data['is_healthy'] = isHealthy;
+    if (diseases != null) {
+      data['diseases'] = diseases!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -159,35 +141,68 @@ class Diseases {
   int? entityId;
   String? name;
   double? probability;
-  bool? redundant;
+  List<SimilarImages>? similarImages;
   DiseaseDetails? diseaseDetails;
 
   Diseases(
       {this.entityId,
         this.name,
         this.probability,
-        this.redundant,
+        this.similarImages,
         this.diseaseDetails});
 
   Diseases.fromJson(Map<String, dynamic> json) {
     entityId = json['entity_id'];
     name = json['name'];
     probability = json['probability'];
-    redundant = json['redundant'];
+    if (json['similar_images'] != null) {
+      similarImages = <SimilarImages>[];
+      json['similar_images'].forEach((v) {
+        similarImages!.add(SimilarImages.fromJson(v));
+      });
+    }
     diseaseDetails = json['disease_details'] != null
-        ? new DiseaseDetails.fromJson(json['disease_details'])
+        ? DiseaseDetails.fromJson(json['disease_details'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['entity_id'] = this.entityId;
-    data['name'] = this.name;
-    data['probability'] = this.probability;
-    data['redundant'] = this.redundant;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['entity_id'] = entityId;
+    data['name'] = name;
+    data['probability'] = probability;
+    if (similarImages != null) {
+      data['similar_images'] =
+          similarImages!.map((v) => v.toJson()).toList();
+    }
     if (this.diseaseDetails != null) {
       data['disease_details'] = this.diseaseDetails!.toJson();
     }
+    return data;
+  }
+}
+
+class SimilarImages {
+  String? id;
+  double? similarity;
+  String? url;
+  String? urlSmall;
+
+  SimilarImages({this.id, this.similarity, this.url, this.urlSmall});
+
+  SimilarImages.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    similarity = json['similarity'];
+    url = json['url'];
+    urlSmall = json['url_small'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['similarity'] = similarity;
+    data['url'] = url;
+    data['url_small'] = urlSmall;
     return data;
   }
 }
@@ -204,9 +219,9 @@ class DiseaseDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['local_name'] = this.localName;
-    data['language'] = this.language;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['local_name'] = localName;
+    data['language'] = language;
     return data;
   }
 }

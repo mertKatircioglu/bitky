@@ -1,10 +1,14 @@
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/models/bitky_data_model.dart';
+import 'package:bitky/screens/identify_result_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 
@@ -47,8 +51,8 @@ class _SearchState extends State<Search> {
   List<String> imagesPaths = [];
   List<XFile>_imagesXfile=[];
   BitkyDataModel _bitkyDataModel = BitkyDataModel();
-  List<String> base64ImgList = [];
   bool isLoading = false;
+  List<String> base64ImgList = [];
 
 
   openImages() async {
@@ -108,9 +112,13 @@ class _SearchState extends State<Search> {
       if (pickedfiles != null) {
         imagefiles = pickedfiles;
         pickedfiles.forEach((element) async {
-          _imagesXfile.add(element);
           imagesPaths.add(element.path);
         });
+        for (var element in pickedfiles) {
+          var bytes = await element.readAsBytes();
+          var base64img = base64Encode(bytes);
+          base64ImgList.add(base64img);
+        }
 
         setState(() {});
       } else {
@@ -126,8 +134,11 @@ class _SearchState extends State<Search> {
       XFile? photos = await imgpicker.pickImage(
           source: ImageSource.camera, imageQuality: 90);
       if (photos != null) {
-        _imagesXfile.add(photos);
+        var bytes = await photos.readAsBytes();
+        var base64img = base64Encode(bytes);
         imagesPaths.add(photos.path);
+        base64ImgList.add(base64img);
+
         //print("SAYIIII: " + base64ImgList.length.toString());
       }
       setState(() {});
@@ -192,30 +203,7 @@ class _SearchState extends State<Search> {
                 ),
               ),
               const SizedBox(
-                height: 150,
-              ),
-              InkWell(
-                onTap: (){
-                  openImages();
-                },
-                child: Center(
-                  child:Card(
-                    elevation: 5,
-                    shadowColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(70)
-                    ),
-                    child: Container(
-                      height: 120,
-                      width: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(70),
-                        gradient: const LinearGradient(colors: [Color(0xfff4FE58A),Color(0xfff19C179)]),
-                      ),
-                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 50,),
-                    ),
-                  ),
-                ),
+                height: 100,
               ),
               Container(
                 alignment: Alignment.center,
@@ -282,22 +270,56 @@ class _SearchState extends State<Search> {
                       }),
                 ),
               ),
+              InkWell(
+                onTap: (){
+                  openImages();
+                },
+                child: Center(
+                  child:Card(
+                    elevation: 5,
+                    shadowColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(70)
+                    ),
+                    child: Container(
+                      height: 120,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(70),
+                        gradient: const LinearGradient(colors: [Color(0xfff4FE58A),Color(0xfff19C179)]),
+                      ),
+                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 50,),
+                    ),
+                  ),
+                ),
+              ),
+
               const SizedBox(
                 height: 10,
               ),
-              Visibility(
-                visible: _imagesXfile.length>2,
+              (isLoading == true)
+                  ? const Center(child: CupertinoActivityIndicator())
+                  :Visibility(
+                visible: imagesPaths.isNotEmpty,
                 child: InkWell(
                   onTap: () async {
                     setState(() {
                       isLoading = true;
                     });
                     _bitkyViewModel!
-                        .getPlanetFromUi(_imagesXfile)
+                        .plantIdentifyFromUi(base64ImgList)
                         .then((value) {
                       _bitkyDataModel = value;
                     }).whenComplete(() {
                        //print("GGGGGGGGGGGGG:    "+_bitkyDataModel.bestMatch.toString());
+                      base64ImgList.clear();
+                      imagesPaths.clear();
+                      PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen: IdentifyResultScreen(dataModel: _bitkyDataModel,),
+                        withNavBar: false,
+                        pageTransitionAnimation:PageTransitionAnimation.cupertino,
+                      );
                       setState(() {
                         isLoading = false;
                       });

@@ -54,6 +54,10 @@ dependencies:
   flutter_facebook_auth: ^5.0.6
   date_time_format: ^2.0.1
   easy_image_viewer: ^1.2.0
+  carousel_slider: ^4.2.1
+  flutter_staggered_animations: ^1.0.0
+
+
 
 
 dev_dependencies:

@@ -1,3 +1,4 @@
+/*
 class BitkyDataModel {
   int? id;
   MetaData? metaData;
@@ -11,8 +12,9 @@ class BitkyDataModel {
   double? isPlantProbability;
   bool? isPlant;
 
-  BitkyDataModel({this.id, this.metaData, this.uploadedDatetime, this.finishedDatetime, this.images, this.suggestions, this.modifiers,
-    this.secret, this.countable, this.isPlantProbability, this.isPlant});
+  BitkyDataModel({this.id, this.metaData, this.uploadedDatetime,
+    this.finishedDatetime, this.images, this.suggestions, this.modifiers, this.secret,
+    this.countable, this.isPlantProbability, this.isPlant});
 
   BitkyDataModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -27,7 +29,7 @@ class BitkyDataModel {
       suggestions = <Suggestions>[];
       json['suggestions'].forEach((v) { suggestions!.add(Suggestions.fromJson(v)); });
     }
-    modifiers = json['modifiers'].cast<String>();
+    modifiers = json['modifiers']== null? [] : List<String>.from(json["modifiers"].map((x) => x));
     secret = json['secret'];
     countable = json['countable'];
     isPlantProbability = json['is_plant_probability'];
@@ -58,6 +60,7 @@ class BitkyDataModel {
 }
 
 class MetaData {
+
   String? date;
   String? datetime;
 
@@ -69,7 +72,7 @@ class MetaData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['date'] = date;
     data['datetime'] = datetime;
     return data;
@@ -135,26 +138,27 @@ class Suggestions {
 
 class PlantDetails {
   List<String>? commonNames;
+  List<String>? edibleParts;
+  List<String>? propagationMethods;
+  List<String>? synonyms;
+  Taxonomy? taxonomy;
   String? url;
   WikiDescription? wikiDescription;
-  Taxonomy? taxonomy;
-  List<WikiImages>? wikiImages;
-  String? language;
+  WikiDescription? wikiImages;
   String? scientificName;
   StructuredName? structuredName;
 
-  PlantDetails({this.commonNames, this.url, this.wikiDescription, this.taxonomy, this.wikiImages, this.language, this.scientificName, this.structuredName});
+  PlantDetails({this.commonNames, this.edibleParts, this.propagationMethods, this.synonyms, this.taxonomy, this.url, this.wikiDescription, this.wikiImages, this.scientificName, this.structuredName});
 
   PlantDetails.fromJson(Map<String, dynamic> json) {
-    commonNames = json['common_names'].cast<String>();
+    commonNames = json['common_names']== null? [] : List<String>.from(json["common_names"].map((x) => x));
+    edibleParts = json['edible_parts']== null? [] : List<String>.from(json["edible_parts"].map((x) => x));
+    propagationMethods = json['propagation_methods']== null? [] : List<String>.from(json["propagation_methods"].map((x) => x));
+    synonyms = json['synonyms']== null? [] : List<String>.from(json["synonyms"].map((x) => x));
+    taxonomy = json['taxonomy'] != null ? Taxonomy.fromJson(json['taxonomy']) : null;
     url = json['url'];
     wikiDescription = json['wiki_description'] != null ? WikiDescription.fromJson(json['wiki_description']) : null;
-    taxonomy = json['taxonomy'] != null ? Taxonomy.fromJson(json['taxonomy']) : null;
-    if (json['wiki_images'] != null) {
-      wikiImages = <WikiImages>[];
-      json['wiki_images'].forEach((v) { wikiImages!.add(WikiImages.fromJson(v)); });
-    }
-    language = json['language'];
+    wikiImages = json['wiki_image'] != null ? WikiDescription.fromJson(json['wiki_image']) : null;
     scientificName = json['scientific_name'];
     structuredName = json['structured_name'] != null ? StructuredName.fromJson(json['structured_name']) : null;
   }
@@ -162,21 +166,54 @@ class PlantDetails {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['common_names'] = commonNames;
+    data['edible_parts'] = edibleParts;
+    data['propagation_methods'] = propagationMethods;
+    data['synonyms'] = synonyms;
+    if (taxonomy != null) {
+      data['taxonomy'] = taxonomy!.toJson();
+    }
     data['url'] = url;
     if (wikiDescription != null) {
       data['wiki_description'] = wikiDescription!.toJson();
     }
-    if (taxonomy != null) {
-      data['taxonomy'] = taxonomy!.toJson();
-    }
     if (wikiImages != null) {
-      data['wiki_images'] = wikiImages!.map((v) => v.toJson()).toList();
+      data['wiki_image'] = wikiImages!.toJson();
     }
-    data['language'] = language;
     data['scientific_name'] = scientificName;
     if (structuredName != null) {
       data['structured_name'] = structuredName!.toJson();
     }
+    return data;
+  }
+}
+
+class Taxonomy {
+  String? clasS;
+  String? family;
+  String? genus;
+  String? kingdom;
+  String? order;
+  String? phylum;
+
+  Taxonomy({this.clasS, this.family, this.genus, this.kingdom, this.order, this.phylum});
+
+  Taxonomy.fromJson(Map<String, dynamic> json) {
+    clasS = json['class'];
+    family = json['family'];
+    genus = json['genus'];
+    kingdom = json['kingdom'];
+    order = json['order'];
+    phylum = json['phylum'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['class'] = clasS;
+    data['family'] = family;
+    data['genus'] = genus;
+    data['kingdom'] = kingdom;
+    data['order'] = order;
+    data['phylum'] = phylum;
     return data;
   }
 }
@@ -202,65 +239,6 @@ class WikiDescription {
     data['citation'] = citation;
     data['license_name'] = licenseName;
     data['license_url'] = licenseUrl;
-    return data;
-  }
-}
-
-class Taxonomy {
-  String? clasS;
-  String? family;
-  String? genus;
-  String? kingdom;
-  String? order;
-  String? phylum;
-
-  Taxonomy({this.clasS, this.family, this.genus, this.kingdom, this.order, this.phylum});
-
-  Taxonomy.fromJson(Map<String, dynamic> json) {
-  clasS = json['class'];
-  family = json['family'];
-  genus = json['genus'];
-  kingdom = json['kingdom'];
-  order = json['order'];
-  phylum = json['phylum'];
-  }
-
-  Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = <String, dynamic>{};
-  data['class'] = clasS;
-  data['family'] = family;
-  data['genus'] = genus;
-  data['kingdom'] = kingdom;
-  data['order'] = order;
-  data['phylum'] = phylum;
-  return data;
-  }
-}
-
-class WikiImages {
-  String? value;
-  String? citation;
-  String? licenseName;
-  String? licenseUrl;
-  String? licenseUrllicenseUrl;
-
-  WikiImages({this.value, this.citation, this.licenseName, this.licenseUrl, this.licenseUrllicenseUrl});
-
-  WikiImages.fromJson(Map<String, dynamic> json) {
-    value = json['value'];
-    citation = json['citation'];
-    licenseName = json['license_name'];
-    licenseUrl = json['license_url'];
-    licenseUrllicenseUrl = json['license_urllicense_url'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['value'] = value;
-    data['citation'] = citation;
-    data['license_name'] = licenseName;
-    data['license_url'] = licenseUrl;
-    data['license_urllicense_url'] = licenseUrllicenseUrl;
     return data;
   }
 }
@@ -315,4 +293,7 @@ class SimilarImages {
     data['license_name'] = licenseName;
     data['license_url'] = licenseUrl;
     return data;
-  }}
+  }
+}
+*/
+

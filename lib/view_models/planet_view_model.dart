@@ -1,7 +1,6 @@
 import 'package:bitky/data/bitky_repository.dart';
 import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../locator.dart';
 import '../models/bitky_data_model.dart';
@@ -33,6 +32,7 @@ class BitkyViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+/*
   Future<BitkyDataModel> getPlanetFromUi(List<XFile> images) async {
     try {
       state = DataState.loadingState;
@@ -44,6 +44,7 @@ class BitkyViewModel with ChangeNotifier {
     }
     return _bitkyDataModel!;
   }
+*/
 
   Future<HealthDataModel> getPlantHealthFromUi(List<String> images) async {
     try {
@@ -55,5 +56,17 @@ class BitkyViewModel with ChangeNotifier {
       print("Model View Hata: $e");
     }
     return _healthDataModel!;
+  }
+
+  Future<BitkyDataModel> plantIdentifyFromUi(List<String> images) async {
+    try {
+      state = DataState.loadingState;
+      _bitkyDataModel = await _repository.plantIdentifyFromRepository(images);
+      state = DataState.loadedState;
+    } catch (e) {
+      state = DataState.errorState;
+      print("Model View Hata: $e");
+    }
+    return _bitkyDataModel!;
   }
 }

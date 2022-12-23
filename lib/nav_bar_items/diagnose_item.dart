@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:bitky/screens/recent_snaps.dart';
+import 'package:bitky/screens/see_all_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +31,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
   HealthDataModel _diseases = HealthDataModel();
   List<String> base64ImgList = [];
   bool isLoading = false;
+  List<String> responseImages = [];
 
   openImages() async {
     showDialog(
@@ -93,7 +97,6 @@ class _DiagnosePageState extends State<DiagnosePage> {
           var base64img = base64Encode(bytes);
           base64ImgList.add(base64img);
         }
-
         setState(() {});
         print("GALLERYYYY: " + base64ImgList.length.toString());
       } else {
@@ -123,36 +126,12 @@ class _DiagnosePageState extends State<DiagnosePage> {
       print("error while picking file.");
     }
   }
-
-/*
-  Future commonsHealth() async {
-    const finalUrl = "https://api.plant.id/v2/health_assessment";
-    Map<String, String> requestHeaders = {
-      'Api-Key': '0fcD9Gc8MZchH729J2YmWqjCEtIu2LPmCx5lAG7zOjHUB0O4IP',
-      'content-type': 'application/json',
-    };
-
-    var request = http.post(Uri.parse(finalUrl), headers: requestHeaders);
-
-    print(request.toString());
-    var res = await request;
-    //  final response = await http.Response.fromStream(request);
-
-    final responseJson = (jsonDecode(res.body));
-    if(res.statusCode == 200){
-      debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
-      return HealthDataModel.fromJson(responseJson);
-    }else{
-      throw Exception("Veri getirelemedi");
-    }
-
-  }
-*/
-
+  
 
   @override
   Widget build(BuildContext context) {
     _bitkyViewModel = Provider.of<BitkyViewModel>(context);
+
     return  Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -199,7 +178,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text("Identify a plant problem"),
+                   Text("Identify a plant problem", style: GoogleFonts.sourceSansPro(),),
                   const SizedBox(
                     height: 10,
                   ),
@@ -284,24 +263,6 @@ class _DiagnosePageState extends State<DiagnosePage> {
                           }),
                     ),
                   ),
-                  /*Visibility(
-                  visible: imagefiles != null ? true : false,
-                  child: TextButton(
-                      onPressed: (){
-                        _bitkyViewModel!.getPlanetFromUi(imagefiles!).whenComplete(() {
-                          setState(() {
-                            datasContainer = true;
-                          });
-                          _response = _bitkyViewModel!.getPlanet.results!;
-                          bestMatch = _bitkyViewModel!.getPlanet.bestMatch;
-
-                        });
-
-                      },child: Text((_bitkyViewModel!.state == DataState.loadingState) ? "Bilgiler getiriliyor..." :
-                  (_bitkyViewModel!.state == DataState.loadedState) ?"Tekrar Sorgula": "Sorgula" ))),
-              (_bitkyViewModel!.state == DataState.loadedState) ? getDatas(context) :
-              (_bitkyViewModel!.state == DataState.loadingState) ? const Center(child: CupertinoActivityIndicator(),):
-              (_bitkyViewModel!.state == DataState.errorState) ? const Center(child: Text("Bir Hata Meydana Geldi"),) : Container(),*/
                   Visibility(
                     visible: imagesPaths.length > 0 ? true : false,
                     child: Column(
@@ -348,9 +309,11 @@ class _DiagnosePageState extends State<DiagnosePage> {
                              List<String> disasNames =[];
                               _diseases.healthAssessment!.diseases!.forEach((element) {
                                 disasNames.add(element.name!);
+                                responseImages.add(element.similarImages![0].url.toString());
                                 //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
                               });
-                             FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
+                             print(responseImages.toString());
+                            FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
                               set({
                                 "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
                                 "problemName":disasNames,
@@ -366,17 +329,18 @@ class _DiagnosePageState extends State<DiagnosePage> {
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
+                            children: [
+                              const Icon(
                                 Icons.search,
                                 color: kPrymaryColor,
+                                size: 20,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Text(
                                 "Search",
-                                style: TextStyle(color: kPrymaryColor),
+                                style: GoogleFonts.sourceSansPro(color: kPrymaryColor),
                               )
                             ],
                           ),
@@ -398,18 +362,18 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(
+                      children:  [
+                        const Icon(
                           Icons.access_time_outlined,
                           color: kPrymaryColor,
                           size: 15,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
                           "Recent Snaps",
-                          style: TextStyle(
+                          style: GoogleFonts.sourceSansPro(
                               color: kPrymaryColor, fontWeight: FontWeight.w500),
                         )
                       ],
@@ -428,7 +392,9 @@ class _DiagnosePageState extends State<DiagnosePage> {
                 )
               ],
             )
-                : Container(),
+                : Container(
+              height: 0,
+            ),
             Visibility(
               visible: _diseases.id !=null,
               child: Expanded(
@@ -438,7 +404,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       children: [
                         Expanded(
                           child: Container(
-                            padding:const EdgeInsets.all(12),
+                            padding:const EdgeInsets.only(left: 12, right: 12, top: 30, bottom: 30),
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
@@ -449,19 +415,18 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                   borderRadius: BorderRadius.circular(15)
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.only(left: 10.0,right: 10.0),
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Text("is healty: ", style: TextStyle(color: kPrymaryColor),),
+                                         Text("is healty: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
                                         Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
                                         "images/smile.png":"images/sad.png":"images/sad.png", width: 20,height: 20,)
                                       ],
                                     ),
-                                    const SizedBox(height: 3,),
-                                    const Divider(height: 0.2, color: Colors.deepOrange,)
                                   ],
                                 ),
                               ),
@@ -472,22 +437,31 @@ class _DiagnosePageState extends State<DiagnosePage> {
                           visible: true,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
+                            children:  [
                               Text(
                                 "Common problems",
-                                style: TextStyle(
+                                style: GoogleFonts.sourceSansPro(
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                               InkWell(
+                                onTap: (){
+                                  PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: SeeAllScreen(responseImages: responseImages, diseases: _diseases,),
+                                    withNavBar: false,
+                                    pageTransitionAnimation:PageTransitionAnimation.cupertino,
+                                  );
+
+                                },
                                   child: Text(
                                     'See all',
-                                    style: TextStyle(color: kPrymaryColor),
+                                    style: GoogleFonts.sourceSansPro(color: kPrymaryColor),
                                   ))
                             ],
                           ),
                         ),
                         const Divider(color: kPrymaryColor),
-                        Visibility(
+                      Visibility(
                           visible: true,
                           child: Expanded(
                             child: Container(
@@ -496,7 +470,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                               child: GridView.builder(
                                   shrinkWrap: true,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount:_diseases.id !=null ? _diseases.healthAssessment!.diseases!.length:0,
+                                  itemCount:responseImages.length,
                                   gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 1,
@@ -504,7 +478,12 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                       mainAxisSpacing: 10),
                                   itemBuilder: (ctx, index) {
                                     return InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        final imageProvider = Image.network(responseImages![index]).image;
+                                        showImageViewer(context, imageProvider, onViewerDismissed: () {
+                                          print("dismissed");
+                                        });
+                                      },
                                       child: Card(
                                         shadowColor: kPrymaryColor,
                                         elevation: 0.5,
@@ -512,40 +491,49 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                             borderRadius:
                                             BorderRadius.circular(15.0)),
                                         child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.all(0.0),
                                           child: Column(
                                             children: [
-                                              /*   Padding(
+                                                 Padding(
                                             padding: const EdgeInsets.only(
-                                                left: 2.0,
-                                                right: 2.0,
-                                                top: 1.0,
-                                                bottom: 3.0),
-                                            child: ClipRRect(
-                                                borderRadius:
+                                                left: 1.0,
+                                                right: 1.0,
+                                                top: 0.0,
+                                                bottom: 0.0),
+                                            child: Stack(
+                                              children: [
+                                                ClipRRect(
+                                                    borderRadius:
                                                     const BorderRadius.only(
                                                         topRight:
-                                                            Radius.circular(15),
+                                                        Radius.circular(15),
                                                         topLeft:
-                                                            Radius.circular(15)),
-                                                child: _response![index] == null
-                                                    ? Image.asset(
+                                                        Radius.circular(15)),
+                                                    child: responseImages[index] == null
+                                                        ? Image.asset(
                                                         "images/leaf.png",
                                                         height: 70,
                                                         width: 70,
                                                         fit: BoxFit.cover)
-                                                    : Image.network(
-                                                        _response![index],
-                                                        height: 70,
-                                                        width: 70,
-                                                        fit: BoxFit.cover,
-                                                      )),
-                                          ),*/
-                                              Text(
-                                                _diseases.healthAssessment!.diseases![index].name.toString(),
-                                                style: const TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.bold),
+                                                        : Image.network(
+                                                      responseImages[index].toString(),
+                                                      height: MediaQuery.of(context).size.height / 8,
+                                                      width: MediaQuery.of(context).size.width,
+                                                      fit: BoxFit.cover,
+                                                    )),
+
+                                              ],
+                                            ),
+                                          ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 2.0, right: 2.0),
+                                                child: Text(
+                                                  _diseases.healthAssessment!.diseases![index].name.toString().toCapitalized(),
+                                                  textAlign: TextAlign.center,
+                                                  style:  GoogleFonts.sourceSansPro(
+                                                      fontSize: 10,
+                                                      fontWeight: FontWeight.w500),
+                                                ),
                                               ),
 
                                             ],
@@ -569,87 +557,5 @@ class _DiagnosePageState extends State<DiagnosePage> {
       ),
     );
   }
-
-/*
-  Visibility getDatas(BuildContext context) {
-    return Visibility(
-      visible: datasContainer!,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: datasContainer == true
-            ? Column(
-                children: [
-                  Text(
-                    "En İyi Eşleşme: ${bestMatch!}",
-                    style: const TextStyle(
-                        color: Colors.pinkAccent,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const Divider(
-                    height: 10,
-                    color: Colors.amber,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text("Diğer Sonuçlar"),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: ListView.builder(
-                        itemCount: _bitkyViewModel!.getPlanet.results!.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            height: 170,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Card(
-                              elevation: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        "İsim: ${_response[index].species.commonNames.toString().replaceAll("]", " ").replaceAll("[", "")}"),
-                                    Row(
-                                      children: [
-                                        const Text("Benzerlik: "),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.green,
-                                              borderRadius:
-                                                  BorderRadius.circular(20)),
-                                          height: 7,
-                                          width: _response[index].score * 100.2,
-                                        ),
-                                        Text(
-                                          "% ${_response[index].score.toStringAsFixed(2)}",
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Text(
-                                        "Bilimsel Adı: ${_response[index].species.scientificName}"),
-                                    Text(
-                                        "Familya: ${_response[index].species.family.scientificNameWithoutAuthor}"),
-                                    Text(
-                                        "Ortak İsmi: ${_response[index].species.commonNames.toString().replaceAll("]", " ").replaceAll("[", "")}"),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                  ),
-                ],
-              )
-            : Container(),
-      ),
-    );
-  }
-*/
+  
 }

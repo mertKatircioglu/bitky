@@ -12,12 +12,16 @@ class PlanetRepository{
 
   BitkyApiClient planetApiClient = locator<BitkyApiClient>();
 
-  Future<BitkyDataModel> getPlanetFromRepository(List<XFile> images) async{
+/*  Future<BitkyDataModel> getPlanetFromRepository(List<XFile> images) async{
     return await planetApiClient.getPlanet(images);
-  }
+  }*/
 
   Future<HealthDataModel> getPlantHealthFromRepository(List<String> images) async{
     return await planetApiClient.getPlanetHealth(images);
+  }
+
+  Future<BitkyDataModel> plantIdentifyFromRepository(List<String> images) async{
+    return await planetApiClient.plantIdentify(images);
   }
 
 }

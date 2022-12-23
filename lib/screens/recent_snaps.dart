@@ -7,10 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-extension StringCasingExtension on String {
-  String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
-  String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
-}
+
 
 class RecentSnapsScreen extends StatelessWidget {
    RecentSnapsScreen({Key? key}) : super(key: key);
@@ -209,6 +206,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                               .toString(),style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600,fontSize: 10,)),
                                         ],
                                       ),
+                                      const SizedBox(height: 10,)
                                     ],
                                   ),
                                 ),
