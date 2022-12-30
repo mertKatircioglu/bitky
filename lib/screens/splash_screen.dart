@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
 import '../globals/globals.dart';
 import '../locator.dart';
 import '../view_models/planet_view_model.dart';
+import '../widgets/custom_error_dialog.dart';
 import 'auth_screen.dart';
 import 'home_screen.dart';
 
@@ -56,21 +58,34 @@ Route _createRouteAuth() {
 
 
 class _SplashScreenState extends State<SplashScreen> {
-  startTimer(BuildContext context){
-    Timer(const Duration(seconds: 3), () async {
 
-      if(authUser.currentUser != null){
-        Navigator.of(context).pushReplacement(_createRoute());
-      }else{
-        Navigator.of(context).pushReplacement(_createRouteAuth());
 
-      }
-    });
+  startTimer(BuildContext context)async{
+    bool result = await InternetConnectionChecker().hasConnection;
+    if(result == true){
+      Timer(const Duration(seconds: 3), () async {
+        if(authUser.currentUser != null){
+          Navigator.of(context).pushReplacement(_createRoute());
+        }else{
+          Navigator.of(context).pushReplacement(_createRouteAuth());
+
+        }
+      });
+    } else{
+      showDialog(context: context, builder: (c){
+        return CustomErrorDialog(message: "No Internet connection.");
+      });
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+    }
+
+
   }
 
   @override
   void initState() {
     super.initState();
+
     startTimer(context);
   }
 

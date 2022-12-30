@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:bitky/screens/recent_snaps.dart';
 import 'package:bitky/screens/see_all_screen.dart';
@@ -7,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -26,12 +28,25 @@ class _DiagnosePageState extends State<DiagnosePage> {
   final ImagePicker imgpicker = ImagePicker();
   List<XFile>? imagefiles;
   BitkyViewModel? _bitkyViewModel;
-  bool? datasContainer = false;
   List<String> imagesPaths = [];
   HealthDataModel _diseases = HealthDataModel();
   List<String> base64ImgList = [];
   bool isLoading = false;
   List<String> responseImages = [];
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    imagefiles!.clear();
+    _bitkyViewModel = BitkyViewModel();
+     imagesPaths.clear();
+  _diseases = HealthDataModel();
+    base64ImgList.clear();
+   isLoading = false;
+    responseImages.clear();
+  }
+
 
   openImages() async {
     showDialog(
@@ -87,51 +102,55 @@ class _DiagnosePageState extends State<DiagnosePage> {
   Future _addImageFromGallery() async {
     try {
       var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 90);
-      if (pickedfiles != null) {
-        imagefiles = pickedfiles;
-        pickedfiles.forEach((element) async {
-          imagesPaths.add(element.path);
+      if(pickedfiles.length>5){
+        showDialog(context: context, builder: (context){
+          return const AlertDialog(content: Text("Please select 5 or less photos."),);
         });
-        for (var element in pickedfiles) {
-          var bytes = await element.readAsBytes();
-          var base64img = base64Encode(bytes);
-          base64ImgList.add(base64img);
+      }else{
+        if (pickedfiles.isNotEmpty) {
+          imagefiles = pickedfiles;
+          pickedfiles.forEach((element) async {
+            imagesPaths.add(element.path);
+          });
+          for (var element in pickedfiles) {
+            var bytes = await element.readAsBytes();
+            var base64img = base64Encode(bytes);
+            base64ImgList.add(base64img);
+          }
+          setState(() {});
+          //  print("GALLERYYYY: " + base64ImgList.length.toString());
+        } else {
+          // print("No image is selected.");
         }
-        setState(() {});
-        print("GALLERYYYY: " + base64ImgList.length.toString());
-      } else {
-        print("No image is selected.");
       }
+
     } catch (e) {
-      print("error while picking file.");
+     // print("error while picking file.");
     }
   }
 
   Future _addImageFromCamera() async {
     try {
-      XFile? photos = await imgpicker.pickImage(
-          source: ImageSource.camera, imageQuality: 90);
+      XFile? photos = await imgpicker.pickImage(source: ImageSource.camera, imageQuality: 90);
       if (photos != null) {
         var bytes = await photos.readAsBytes();
         var base64img = base64Encode(bytes);
         imagesPaths.add(photos.path);
         base64ImgList.add(base64img);
-
-        print("SAYIIII: " + base64ImgList.length.toString());
+       // print("SAYIIII: " + base64ImgList.length.toString());
       }
       setState(() {});
-
-      print("AKMERAAA: " + imagefiles!.length.toString());
+      //print("AKMERAAA: " + imagefiles!.length.toString());
     } catch (e) {
-      print("error while picking file.");
+      // print("error while picking file.");
     }
   }
-  
+
+
 
   @override
   Widget build(BuildContext context) {
     _bitkyViewModel = Provider.of<BitkyViewModel>(context);
-
     return  Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -155,11 +174,35 @@ class _DiagnosePageState extends State<DiagnosePage> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
+              children:  [
+                 Text(
                   'Diagnose',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.sourceSansPro(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
+                Visibility(
+                  visible:_diseases.id !=null,
+                  child: InkWell(
+                    onTap: (){
+                      isLoading = true;
+                  setState(() {
+                    _diseases.id = null;
+                    _diseases = HealthDataModel();
+                    imagefiles!.clear();
+                    base64ImgList.clear();
+                    imagesPaths.clear();
+                    responseImages.clear();
+                    isLoading = false;
+                   });
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.clear, size:
+                        15,color: kPrymaryColor,),
+                        const SizedBox(width: 2,),
+                        Text("clear", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)
+                      ],),),
+                )
 
               ],
             ),
@@ -205,8 +248,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       alignment: WrapAlignment.center,
                       direction: Axis.horizontal,
                       children: List.generate(
-                          (imagesPaths.isNotEmpty ? imagesPaths.length : 5),
-                              (index) {
+                          (imagesPaths.isNotEmpty ? imagesPaths.length : 5), (index) {
                             if (imagesPaths.isNotEmpty) {
                               return Card(
                                 shape: RoundedRectangleBorder(
@@ -260,7 +302,8 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                 ),
                               );
                             }
-                          }),
+                          }
+                          ),
                     ),
                   ),
                   Visibility(
@@ -313,7 +356,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                 //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
                               });
                              print(responseImages.toString());
-                            FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
+                          FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
                               set({
                                 "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
                                 "problemName":disasNames,
@@ -385,11 +428,25 @@ class _DiagnosePageState extends State<DiagnosePage> {
 
             (isLoading == true)
                 ? Column(
-              children: const [
-                Center(child: CupertinoActivityIndicator()),
+              children: [
+                const SizedBox(
+                  height: 100,
+                ),
+                CupertinoActivityIndicator(color: kPrymaryColor,),
                 SizedBox(
-                  height: 150,
-                )
+                  child: WavyAnimatedTextKit(
+                    textStyle: GoogleFonts.sourceSansPro(
+                        fontSize: 18,
+                        color: kPrymaryColor
+                    ),
+                    text: const [
+                      "Please wait..."
+                    ],
+                    isRepeatingAnimation: true,
+                    speed: const Duration(milliseconds: 150),
+                  ),
+                ),
+
               ],
             )
                 : Container(
@@ -433,6 +490,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                             ),
                           ),
                         ),
+
                         Visibility(
                           visible: true,
                           child: Row(
@@ -474,70 +532,69 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                   gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 1,
-                                      crossAxisSpacing: 10,
+                                      crossAxisSpacing: 1,
                                       mainAxisSpacing: 10),
                                   itemBuilder: (ctx, index) {
-                                    return InkWell(
-                                      onTap: () {
-                                        final imageProvider = Image.network(responseImages![index]).image;
+                                    return Bounce(
+                                      duration: const Duration(milliseconds: 200),
+                                      onPressed: () {
+                                        final imageProvider = Image.network(responseImages[index]).image;
                                         showImageViewer(context, imageProvider, onViewerDismissed: () {
                                           print("dismissed");
                                         });
                                       },
                                       child: Card(
                                         shadowColor: kPrymaryColor,
-                                        elevation: 0.5,
+                                        elevation: 1,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                             BorderRadius.circular(15.0)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(0.0),
-                                          child: Column(
-                                            children: [
-                                                 Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 1.0,
-                                                right: 1.0,
-                                                top: 0.0,
-                                                bottom: 0.0),
-                                            child: Stack(
+                                        child: Stack(
+                                          children: [
+                                            ClipRRect(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    15),
+                                                child: Container(
+                                                    decoration:  BoxDecoration(
+                                                        image: DecorationImage(
+                                                            fit: BoxFit.fill,
+                                                            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.darken),
+                                                            image: NetworkImage(responseImages[index].toString()))
+                                                    ),
+
+                                                )),
+
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                ClipRRect(
-                                                    borderRadius:
-                                                    const BorderRadius.only(
-                                                        topRight:
-                                                        Radius.circular(15),
-                                                        topLeft:
-                                                        Radius.circular(15)),
-                                                    child: responseImages[index] == null
-                                                        ? Image.asset(
-                                                        "images/leaf.png",
-                                                        height: 70,
-                                                        width: 70,
-                                                        fit: BoxFit.cover)
-                                                        : Image.network(
-                                                      responseImages[index].toString(),
-                                                      height: MediaQuery.of(context).size.height / 8,
-                                                      width: MediaQuery.of(context).size.width,
-                                                      fit: BoxFit.cover,
-                                                    )),
-
-                                              ],
-                                            ),
-                                          ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(left: 2.0, right: 2.0),
-                                                child: Text(
-                                                  _diseases.healthAssessment!.diseases![index].name.toString().toCapitalized(),
-                                                  textAlign: TextAlign.center,
-                                                  style:  GoogleFonts.sourceSansPro(
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.w500),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    _diseases.healthAssessment!.diseases![index].name.toString().toCapitalized(),
+                                                    textAlign: TextAlign.center,
+                                                    style:  GoogleFonts.sourceSansPro(
+                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w600),
+                                                  ),
                                                 ),
-                                              ),
 
-                                            ],
-                                          ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    "Similarity: %${_diseases.healthAssessment!.diseases![index].similarImages![0].similarity.toString().substring(0,1)}0",
+                                                    textAlign: TextAlign.center,
+                                                    style:  GoogleFonts.sourceSansPro(
+                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w600),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
                                         ),
                                       ),
                                     );
@@ -550,7 +607,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                   )),
             ),
             const SizedBox(
-              height: 25,
+              height: 30,
             )
           ],
         ),

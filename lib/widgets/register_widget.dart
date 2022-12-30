@@ -61,7 +61,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     User? currentUser;
     await authUser.createUserWithEmailAndPassword(email: emailController.text.trim(),
         password: passwordController.text.trim()).then((auth) => {
-      currentUser= auth.user
+      currentUser= auth.user,
+      saveDataToFirestore(currentUser!),
     }).catchError((error){
       Navigator.pop(context);
       showDialog(context: context, builder: (c){

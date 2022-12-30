@@ -51,11 +51,19 @@ dependencies:
   cloud_firestore: ^4.2.0
   flutter_exit_app: ^1.0.4
   google_sign_in: ^5.4.2
-  flutter_facebook_auth: ^5.0.6
   date_time_format: ^2.0.1
   easy_image_viewer: ^1.2.0
   carousel_slider: ^4.2.1
   flutter_staggered_animations: ^1.0.0
+  firebase_messaging:
+  flutter_local_notifications:
+  internet_connection_checker: ^1.0.0+1
+  flutter_bounce: ^1.1.0
+  dotted_border: ^2.0.0+3
+  animated_text_kit: ^4.2.2
+  datetime_picker_formfield:
+  day_picker: 2.1.0
+  day_night_time_picker:
 
 
 

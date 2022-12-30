@@ -1,15 +1,19 @@
 import 'package:bitky/globals/globals.dart';
+import 'package:bitky/helpers/notification_service.dart';
 import 'package:bitky/nav_bar_items/my_garden_item.dart';
 import 'package:bitky/nav_bar_items/reminders_item.dart';
 import 'package:bitky/nav_bar_items/search_item.dart';
 import 'package:bitky/nav_bar_items/settings_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+
 import '../nav_bar_items/diagnose_item.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,10 +22,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   PersistentTabController? _controller;
   bool? _hideBar=false;
+  late final LocalNotificationService service;
+
   @override
   void initState() {
+    service = LocalNotificationService();
+    service.initialize();
     super.initState();
     _controller = PersistentTabController(initialIndex: 0);
+
+
   }
 
   List<Widget> _buildScreens() {
@@ -34,44 +44,54 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
   }
 
+
+
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.waveform_path_ecg),
+        icon: const Icon(CupertinoIcons.waveform_path_ecg, size: 20),
         title: ("Diagnose"),
+        textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
+
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.search),
+        icon: const Icon(CupertinoIcons.search, size: 20,),
         title: ("Search"),
+        textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.bell),
+        icon: const Icon(CupertinoIcons.bell, size: 20),
         title: ("Reminders"),
+        textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.leaf_arrow_circlepath),
+        icon: const Icon(CupertinoIcons.leaf_arrow_circlepath, size: 20),
         title: ("My Garden"),
+        textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.settings),
+        icon: const Icon(CupertinoIcons.settings, size: 20),
         title: ("Settings"),
+        textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
     ];
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: PersistentTabView(
         context,
         controller: _controller,
@@ -79,6 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
         screens: _buildScreens(),
         items: _navBarsItems(),
         confineInSafeArea: true,
+       /* onItemSelected: (int)async{
+
+        },*/
         handleAndroidBackButtonPress: true,
         navBarStyle: NavBarStyle.style6,
         hideNavigationBarWhenKeyboardShows: true,

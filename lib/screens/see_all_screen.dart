@@ -1,5 +1,6 @@
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,7 +37,7 @@ class SeeAllScreen extends StatelessWidget {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10),
             itemBuilder: (ctx, index) {
-              print(diseases!.healthAssessment!.diseases![index].similarImages![0].similarity);
+            //  print(diseases!.healthAssessment!.diseases![index].similarImages![0].similarity);
               return AnimationConfiguration.staggeredGrid(
                   position: index,
                   columnCount: responseImages!.length,
@@ -44,8 +45,9 @@ class SeeAllScreen extends StatelessWidget {
                   child: SlideAnimation(
                     verticalOffset: 50.0,
                     child: FadeInAnimation(
-                      child: InkWell(
-                        onTap: () {
+                      child: Bounce(
+                        duration: const Duration(milliseconds: 200),
+                        onPressed: () {
                           final imageProvider = Image.network(responseImages![index]).image;
                           showImageViewer(context, imageProvider, onViewerDismissed: () {
                             print("dismissed");
@@ -53,81 +55,56 @@ class SeeAllScreen extends StatelessWidget {
                         },
                         child: Card(
                           shadowColor: kPrymaryColor,
-                          elevation: 0.5,
+                          elevation: 1,
                           shape: RoundedRectangleBorder(
                               borderRadius:
                               BorderRadius.circular(15.0)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(0.0),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 1.0,
-                                      right: 1.0,
-                                      top: 0.0,
-                                      bottom: 0.0),
-                                  child: Stack(
-                                    children: [
-                                      ClipRRect(
-                                          borderRadius:
-                                          const BorderRadius.only(
-                                              topRight:
-                                              Radius.circular(15),
-                                              topLeft:
-                                              Radius.circular(15)),
-                                          child: responseImages![index] == null
-                                              ? Image.asset(
-                                              "images/leaf.png",
-                                              height: 70,
-                                              width: 70,
-                                              fit: BoxFit.cover)
-                                              : Image.network(
-                                            responseImages![index].toString(),
-                                            height: MediaQuery.of(context).size.height / 8,
-                                            width: MediaQuery.of(context).size.width,
-                                            fit: BoxFit.cover,
-                                          )),
+                          child: Stack(
+                            children: [
+                              ClipRRect(
+                                  borderRadius:
+                                  BorderRadius.circular(
+                                      15),
+                                  child: Container(
+                                    decoration:  BoxDecoration(
+                                        image: DecorationImage(
+                                            fit: BoxFit.fill,
+                                            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.darken),
+                                            image: NetworkImage(responseImages![index].toString()))
+                                    ),
 
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 2.0, right: 2.0),
-                                  child: Text(
-                                    diseases!.healthAssessment!.diseases![index].name.toString().toCapitalized(),
-                                    textAlign: TextAlign.center,
-                                    style:  GoogleFonts.sourceSansPro(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment:MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Similarity:",
+                                  )),
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      diseases!.healthAssessment!.diseases![index].name.toString().toCapitalized(),
                                       textAlign: TextAlign.center,
                                       style:  GoogleFonts.sourceSansPro(
                                           fontSize: 12,
-                                          color: kPrymaryColor,
-                                          fontWeight: FontWeight.w500),
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 2.0, right: 2.0),
-                                      child: Text(
-                                        "%${diseases!.healthAssessment!.diseases![index].similarImages![0].similarity.toString().substring(0,1)}0",
-                                        textAlign: TextAlign.center,
-                                        style:  GoogleFonts.sourceSansPro(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                  ],
-                                )
+                                  ),
 
-                              ],
-                            ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      "Similarity: %${diseases!.healthAssessment!.diseases![index].similarImages![0].similarity.toString().substring(0,1)}0",
+                                      textAlign: TextAlign.center,
+                                      style:  GoogleFonts.sourceSansPro(
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
                         ),
                       ),

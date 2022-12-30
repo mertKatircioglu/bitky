@@ -141,12 +141,13 @@ class _AuthScreenState extends State<AuthScreen> {
           "userEmail": user.email,
           "createDate": DateTime.now()
         });
+
         // ignore: use_build_context_synchronously
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (c){
           return ChangeNotifierProvider<BitkyViewModel>(
               create: (context)=>locator<BitkyViewModel>(),
               child:const HomeScreen());
-        }));
+        })).whenComplete(() => Navigator.pop(context));
 
       }
     }

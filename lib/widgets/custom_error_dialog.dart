@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class CustomErrorDialog extends StatelessWidget {
 
-
   final String? message;
   CustomErrorDialog({this.message});
 
@@ -10,18 +9,18 @@ class CustomErrorDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       key: key,
-      content: Text(message!),
+      content: Text(message!, textAlign: TextAlign.center,),
       actions: [
         ElevatedButton(
           onPressed: (){
             Navigator.pop(context);
           },
-            child: const Center(
-              child:const Text('Ok', textAlign: TextAlign.center,),
-            ),
           style: ElevatedButton.styleFrom(
             primary: Colors.green,
           ),
+            child: const Center(
+              child:Text('Ok', textAlign: TextAlign.center,),
+            ),
         )
       ],
     );

@@ -27,7 +27,6 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
 
       body:Stack(
         children: [
-
         Container(
           height: 350,
           width: MediaQuery.of(context).size.width,
@@ -63,7 +62,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
           ),
         ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(left: 8.0, top: 18),
             child: SizedBox(
               height: 35,
               width: 35,
@@ -135,6 +134,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                             Text("Description",
                               style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w500, fontSize: 20),),
                             Text(widget.dataModel!.suggestions![index].plantDetails!.wikiDescription!.value!.toCapitalized().toString(),
+                              textAlign: TextAlign.justify,
                               style: GoogleFonts.sourceSansPro( fontSize: 14),),
                             const SizedBox(height: 10,),
                             Padding(

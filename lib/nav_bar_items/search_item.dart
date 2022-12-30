@@ -2,11 +2,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/models/bitky_data_model.dart';
 import 'package:bitky/screens/identify_result_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
@@ -109,23 +111,30 @@ class _SearchState extends State<Search> {
   Future _addImageFromGallery() async {
     try {
       var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 90);
-      if (pickedfiles != null) {
-        imagefiles = pickedfiles;
-        pickedfiles.forEach((element) async {
-          imagesPaths.add(element.path);
+      if(pickedfiles.length>5){
+        showDialog(context: context, builder: (context){
+          return const AlertDialog(content: Text("Please select 5 or less photos."),);
         });
-        for (var element in pickedfiles) {
-          var bytes = await element.readAsBytes();
-          var base64img = base64Encode(bytes);
-          base64ImgList.add(base64img);
+      }else{
+        if (pickedfiles.isNotEmpty) {
+          imagefiles = pickedfiles;
+          pickedfiles.forEach((element) async {
+            imagesPaths.add(element.path);
+          });
+          for (var element in pickedfiles) {
+            var bytes = await element.readAsBytes();
+            var base64img = base64Encode(bytes);
+            base64ImgList.add(base64img);
+          }
+          setState(() {});
+          //  print("GALLERYYYY: " + base64ImgList.length.toString());
+        } else {
+          // print("No image is selected.");
         }
-
-        setState(() {});
-      } else {
-       // print("No image is selected.");
       }
+
     } catch (e) {
-     // print("error while picking file.");
+      // print("error while picking file.");
     }
   }
 
@@ -138,14 +147,9 @@ class _SearchState extends State<Search> {
         var base64img = base64Encode(bytes);
         imagesPaths.add(photos.path);
         base64ImgList.add(base64img);
-
-        //print("SAYIIII: " + base64ImgList.length.toString());
       }
       setState(() {});
-
-     // print("AKMERAAA: " + imagefiles!.length.toString());
     } catch (e) {
-     // print("error while picking file.");
     }
   }
 
@@ -184,7 +188,6 @@ class _SearchState extends State<Search> {
                       borderRadius: BorderRadius.circular(25)),
                   child: TextField(
                     onSubmitted: (val){
-
                     },
                     decoration: InputDecoration(
                         suffixIcon: const Icon(
@@ -270,25 +273,28 @@ class _SearchState extends State<Search> {
                       }),
                 ),
               ),
-              InkWell(
-                onTap: (){
-                  openImages();
-                },
-                child: Center(
-                  child:Card(
-                    elevation: 5,
-                    shadowColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(70)
-                    ),
-                    child: Container(
-                      height: 120,
-                      width: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(70),
-                        gradient: const LinearGradient(colors: [Color(0xfff4FE58A),Color(0xfff19C179)]),
+              Visibility(
+                visible: imagesPaths.length >= 5 ? false : true,
+                child: InkWell(
+                  onTap: (){
+                    openImages();
+                  },
+                  child: Center(
+                    child:Card(
+                      elevation: 5,
+                      shadowColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(70)
                       ),
-                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 50,),
+                      child: Container(
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(70),
+                          gradient: const LinearGradient(colors: [Color(0xfff4FE58A),Color(0xfff19C179)]),
+                        ),
+                        child: const Icon(Icons.camera_alt, color: Colors.white, size: 50,),
+                      ),
                     ),
                   ),
                 ),
@@ -298,7 +304,25 @@ class _SearchState extends State<Search> {
                 height: 10,
               ),
               (isLoading == true)
-                  ? const Center(child: CupertinoActivityIndicator())
+                  ? Column(
+                    children: [
+                      const SizedBox(height: 20,),
+                      const CupertinoActivityIndicator(color: kPrymaryColor,),
+                      SizedBox(
+                child: WavyAnimatedTextKit(
+                      textStyle: GoogleFonts.sourceSansPro(
+                          fontSize: 18,
+                          color: kPrymaryColor
+                      ),
+                      text: const [
+                        "Please wait..."
+                      ],
+                      isRepeatingAnimation: true,
+                      speed: const Duration(milliseconds: 150),
+                ),
+              ),
+                    ],
+                  )
                   :Visibility(
                 visible: imagesPaths.isNotEmpty,
                 child: InkWell(
