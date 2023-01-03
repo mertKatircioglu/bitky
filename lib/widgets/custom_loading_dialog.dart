@@ -10,7 +10,7 @@ class CustomLoadingDialog extends StatelessWidget {
 
 
   Widget _dialog(BuildContext context) {
-    return AlertDialog(
+    return CupertinoAlertDialog(
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

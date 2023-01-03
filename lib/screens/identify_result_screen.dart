@@ -27,19 +27,18 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
 
       body:Stack(
         children: [
-        Container(
+        SizedBox(
           height: 350,
           width: MediaQuery.of(context).size.width,
           child: CarouselSlider.builder(
             itemCount: images!.length,
             itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) =>
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: InkWell(
                       onTap: (){
                         final imageProvider = Image.network(images![itemIndex]).image;
                         showImageViewer(context, imageProvider, onViewerDismissed: () {
-                          print("dismissed");
                         });
                       },
                       child: Image.network(images![itemIndex], fit: BoxFit.cover,)),
@@ -47,7 +46,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
             options: CarouselOptions(
               height: 400,
               pauseAutoPlayOnManualNavigate: true,
-              viewportFraction: 0.8,
+              viewportFraction: 1,
               initialPage: 0,
               enableInfiniteScroll: true,
               reverse: false,
@@ -62,7 +61,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
           ),
         ),
           Padding(
-            padding: const EdgeInsets.only(left: 8.0, top: 18),
+            padding: const EdgeInsets.only(left: 8.0, top: 30),
             child: SizedBox(
               height: 35,
               width: 35,

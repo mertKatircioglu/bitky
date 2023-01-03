@@ -6,9 +6,12 @@ import 'package:bitky/widgets/reminder_add_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import '../models/bitky_data_model.dart';
 import '../view_models/planet_view_model.dart';
 import '../widgets/custom_error_dialog.dart';
@@ -27,8 +30,12 @@ class _ReminderState extends State<Reminder> {
   bool isLoading = false;
   List<String> base64ImgList = [];
   BitkyViewModel? _bitkyViewModel;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   BitkyDataModel _bitkyDataModel = BitkyDataModel();
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  AnimationController? localAnimationController;
+  bool notificationState = true;
+
 
   _addFromCamera(){
     _imagePickerSourceCamera().whenComplete(() {
@@ -133,6 +140,7 @@ class _ReminderState extends State<Reminder> {
     );
   }
 
+
   Future _imagePickerSourceCamera() async {
     try {
       XFile? photos = await imgpicker.pickImage(
@@ -150,6 +158,16 @@ class _ReminderState extends State<Reminder> {
   Widget build(BuildContext context) {
     _bitkyViewModel = Provider.of<BitkyViewModel>(context);
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        backwardsCompatibility: false,
+        foregroundColor: Colors.black,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 18.0),
+          child: Text("Reminders",style: GoogleFonts.sourceSansPro(fontSize: 16, fontWeight: FontWeight.w600),),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
@@ -174,7 +192,8 @@ class _ReminderState extends State<Reminder> {
             ),
           )
               : StreamBuilder(
-              stream: FirebaseFirestore.instance.collection('users/${authUser.currentUser!.uid}/reminders').orderBy('createDate', descending: true).snapshots(),
+              stream: FirebaseFirestore.instance.collection('users/${authUser.currentUser!.uid}/reminders').
+              orderBy('createDate', descending: true).snapshots(),
               builder:(ctx, reminderSnapshot){
                 if(reminderSnapshot.connectionState == ConnectionState.waiting){
                   return Center(child:SizedBox(
@@ -208,43 +227,87 @@ class _ReminderState extends State<Reminder> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)
                             ),
-                            child: ListTile(
-                              title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(reminderDocs[index]["room"],style:GoogleFonts.sourceSansPro(),),
-                                  Row(
-                                    children: [
-                                      Text("Plant Name: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                      Text(reminderDocs[index]["plantName"], style:GoogleFonts.sourceSansPro(),),
-                                    ],
-                                  ),
-                                  reminderDocs[index]["scheduleTipe"] == "weakly" ?  Row(
-                                    children: [
-                                      Text("Day: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                      Text(reminderDocs[index]["day"].toString(), style:GoogleFonts.sourceSansPro(),),
-                                    ],
-                                  ):Container(),
-                                  Row(
-                                    children: [
-                                      Text("Time: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                      Text(reminderDocs[index]["hour"].toString(), style:GoogleFonts.sourceSansPro(),),
-                                      Text(":", style:GoogleFonts.sourceSansPro(),),
-                                      Text(reminderDocs[index]["minute"].toString(), style:GoogleFonts.sourceSansPro(),),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text("Schedule Type: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                      Text(reminderDocs[index]["scheduleTipe"].toString().toCapitalized(), style:GoogleFonts.sourceSansPro(color: Colors.deepOrange),),
-                                    ],
-                                  ),
-                                ],
+                            child: Dismissible(
+                              direction: DismissDirection.endToStart,
+                              background: Container(color: Colors.red),
+                              onDismissed: (val){
+                                Future.delayed(const Duration(seconds: 0), () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (c) {
+                                        return CupertinoAlertDialog(
+                                          content: const Text(
+                                              "Are you sure you want to delete this reminder?",
+                                              textAlign: TextAlign.center),
+                                          actions: [
+                                            CupertinoButton(
+                                              onPressed: ()  {
+                                                flutterLocalNotificationsPlugin.cancel(reminderDocs[index]["scheduleId"]).whenComplete(() {
+                                                  FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/reminders").doc(reminderDocs[index]["scheduleId"]).delete();
+                                                  showTopSnackBar(
+                                                    Overlay.of(context)!,
+                                                    CustomSnackBar.error(
+                                                      message:
+                                                      "${reminderDocs[index]["plantName"]}, reminder is deleted.",
+                                                    ),
+                                                    onAnimationControllerInit: (controller) =>
+                                                    localAnimationController = controller,
+                                                  );
+                                                });
+                                              },
+
+                                              child: const Text("Yes"),
+                                            ),
+                                            CupertinoButton(
+                                              onPressed: () {
+                                                Navigator.of(context, rootNavigator: false).pop();
+                                              },
+                                              child: const Text("No"),
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                });
+                              },
+                              key: Key(reminderDocs[index]["plantName"].toString()),
+                              child: ListTile(
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(reminderDocs[index]["room"],style:GoogleFonts.sourceSansPro(),),
+                                    Row(
+                                      children: [
+                                        Text("Plant Name: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                        Text(reminderDocs[index]["plantName"], style:GoogleFonts.sourceSansPro(),),
+                                      ],
+                                    ),
+                                    reminderDocs[index]["scheduleTipe"] == "weakly" ?  Row(
+                                      children: [
+                                        Text("Day: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                        Text(reminderDocs[index]["day"].toString(), style:GoogleFonts.sourceSansPro(),),
+                                      ],
+                                    ):Container(),
+                                    Row(
+                                      children: [
+                                        Text("Time: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                        Text(reminderDocs[index]["hour"].toString(), style:GoogleFonts.sourceSansPro(),),
+                                        Text(":", style:GoogleFonts.sourceSansPro(),),
+                                        Text(reminderDocs[index]["minute"].toString(), style:GoogleFonts.sourceSansPro(),),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text("Schedule Type: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                        Text(reminderDocs[index]["scheduleTipe"].toString().toCapitalized(), style:GoogleFonts.sourceSansPro(color: Colors.deepOrange),),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(reminderDocs[index]["image"]),
+                                ),
+                                trailing:const Icon(Icons.notifications_active_outlined, color: kPrymaryColor,),
                               ),
-                              leading: CircleAvatar(
-                                backgroundImage: NetworkImage(reminderDocs[index]["image"]),
-                              ),
-                              trailing: const Icon(Icons.notifications_none, color: kPrymaryColor,),
                             ),
                           );
                         });

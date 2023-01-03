@@ -64,6 +64,7 @@ dependencies:
   datetime_picker_formfield:
   day_picker: 2.1.0
   day_night_time_picker:
+  top_snackbar_flutter: ^3.0.0+1
 
 
 

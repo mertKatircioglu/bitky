@@ -4,8 +4,7 @@ import 'package:bitky/models/bitky_data_model.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
-import 'package:day_picker/day_picker.dart';
-import 'package:day_picker/model/day_in_week.dart';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +30,6 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
 
 
 
-
-
 @override
   void initState() {
 
@@ -54,81 +51,83 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-          mainAxisSize: MainAxisSize.min,
-      children: [
-        Stack(
-          children: [
-            Container(
-              decoration:  BoxDecoration(
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.darken),
-                      image: NetworkImage(widget.bitkyDataModel!.images![0].url!))
-              ),
-              width: MediaQuery.of(context).size.width,
-              height: 250,
+    return Container(
+      child: Column(
+            mainAxisSize: MainAxisSize.min,
+        children: [
+          Stack(
+            children: [
+              Container(
+                decoration:  BoxDecoration(
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.darken),
+                        image: NetworkImage(widget.bitkyDataModel!.images![0].url!))
+                ),
+                width: MediaQuery.of(context).size.width,
+                height: 150,
 
-            ),
-            Padding(
-              padding:const EdgeInsets.all(20),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Text(widget.bitkyDataModel!.suggestions![0].plantDetails!.commonNames![0].toCapitalized().toString(),
-                      style: GoogleFonts.sourceSansPro(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600),),
-                    Text(widget.bitkyDataModel!.suggestions![0].plantDetails!.wikiDescription!.value.toString(),
-                      textAlign: TextAlign.justify,
-                      style: GoogleFonts.sourceSansPro(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),),
-                  ],
+              ),
+              Padding(
+                padding:const EdgeInsets.all(20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Text(widget.bitkyDataModel!.suggestions![0].plantDetails!.commonNames![0].toCapitalized().toString(),
+                        style: GoogleFonts.sourceSansPro(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600),),
+
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  DottedBorder(
-                    padding: const EdgeInsets.only(right: 5,left: 5),
-                    strokeCap: StrokeCap.butt,
-                    color: kPrymaryColor,
-                    child: TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Room name'),
+            ],
+          ),
+          Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    DottedBorder(
+                      padding: const EdgeInsets.only(right: 5,left: 5),
+                      strokeCap: StrokeCap.butt,
+                      color: kPrymaryColor,
+                      child: TextFormField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Plant name'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 15,),
-                  DottedBorder(
-                    padding: const EdgeInsets.only(right: 5,left: 5),
-                    color: kPrymaryColor,
-                    child: TextFormField(
-                      controller: locationController,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Room name'),
-                      textInputAction: TextInputAction.next,
+                    const SizedBox(height: 15,),
+                    DottedBorder(
+                      padding: const EdgeInsets.only(right: 5,left: 5),
+                      color: kPrymaryColor,
+                      child: TextFormField(
+                        controller: locationController,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Room name'),
+                        textInputAction: TextInputAction.next,
+                      ),
                     ),
-                  ),
 
 
-                ],
-              ),
-            )),
+                  ],
+                ),
+              )),
 
-        SizedBox(height:80,child: NoteThumbnail(imagE:widget.bitkyDataModel!.images![0].url! ,plantName: nameController.text, room: locationController.text ?? "Room 1",id: 2, color: Colors.transparent, title: widget.bitkyDataModel!.suggestions![0].plantDetails!.commonNames![0].toString(), content: "Watering Time"))
-      ],
+          SizedBox(height:80,child: NoteThumbnail(imagE:widget.bitkyDataModel!.images![0].url!,
+              plantName: nameController.text, room: locationController.text ?? "Room 1",
+              color: Colors.transparent,
+              title: widget.bitkyDataModel!.suggestions![0].plantDetails!.commonNames![0].toString(), content: "Watering Time"))
+        ],
+      ),
     );
   }
 }
 class NoteThumbnail extends StatefulWidget {
-final int id;
 final Color color;
 final String title;
 final String plantName;
@@ -138,7 +137,6 @@ final String content;
 
 const NoteThumbnail(
 {Key? key,
-required this.id,
 required this.color,
 required this.plantName,
   required this.imagE,
@@ -168,17 +166,16 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
    int? day;
 
   Future _daily(BuildContext context) async {
+    final notificationId = UniqueKey().hashCode;
     Navigator.of(context).push(showPicker(
       context: context,
       value: _time,
       onChange: (val){
         Time _timee = Time(val.hour,val.minute,00);
-        print(_timee.hour.toString());
-        formValidation(_timee,50, "daily").whenComplete(() async{
-          await service.showSchelduledNotificationDaily(id: widget.id, title: widget.title,
+        formValidation(_timee,50, "daily",notificationId).whenComplete(() async{
+          await service.showSchelduledNotificationDaily(id: notificationId, title: widget.title,
               body:widget.content, time:_timee).whenComplete(() {
             Navigator.pop(context);
-
             showDialog(context: context,
                 builder: (c){
                   return CustomErrorDialog(message: 'Plant ${widget.plantName} watering alarms is set.',);
@@ -191,9 +188,10 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
   }
 
   Future _weakly(BuildContext context) async {
+    final notificationId = UniqueKey().hashCode;
+
     showDialog(context: context, builder: (context){
       return AlertDialog(
-
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(15))
         ),
@@ -296,8 +294,8 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
         value: _time,
         onChange: (val){
           Time _timee = Time(val.hour,val.minute,00);
-          formValidation(_timee,day!, "weakly").whenComplete(() async{
-            await service.showSchelduledNotificationWeakly(id: widget.id, title: widget.title,
+          formValidation(_timee,day!, "weakly",notificationId).whenComplete(() async{
+            await service.showSchelduledNotificationWeakly(id: notificationId, title: widget.title,
                 body:widget.content, time:_timee, day: Day(day!)).whenComplete(() {
               Navigator.pop(context);
               showDialog(context: context,
@@ -315,11 +313,13 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
 
 
   }
-  Future<void> formValidation(Time time, int day, String type) async{
+  Future<void> formValidation(Time time, int day, String type, int notificationId) async{
     if(widget.plantName.isNotEmpty){
 
-      FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/reminders").doc(DateTime.now().toString()).
+      FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/reminders").doc(notificationId.toString()).
       set({
+        "scheduleId":notificationId,
+        "isActive":true,
         "image": widget.imagE,
         "scheduleTipe":type,
         "plantName": widget.plantName,
@@ -342,6 +342,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
   void initState() {
     service = LocalNotificationService();
     service.initialize();
+
     super.initState();
   }
 

@@ -26,7 +26,7 @@ class DiagnosePage extends StatefulWidget {
 
 class _DiagnosePageState extends State<DiagnosePage> {
   final ImagePicker imgpicker = ImagePicker();
-  List<XFile>? imagefiles;
+  List<XFile>? imagefiles=[];
   BitkyViewModel? _bitkyViewModel;
   List<String> imagesPaths = [];
   HealthDataModel _diseases = HealthDataModel();

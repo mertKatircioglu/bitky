@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomErrorDialog extends StatelessWidget {
@@ -7,17 +8,15 @@ class CustomErrorDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return CupertinoAlertDialog(
       key: key,
       content: Text(message!, textAlign: TextAlign.center,),
       actions: [
-        ElevatedButton(
+        CupertinoButton(
           onPressed: (){
             Navigator.pop(context);
           },
-          style: ElevatedButton.styleFrom(
-            primary: Colors.green,
-          ),
+
             child: const Center(
               child:Text('Ok', textAlign: TextAlign.center,),
             ),
