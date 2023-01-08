@@ -55,7 +55,7 @@ class _FlowItemState extends State<FlowItem> {
                 ],
               ),
               const SizedBox(
-                height: 40,
+                height: 5,
               ),
               isLoading == true
                   ?    Center(
@@ -106,7 +106,7 @@ class _FlowItemState extends State<FlowItem> {
                                 return Padding(
                                   padding: const EdgeInsets.all(18.0),
                                   child: SizedBox(
-                                    height: 520,
+                                    height: MediaQuery.of(context).size.height * 1.1,
                                     child: Card(
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
@@ -159,6 +159,7 @@ class _FlowItemState extends State<FlowItem> {
                                             ),
                                             Padding(padding: const EdgeInsets.all(8.0),
                                               child: Column(
+                                                mainAxisSize: MainAxisSize.min,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [       Text("${recentDocs[index]['title']}",style: GoogleFonts.sourceSansPro(fontSize: 22, fontWeight: FontWeight.w600) ),
                                                   Text("${recentDocs[index]['subTitle']}",style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600, color: Colors.grey) ),
@@ -229,7 +230,6 @@ class _FlowItemState extends State<FlowItem> {
                                                   ),],
                                               ),
                                             ),
-                                            const SizedBox(height: 10,)
                                           ],
                                         ),
                                       ),

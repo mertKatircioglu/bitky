@@ -26,7 +26,9 @@ Future<void> main() async{
   runApp(RestartWidget(child: const MyApp(),));
 }
 
-class MyApp extends StatelessWidget {
+
+
+class MyApp extends StatelessWidget with WidgetsBindingObserver {
   const MyApp({super.key});
 
 
@@ -34,6 +36,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Bitky Guide',
+
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
