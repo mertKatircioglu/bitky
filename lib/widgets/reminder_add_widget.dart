@@ -3,14 +3,15 @@ import 'package:bitky/globals/globals.dart';
 import 'package:bitky/models/bitky_data_model.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:intl/intl.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import '../helpers/notification_service.dart';
 import 'custom_error_dialog.dart';
 
@@ -118,10 +119,12 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
                 ),
               )),
 
-          SizedBox(height:80,child: NoteThumbnail(imagE:widget.bitkyDataModel!.images![0].url!,
+          SizedBox(height:80,
+              child: NoteThumbnail(imagE:widget.bitkyDataModel!.images![0].url!,
               plantName: nameController.text, room: locationController.text ?? "Room 1",
               color: Colors.transparent,
-              title: widget.bitkyDataModel!.suggestions![0].plantDetails!.commonNames![0].toString(), content: "Watering Time"))
+              title: nameController.text, content: "Watering Time")),
+          const SizedBox(height: 50,)
         ],
       ),
     );
@@ -154,37 +157,40 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
   DateTime fullDate = DateTime.now();
   late final LocalNotificationService service;
   int? selectedDay;
-  TimeOfDay _time = TimeOfDay.now().replacing(hour: 11, minute: 30);
   bool iosStyle = true;
+  int? day;
+  String? time;
 
-  void onTimeChanged(TimeOfDay newTime) {
-    setState(() {
-      _time = newTime;
-    });
-  }
 
-   int? day;
 
   Future _daily(BuildContext context) async {
     final notificationId = UniqueKey().hashCode;
-    Navigator.of(context).push(showPicker(
-      context: context,
-      value: _time,
-      onChange: (val){
-        Time _timee = Time(val.hour,val.minute,00);
-        formValidation(_timee,50, "daily",notificationId).whenComplete(() async{
-          await service.showSchelduledNotificationDaily(id: notificationId, title: widget.title,
-              body:widget.content, time:_timee).whenComplete(() {
-            Navigator.pop(context);
-            showDialog(context: context,
-                builder: (c){
-                  return CustomErrorDialog(message: 'Plant ${widget.plantName} watering alarms is set.',);
-                });
 
+    DatePicker.showTimePicker(context, showTitleActions: true,
+        showSecondsColumn: false,
+        onChanged: (date){
+          setState(() {
+            time ="${date.hour.toString()}:${date.minute.toString()}";
           });
-        });
-      },
-    ));
+          print(time);
+        },
+        onConfirm: (date){
+        var tzTime=  tz.TZDateTime.parse(tz.local, date.toString());
+          formValidation(time!,50, "daily",notificationId).whenComplete(() async{
+            await service.showSchelduledNotificationDaily(id: notificationId, title: widget.title,
+                body:widget.content, time:tzTime).whenComplete(() {
+              Navigator.pop(context);
+              showDialog(context: context,
+                  builder: (c){
+                    return CustomErrorDialog(message: 'Plant ${widget.plantName} watering alarms is set.',);
+                  });
+
+            });
+          });
+
+        }
+    );
+
   }
 
   Future _weakly(BuildContext context) async {
@@ -196,124 +202,133 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
           borderRadius: BorderRadius.all(Radius.circular(15))
         ),
         title: const Text("Select Day", style: TextStyle(color: kPrymaryColor),),
-        content: Container(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RadioListTile(
-                title: const Text("Sunday"),
-                value: 1,
-                groupValue: day,
-                onChanged: (value){
-                  setState(() {
-                    day = value;
-                  });
-                  Navigator.pop(context);
-                },
-              ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RadioListTile(
+              title: const Text("Sunday"),
+              value: 1,
+              groupValue: day,
+              onChanged: (value){
+                setState(() {
+                  day = value;
+                });
+                Navigator.pop(context);
+              },
+            ),
 
-              RadioListTile(
-                title: const Text("Monday"),
-                value: 2,
-                groupValue: day,
-                onChanged: (value){
-                  setState(() {
-                    day = value;
-                  });
-                  Navigator.pop(context);
+            RadioListTile(
+              title: const Text("Monday"),
+              value: 2,
+              groupValue: day,
+              onChanged: (value){
+                setState(() {
+                  day = value;
+                });
+                Navigator.pop(context);
 
-                },
-              ),
+              },
+            ),
 
-              RadioListTile(
-                title: const Text("Tuesday"),
-                value: 3,
-                groupValue: day,
-                onChanged: (value){
-                  setState(() {
-                    day = value;
-                  });
-                  Navigator.pop(context);
+            RadioListTile(
+              title: const Text("Tuesday"),
+              value: 3,
+              groupValue: day,
+              onChanged: (value){
+                setState(() {
+                  day = value;
+                });
+                Navigator.pop(context);
 
-                },
-              ),
-              RadioListTile(
-                title: const Text("Wednesday"),
-                value: 4,
-                groupValue: day,
-                onChanged: (value){
-                  setState(() {
-                    day = value;
-                  });
-                  Navigator.pop(context);
+              },
+            ),
+            RadioListTile(
+              title: const Text("Wednesday"),
+              value: 4,
+              groupValue: day,
+              onChanged: (value){
+                setState(() {
+                  day = value;
+                });
+                Navigator.pop(context);
 
-                },
-              ),   RadioListTile(
-                title: const Text("Thursday"),
-                value: 5,
-                groupValue: day,
-                onChanged: (value){
-                  setState(() {
-                    day = value;
-                  });
-                  Navigator.pop(context);
+              },
+            ),   RadioListTile(
+              title: const Text("Thursday"),
+              value: 5,
+              groupValue: day,
+              onChanged: (value){
+                setState(() {
+                  day = value;
+                });
+                Navigator.pop(context);
 
-                },
-              ),
-              RadioListTile(
-                title: const Text("Friday"),
-                value: 6,
-                groupValue: day,
-                onChanged: (value){
-                  setState(() {
-                    day = value;
-                  });
-                  Navigator.pop(context);
+              },
+            ),
+            RadioListTile(
+              title: const Text("Friday"),
+              value: 6,
+              groupValue: day,
+              onChanged: (value){
+                setState(() {
+                  day = value;
+                });
+                Navigator.pop(context);
 
-                },
-              ),
-              RadioListTile(
-                title: const Text("Saturday"),
-                value: 7,
-                groupValue: day,
-                onChanged: (value){
-                  setState(() {
-                    day = value;
-                  });
-                  Navigator.pop(context);
+              },
+            ),
+            RadioListTile(
+              title: const Text("Saturday"),
+              value: 7,
+              groupValue: day,
+              onChanged: (value){
+                setState(() {
+                  day = value;
+                });
+                Navigator.pop(context);
 
-                },
-              ),
-            ],
-          ),
+              },
+            ),
+          ],
         ),
       );
     }).whenComplete(() async{
-      Navigator.of(context).push(showPicker(
-        context: context,
-        value: _time,
-        onChange: (val){
-          Time _timee = Time(val.hour,val.minute,00);
-          formValidation(_timee,day!, "weakly",notificationId).whenComplete(() async{
-            await service.showSchelduledNotificationWeakly(id: notificationId, title: widget.title,
-                body:widget.content, time:_timee, day: Day(day!)).whenComplete(() {
-              Navigator.pop(context);
-              showDialog(context: context,
-                  builder: (c){
-                    return CustomErrorDialog(message: 'Plant ${widget.plantName} watering alarms is set.',);
-
-                  });
-
-
+      DatePicker.showTimePicker(context, showTitleActions: true,
+          showSecondsColumn: false,
+          onChanged: (date){
+            setState(() {
+              time ="${date.hour.toString()}:${date.minute.toString()}";
             });
-          });
-        },
-      ));
+
+          },
+          onConfirm: (date){
+            print(date.toString());
+            var tzTime=  tz.TZDateTime.parse(tz.local, date.toString());
+            formValidation(time!,day!, "weekly",notificationId).whenComplete(() async{
+              await service.showSchelduledNotificationWeakly(id: notificationId, title: widget.title,
+                  body:widget.content, time:tzTime, day: day!).whenComplete(() {
+                Navigator.pop(context);
+                showDialog(context: context,
+                    builder: (c){
+                      return CustomErrorDialog(message: 'Plant ${widget.plantName} watering alarms is set.',);
+
+                    });
+
+
+              });
+            });
+
+
+          }
+      );
     });
 
 
+
+
+
   }
-  Future<void> formValidation(Time time, int day, String type, int notificationId) async{
+  Future<void> formValidation(String time, int day, String type, int notificationId) async{
     if(widget.plantName.isNotEmpty){
 
       FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/reminders").doc(notificationId.toString()).
@@ -321,12 +336,11 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
         "scheduleId":notificationId,
         "isActive":true,
         "image": widget.imagE,
-        "scheduleTipe":type,
+        "scheduleType":type,
         "plantName": widget.plantName,
         "room": widget.room ?? "Oda-1",
-        "hour":time.hour,
+        "time":time,
         "day": day,
-        "minute": time.minute,
         "createDate": DateTime.now()
       });
     }else{

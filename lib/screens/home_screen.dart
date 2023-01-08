@@ -1,5 +1,6 @@
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/helpers/notification_service.dart';
+import 'package:bitky/nav_bar_items/flow_item.dart';
 import 'package:bitky/nav_bar_items/my_garden_item.dart';
 import 'package:bitky/nav_bar_items/reminders_item.dart';
 import 'package:bitky/nav_bar_items/search_item.dart';
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     service = LocalNotificationService();
     service.initialize();
     super.initState();
-    _controller = PersistentTabController(initialIndex: 0);
+    _controller = PersistentTabController(initialIndex: 2);
 
 
   }
@@ -38,9 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       const DiagnosePage(),
       const Search(),
+      const FlowItem(),
       const Reminder(),
       const MyGarden(),
-      const SettingsItem()
     ];
   }
 
@@ -64,6 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.flowchart, size: 20,),
+        title: ("Flow"),
+        textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
+        activeColorPrimary: kPrymaryColor,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
+      PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.bell, size: 20),
         title: ("Reminders"),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
@@ -77,13 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
-      PersistentBottomNavBarItem(
+/*      PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.settings, size: 20),
         title: ("Settings"),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+      ),*/
     ];
   }
 

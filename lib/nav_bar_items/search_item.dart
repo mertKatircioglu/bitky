@@ -351,17 +351,17 @@ class _SearchState extends State<Search> {
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
+                    children: [
+                      const Icon(
                         Icons.search,
                         color: kPrymaryColor,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
                       Text(
                         "Search",
-                        style: TextStyle(color: kPrymaryColor),
+                        style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontSize: 22),
                       )
                     ],
                   ),

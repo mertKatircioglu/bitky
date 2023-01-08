@@ -68,7 +68,7 @@ class SeeAllScreen extends StatelessWidget {
                                   child: Container(
                                     decoration:  BoxDecoration(
                                         image: DecorationImage(
-                                            fit: BoxFit.fill,
+                                            fit: BoxFit.cover,
                                             colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.darken),
                                             image: NetworkImage(responseImages![index].toString()))
                                     ),

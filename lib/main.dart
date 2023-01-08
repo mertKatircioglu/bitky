@@ -1,15 +1,10 @@
 import 'dart:io';
-
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/restart_app.dart';
 import 'package:bitky/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'helpers/notification_service.dart';
 import 'locator.dart';
 
 class MyHttpOverrides extends HttpOverrides{
@@ -33,7 +28,6 @@ Future<void> main() async{
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
 
 
   @override

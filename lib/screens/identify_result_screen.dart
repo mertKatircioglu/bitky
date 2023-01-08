@@ -24,7 +24,6 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
     });
     print(images.toString());
     return Scaffold(
-
       body:Stack(
         children: [
         SizedBox(

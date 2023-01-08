@@ -207,7 +207,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
               ],
             ),
             const SizedBox(
-              height: 40,
+              height: 20,
             ),
             Center(
               child: Column(
@@ -219,9 +219,9 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     width: 80,
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
-                   Text("Identify a plant problem", style: GoogleFonts.sourceSansPro(),),
+                   Text("Identify a plant problem", style: GoogleFonts.sourceSansPro(fontSize: 18),),
                   const SizedBox(
                     height: 10,
                   ),
@@ -383,7 +383,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                               ),
                               Text(
                                 "Search",
-                                style: GoogleFonts.sourceSansPro(color: kPrymaryColor),
+                                style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontSize: 22),
                               )
                             ],
                           ),
@@ -392,7 +392,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   InkWell(
                     onTap: (){
@@ -417,7 +417,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                         Text(
                           "Recent Snaps",
                           style: GoogleFonts.sourceSansPro(
-                              color: kPrymaryColor, fontWeight: FontWeight.w500),
+                              color: kPrymaryColor, fontWeight: FontWeight.w500, fontSize: 16),
                         )
                       ],
                     ),
@@ -461,7 +461,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       children: [
                         Expanded(
                           child: Container(
-                            padding:const EdgeInsets.only(left: 12, right: 12, top: 30, bottom: 30),
+                            padding:const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 30),
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
@@ -474,16 +474,14 @@ class _DiagnosePageState extends State<DiagnosePage> {
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 10.0,right: 10.0),
                                 child: Column(
+                                  mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                         Text("is healty: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                        Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
-                                        "images/smile.png":"images/sad.png":"images/sad.png", width: 20,height: 20,)
-                                      ],
-                                    ),
+                                    Text("Your plant is not healthy", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                    const SizedBox(height: 5,),
+                                    Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
+                                    "images/smile.png":"images/sad.png":"images/sad.png", width: 50,height: 50,),
+                                    const SizedBox(height: 5,),
                                   ],
                                 ),
                               ),

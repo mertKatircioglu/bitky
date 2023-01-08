@@ -167,8 +167,11 @@ Future<void> showNotification({required int id, required String title, required 
   Future<void> showSchelduledNotificationDaily({
     required int id,
     required String title,
-    required Time time,
+    required tz.TZDateTime time,
     required String body}) async{
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    var tzTime = tz.TZDateTime(tz.local, now.year, now.month, now.day, time.hour,time.minute);
+    print(tzTime.hour.toString() + tzTime.minute.toString());
     const AndroidNotificationDetails androidNotificationDetails =
     AndroidNotificationDetails('channel_id', 'channel_name',
         channelDescription: 'description',
@@ -176,15 +179,21 @@ Future<void> showNotification({required int id, required String title, required 
         priority: Priority.high,
         ticker: 'ticker');
     const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-    await _localNotificationService.showDailyAtTime(
+    NotificationDetails(android: androidNotificationDetails, iOS: DarwinNotificationDetails(
+      sound: 'default.wav',
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    ) );
+    await _localNotificationService.zonedSchedule(
         id,
         title,
         body,
-        time,
+        tzTime,
         notificationDetails,
-      //androidAllowWhileIdle: true,
-     // uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: true,
+    matchDateTimeComponents:DateTimeComponents.time
     );
     print("burası çalıştı");
   }
@@ -192,9 +201,12 @@ Future<void> showNotification({required int id, required String title, required 
   Future<void> showSchelduledNotificationWeakly({
     required int id,
     required String title,
-    required Time time,
-    required Day day,
+    required tz.TZDateTime time,
+    required int day,
     required String body}) async{
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    var tzTime = tz.TZDateTime(tz.local, now.year, now.month, day, time.hour,time.minute);
+    print("Service:: "+tzTime.toString());
     const AndroidNotificationDetails androidNotificationDetails =
     AndroidNotificationDetails('channel_id', 'channel_name',
         channelDescription: 'description',
@@ -202,16 +214,22 @@ Future<void> showNotification({required int id, required String title, required 
         priority: Priority.high,
         ticker: 'ticker');
     const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-    await _localNotificationService.showWeeklyAtDayAndTime(
+    NotificationDetails(android: androidNotificationDetails, iOS: DarwinNotificationDetails(
+      sound: 'default.wav',
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    ));
+    await _localNotificationService.zonedSchedule(
       id,
       title,
       body,
-      day,
-      time,
+      tzTime,
       notificationDetails,
-      //androidAllowWhileIdle: true,
-      // uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true,
+        matchDateTimeComponents:DateTimeComponents.dayOfWeekAndTime
+
     );
   }
 
