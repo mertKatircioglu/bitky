@@ -14,6 +14,7 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 
+import '../l10n/app_localizations.dart';
 import '../view_models/planet_view_model.dart';
 
 class CurvePainter extends CustomPainter {
@@ -65,9 +66,9 @@ class _SearchState extends State<Search> {
             shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             elevation: 0,
-            title: const Center(
+            title:  Center(
                 child: Text(
-                  "Add Pictures",
+                  AppLocalizations.of(context)!.addpicture,
                 )),
             content: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,7 +114,7 @@ class _SearchState extends State<Search> {
       var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 90);
       if(pickedfiles.length>5){
         showDialog(context: context, builder: (context){
-          return const AlertDialog(content: Text("Please select 5 or less photos."),);
+          return AlertDialog(content: Text(AppLocalizations.of(context)!.addpictureerror),);
         });
       }else{
         if (pickedfiles.isNotEmpty) {
@@ -169,9 +170,9 @@ class _SearchState extends State<Search> {
                 height: 100,
               ),
 
-              const Text(
-                "Find Perfect Plants & Veggies",
-                style: TextStyle(
+               Text(
+                AppLocalizations.of(context)!.searchpagesubtitle,
+                style: const TextStyle(
                     color: kPrymaryColor,
                     fontSize: 18,
                     fontWeight: FontWeight.w500),
@@ -200,7 +201,7 @@ class _SearchState extends State<Search> {
                         ),
                         filled: true,
                         hintStyle: const TextStyle(color: Colors.grey),
-                        hintText: "Type a plant name",
+                        hintText: AppLocalizations.of(context)!.typeaplantname,
                         fillColor: Colors.white70),
                   ),
                 ),
@@ -314,8 +315,8 @@ class _SearchState extends State<Search> {
                           fontSize: 18,
                           color: kPrymaryColor
                       ),
-                      text: const [
-                        "Please wait..."
+                      text:  [
+                        AppLocalizations.of(context)!.plswait
                       ],
                       isRepeatingAnimation: true,
                       speed: const Duration(milliseconds: 150),
@@ -360,7 +361,7 @@ class _SearchState extends State<Search> {
                         width: 5,
                       ),
                       Text(
-                        "Search",
+                        AppLocalizations.of(context)!.searchtitle,
                         style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontSize: 22),
                       )
                     ],

@@ -2,16 +2,14 @@ import 'dart:convert';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
-import 'package:bitky/widgets/app_bar_widget.dart';
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/widgets/reminder_add_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -110,7 +108,7 @@ class _ReminderState extends State<Reminder> {
                       const SizedBox(
                         width: 3,
                       ),
-                      Text("Scan your plant",
+                      Text(AppLocalizations.of(context)!.scanyourplant,
                           style: GoogleFonts.sourceSansPro(
                               color: kPrymaryColor, fontSize: 18)),
                     ],
@@ -131,7 +129,7 @@ class _ReminderState extends State<Reminder> {
                       const SizedBox(
                         width: 3,
                       ),
-                      Text("Add your garden",
+                      Text(AppLocalizations.of(context)!.addyourgarden,
                           style: GoogleFonts.sourceSansPro(
                               color: kPrymaryColor, fontSize: 18)),
                     ],
@@ -187,7 +185,7 @@ class _ReminderState extends State<Reminder> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:  [
                   Text(
-                    'Reminders',
+                    AppLocalizations.of(context)!.remindertitle,
                     style: GoogleFonts.sourceSansPro(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
 
@@ -232,8 +230,8 @@ class _ReminderState extends State<Reminder> {
                                   fontSize: 18,
                                   color: kPrymaryColor
                               ),
-                              text: const [
-                                "Please wait..."
+                              text:  [
+                                AppLocalizations.of(context)!.plswait
                               ],
                               isRepeatingAnimation: true,
                               speed: const Duration(milliseconds: 150),
@@ -274,8 +272,8 @@ class _ReminderState extends State<Reminder> {
                                         context: context,
                                         builder: (c) {
                                           return CupertinoAlertDialog(
-                                            content: const Text(
-                                                "Are you sure you want to delete this reminder?",
+                                            content:  Text(
+                                                AppLocalizations.of(context)!.areyousurewanttodeletereminder,
                                                 textAlign: TextAlign.center),
                                             actions: [
                                               CupertinoButton(
@@ -289,7 +287,7 @@ class _ReminderState extends State<Reminder> {
                                                       Overlay.of(context)!,
                                                       CustomSnackBar.error(
                                                         message:
-                                                        "${reminderDocs[index]["plantName"]}, reminder is deleted.",
+                                                        "${reminderDocs[index]["plantName"]}, ${AppLocalizations.of(context)!.reminderisdeleted}.",
                                                       ),
                                                       onAnimationControllerInit: (controller) =>
                                                       localAnimationController = controller,
@@ -299,14 +297,14 @@ class _ReminderState extends State<Reminder> {
 
                                                 },
 
-                                                child: const Text("Yes"),
+                                                child: Text(AppLocalizations.of(context)!.yes),
                                               ),
                                               CupertinoButton(
                                                 onPressed: () {
                                                   Navigator.of(context, rootNavigator: true).pop("Discard");
 
                                                 },
-                                                child: const Text("No"),
+                                                child: Text(AppLocalizations.of(context)!.no),
                                               ),
                                             ],
                                           );
@@ -320,26 +318,26 @@ class _ReminderState extends State<Reminder> {
                                         Text(reminderDocs[index]["room"],style:GoogleFonts.sourceSansPro(),),
                                         Row(
                                           children: [
-                                            Expanded(child: Text("Plant Name: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)),
+                                            Expanded(child: Text("${AppLocalizations.of(context)!.plantname}: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)),
                                             Expanded(child: Text(reminderDocs[index]["plantName"], style:GoogleFonts.sourceSansPro(),)),
                                           ],
                                         ),
                                         reminderDocs[index]["scheduleType"] == "weekly" ?  Row(
                                           children: [
-                                            Text("Day: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                            Text("${AppLocalizations.of(context)!.day}: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
                                             Text(reminderDocs[index]["day"].toString(), style:GoogleFonts.sourceSansPro(),),
                                           ],
                                         ):Container(),
                                         Row(
                                           children: [
-                                            Text("Time: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                            Text("${AppLocalizations.of(context)!.time}: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
                                             Text(reminderDocs[index]["time"].toString(), style:GoogleFonts.sourceSansPro(),),
 
                                           ],
                                         ),
                                         Row(
                                           children: [
-                                            Text("Schedule Type: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                            Text("${AppLocalizations.of(context)!.schduletype}: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
                                             Text(reminderDocs[index]["scheduleType"].toString().toCapitalized(), style:GoogleFonts.sourceSansPro(color: Colors.deepOrange),),
                                           ],
                                         ),

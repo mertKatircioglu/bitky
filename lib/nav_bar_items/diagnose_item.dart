@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import '../globals/globals.dart';
+import '../l10n/app_localizations.dart';
 import '../view_models/planet_view_model.dart';
 import '../widgets/primary_button_widget.dart';
 
@@ -56,9 +57,9 @@ class _DiagnosePageState extends State<DiagnosePage> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             elevation: 0,
-            title: const Center(
+            title: Center(
                 child: Text(
-              "Add Pictures",
+                  AppLocalizations.of(context)!.addpicture,
             )),
             content: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -104,7 +105,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
       var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 90);
       if(pickedfiles.length>5){
         showDialog(context: context, builder: (context){
-          return const AlertDialog(content: Text("Please select 5 or less photos."),);
+          return  AlertDialog(content: Text(AppLocalizations.of(context)!.addpictureerror),);
         });
       }else{
         if (pickedfiles.isNotEmpty) {
@@ -176,7 +177,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:  [
                  Text(
-                  'Diagnose',
+                   AppLocalizations.of(context)!.diagnosetitle,
                   style: GoogleFonts.sourceSansPro(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 Visibility(
@@ -200,7 +201,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                         const Icon(Icons.clear, size:
                         15,color: kPrymaryColor,),
                         const SizedBox(width: 2,),
-                        Text("clear", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)
+                        Text(AppLocalizations.of(context)!.clear, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)
                       ],),),
                 )
 
@@ -221,7 +222,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                   const SizedBox(
                     height: 5,
                   ),
-                   Text("Identify a plant problem", style: GoogleFonts.sourceSansPro(fontSize: 18),),
+                   Text(AppLocalizations.of(context)!.diagnosesubtitle, style: GoogleFonts.sourceSansPro(fontSize: 18),),
                   const SizedBox(
                     height: 10,
                   ),
@@ -230,7 +231,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     child: Container(
                       width: MediaQuery.of(context).size.width /1.5,
                       child: CustomPrimaryButton(
-                        text: "Take a photo",
+                        text: AppLocalizations.of(context)!.takeaphotobutton,
                         radius: 15.0,
                         function: () {
                           openImages();
@@ -345,7 +346,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                               isLoading = true;
                             });
                             _bitkyViewModel!
-                                .getPlantHealthFromUi(base64ImgList)
+                                .getPlantHealthFromUi(base64ImgList, context)
                                 .then((value) {
                               _diseases = value;
                             }).whenComplete(() {
@@ -382,7 +383,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                 width: 5,
                               ),
                               Text(
-                                "Search",
+                                AppLocalizations.of(context)!.searchtitle,
                                 style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontSize: 22),
                               )
                             ],
@@ -415,7 +416,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                           width: 10,
                         ),
                         Text(
-                          "Recent Snaps",
+                          AppLocalizations.of(context)!.recentsnaps,
                           style: GoogleFonts.sourceSansPro(
                               color: kPrymaryColor, fontWeight: FontWeight.w500, fontSize: 16),
                         )
@@ -439,8 +440,8 @@ class _DiagnosePageState extends State<DiagnosePage> {
                         fontSize: 18,
                         color: kPrymaryColor
                     ),
-                    text: const [
-                      "Please wait..."
+                    text: [
+                      AppLocalizations.of(context)!.plswait
                     ],
                     isRepeatingAnimation: true,
                     speed: const Duration(milliseconds: 150),
@@ -477,7 +478,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("Your plant is not healthy", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                    Text(AppLocalizations.of(context)!.nothealthy, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
                                     const SizedBox(height: 5,),
                                     Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
                                     "images/smile.png":"images/sad.png":"images/sad.png", width: 50,height: 50,),
@@ -495,7 +496,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children:  [
                               Text(
-                                "Common problems",
+                                AppLocalizations.of(context)!.commonprolems,
                                 style: GoogleFonts.sourceSansPro(
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
@@ -510,7 +511,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
 
                                 },
                                   child: Text(
-                                    'See all',
+                                    AppLocalizations.of(context)!.seeall,
                                     style: GoogleFonts.sourceSansPro(color: kPrymaryColor),
                                   ))
                             ],
@@ -582,7 +583,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                                 Padding(
                                                   padding: const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    "Similarity: %${_diseases.healthAssessment!.diseases![index].similarImages![0].similarity.toString().substring(0,1)}0",
+                                                    "${AppLocalizations.of(context)!.similarity}: %${_diseases.healthAssessment!.diseases![index].similarImages![0].similarity.toString().substring(0,1)}0",
                                                     textAlign: TextAlign.center,
                                                     style:  GoogleFonts.sourceSansPro(
                                                         fontSize: 12,

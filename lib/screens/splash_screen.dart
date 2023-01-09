@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -99,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen> {
             children:  [
               Image.asset("images/plant.png", width: 70, height: 70,),
             const Text("Bitky", style: TextStyle(fontSize: 18, color: kPrymaryColor),),
-            const Text("Identify a plant or plant problem",style: TextStyle(fontSize: 12,)),
+             Text(AppLocalizations.of(context)!.splashtitle,style: TextStyle(fontSize: 12,)),
             const SizedBox(height: 20,),
             const CupertinoActivityIndicator(
                 radius: 15,

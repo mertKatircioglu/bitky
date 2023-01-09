@@ -1,4 +1,5 @@
 import 'package:bitky/globals/globals.dart';
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 
@@ -21,7 +22,7 @@ class RecentSnapsScreen extends StatelessWidget {
         elevation: 0,
         foregroundColor: kPrymaryColor,
         centerTitle: true,
-        title: Text("Recent Snaps",style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600)),
+        title: Text(AppLocalizations.of(context)!.recentsnaps,style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600)),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -77,7 +78,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                     CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Reasons: ",
+                                        "${AppLocalizations.of(context)!.reasons}: ",
                                         style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600),
                                       ),
                                       Row(
@@ -100,7 +101,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                       Row(
                                         children: [
                                           Text(
-                                            "Healthy: ",
+                                            "${AppLocalizations.of(context)!.healthy}: ",
                                             style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600),
                                           ),
                                           Image.asset(recentDocs[index]['isHealty'] == true?
@@ -115,7 +116,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                         color: kPrymaryColor,
                                       ),
                                        Text(
-                                        "Uploads",
+                                         AppLocalizations.of(context)!.uploads,
                                         style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600),
                                       ),
                                       SizedBox(
@@ -166,7 +167,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
                                           Text(
-                                            "Date: ",
+                                            "${AppLocalizations.of(context)!.date}: ",
                                             style: GoogleFonts.sourceSansPro(color: kPrymaryColor,fontSize: 10, fontWeight: FontWeight.w600),
                                           ),
                                           Text((recentDocs[index]['createdAt']
@@ -190,7 +191,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                             width: 10,
                                           ),
                                           Text(
-                                            "Hour: ",
+                                            "${AppLocalizations.of(context)!.time}: ",
                                             style: GoogleFonts.sourceSansPro(color: kPrymaryColor,fontSize: 10, fontWeight: FontWeight.w600),
                                           ),
                                           Text((recentDocs[index]['createdAt']

@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
@@ -48,7 +49,7 @@ class _FlowItemState extends State<FlowItem> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:  [
                   Text(
-                    'Flow',
+                    AppLocalizations.of(context)!.flowtitle,
                     style: GoogleFonts.sourceSansPro(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
 
@@ -69,8 +70,8 @@ class _FlowItemState extends State<FlowItem> {
                               fontSize: 18,
                               color: kPrymaryColor
                           ),
-                          text: const [
-                            "Please wait..."
+                          text:  [
+                            AppLocalizations.of(context)!.plswait
                           ],
                           isRepeatingAnimation: true,
                           speed: const Duration(milliseconds: 150),
@@ -161,7 +162,7 @@ class _FlowItemState extends State<FlowItem> {
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [       Text("${recentDocs[index]['title']}",style: GoogleFonts.sourceSansPro(fontSize: 22, fontWeight: FontWeight.w600) ),
+                                                children: [Text("${recentDocs[index]['title']}",style: GoogleFonts.sourceSansPro(fontSize: 22, fontWeight: FontWeight.w600) ),
                                                   Text("${recentDocs[index]['subTitle']}",style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600, color: Colors.grey) ),
                                                   const SizedBox(
                                                     height: 5,
@@ -182,13 +183,13 @@ class _FlowItemState extends State<FlowItem> {
 
                                                     children: [
                                                       Text(
-                                                        "Author: ",
+                                                        AppLocalizations.of(context)!.author,
                                                         style: GoogleFonts.sourceSansPro(color: kPrymaryColor,fontSize: 10, fontWeight: FontWeight.w600),
                                                       ),
                                                       Text("${recentDocs[index]['author']}",style: GoogleFonts.sourceSansPro()),
 
                                                       Text(
-                                                        "Date: ",
+                                                        AppLocalizations.of(context)!.date,
                                                         style: GoogleFonts.sourceSansPro(color: kPrymaryColor,fontSize: 10, fontWeight: FontWeight.w600),
                                                       ),
                                                       Text((recentDocs[index]['createdAt']
@@ -212,7 +213,7 @@ class _FlowItemState extends State<FlowItem> {
                                                         width: 10,
                                                       ),
                                                       Text(
-                                                        "Hour: ",
+                                                        AppLocalizations.of(context)!.time,
                                                         style: GoogleFonts.sourceSansPro(color: kPrymaryColor,fontSize: 10, fontWeight: FontWeight.w600),
                                                       ),
                                                       Text((recentDocs[index]['createdAt']

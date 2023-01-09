@@ -1,11 +1,8 @@
 
 import 'dart:convert';
-import 'dart:io';
-
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-
 import '../models/bitky_data_model.dart';
 import '../models/bitky_health_data_model.dart';
 
@@ -42,7 +39,7 @@ class BitkyApiClient{
     var body = json.encode({
       "images": images,
       "modifiers": ["similar_images"],
-      "plant_details": ["common_names", "url", "wiki_description", "taxonomy", "wiki_images"],
+      "plant_details": ["common_names","watering", "url", "wiki_description", "taxonomy", "wiki_images"],
     });
     var request = http.post(Uri.parse(finalUrl), headers: requestHeaders, body: body);
     var res = await request;
@@ -58,7 +55,7 @@ class BitkyApiClient{
   }
 
 
-  Future<HealthDataModel> getPlanetHealth(List<String> images) async {
+  Future<HealthDataModel> getPlanetHealth(List<String> images, BuildContext context) async {
     const finalUrl = "https://api.plant.id/v2/health_assessment";
     Map<String, String> requestHeaders = {
       'Api-Key': '4FevuT7eMgLKdMqvSO8l6jdaNCixmhQQbNH1Ey7Ym57AHUMx86',

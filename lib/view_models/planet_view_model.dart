@@ -46,10 +46,10 @@ class BitkyViewModel with ChangeNotifier {
   }
 */
 
-  Future<HealthDataModel> getPlantHealthFromUi(List<String> images) async {
+  Future<HealthDataModel> getPlantHealthFromUi(List<String> images, BuildContext context) async {
     try {
       state = DataState.loadingState;
-      _healthDataModel = await _repository.getPlantHealthFromRepository(images);
+      _healthDataModel = await _repository.getPlantHealthFromRepository(images, context);
       state = DataState.loadedState;
     } catch (e) {
       state = DataState.errorState;

@@ -1,4 +1,5 @@
 import 'package:bitky/globals/globals.dart';
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
@@ -115,7 +116,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Text("Scientific Names: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
+                                          Text("${AppLocalizations.of(context)!.scientificnames}: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
                                           fontSize: 12
                                           ),),
                                           Text(widget.dataModel!.suggestions![index].plantDetails!.scientificName!.toCapitalized().toString(),
@@ -129,7 +130,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                               ),
                             ),
                             const SizedBox(height: 10,),
-                            Text("Description",
+                            Text(AppLocalizations.of(context)!.descrip,
                               style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w500, fontSize: 20),),
                             Text(widget.dataModel!.suggestions![index].plantDetails!.wikiDescription!.value!.toCapitalized().toString(),
                               textAlign: TextAlign.justify,
@@ -148,7 +149,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("Taxonomy", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
+                                      Text(AppLocalizations.of(context)!.taxonomy, style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
                                       fontSize: 16
                                       ),),
                                       Row(
@@ -166,7 +167,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Text("Phylum: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
+                                          Text("${AppLocalizations.of(context)!.phylum}: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
                                               fontSize: 12
                                           ),),
                                           Text(widget.dataModel!.suggestions![index].plantDetails!.taxonomy!.phylum!.toCapitalized().toString(),
@@ -177,7 +178,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Text("Class: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
+                                          Text("${AppLocalizations.of(context)!.classs}: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
                                               fontSize: 12
                                           ),),
                                           Text(widget.dataModel!.suggestions![index].plantDetails!.taxonomy!.clasS!.toCapitalized().toString(),
@@ -199,7 +200,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Text("Family: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
+                                          Text("${AppLocalizations.of(context)!.family}: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
                                               fontSize: 12
                                           ),),
                                           Text(widget.dataModel!.suggestions![index].plantDetails!.taxonomy!.family!.toCapitalized().toString(),
@@ -210,7 +211,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Text("Genus: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
+                                          Text("${AppLocalizations.of(context)!.genus}: ", style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
                                               fontSize: 12
                                           ),),
                                           Text(widget.dataModel!.suggestions![index].plantDetails!.taxonomy!.genus!.toCapitalized().toString(),

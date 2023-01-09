@@ -29,6 +29,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  flutter_localization: ^0.1.9
   flutter:
     sdk: flutter
 
@@ -65,7 +66,7 @@ dependencies:
   day_picker: 2.1.0
   top_snackbar_flutter: ^3.0.0+1
   flutter_datetime_picker: ^1.5.1
-  intl: ^0.18.0
+  intl: 0.17.0
 
 
 
@@ -87,16 +88,12 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
+  generate: true
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
   assets:
     - images/
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

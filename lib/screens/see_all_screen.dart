@@ -1,3 +1,4 @@
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
@@ -21,7 +22,7 @@ class SeeAllScreen extends StatelessWidget {
         elevation: 0,
         foregroundColor: kPrymaryColor,
         centerTitle: true,
-        title: Text("All Response",style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600)),
+        title: Text(AppLocalizations.of(context)!.allresponse,style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -94,7 +95,7 @@ class SeeAllScreen extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.all(5.0),
                                     child: Text(
-                                      "Similarity: %${diseases!.healthAssessment!.diseases![index].similarImages![0].similarity.toString().substring(0,1)}0",
+                                      "${AppLocalizations.of(context)!.similarity}: %${diseases!.healthAssessment!.diseases![index].similarImages![0].similarity.toString().substring(0,1)}0",
                                       textAlign: TextAlign.center,
                                       style:  GoogleFonts.sourceSansPro(
                                           fontSize: 12,

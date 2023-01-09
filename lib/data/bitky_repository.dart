@@ -2,6 +2,7 @@
 import 'dart:typed_data';
 
 import 'package:bitky/models/bitky_health_data_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../locator.dart';
@@ -16,8 +17,8 @@ class PlanetRepository{
     return await planetApiClient.getPlanet(images);
   }*/
 
-  Future<HealthDataModel> getPlantHealthFromRepository(List<String> images) async{
-    return await planetApiClient.getPlanetHealth(images);
+  Future<HealthDataModel> getPlantHealthFromRepository(List<String> images, BuildContext context) async{
+    return await planetApiClient.getPlanetHealth(images, context);
   }
 
   Future<BitkyDataModel> plantIdentifyFromRepository(List<String> images) async{

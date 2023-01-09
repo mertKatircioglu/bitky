@@ -5,11 +5,13 @@ import 'package:bitky/nav_bar_items/my_garden_item.dart';
 import 'package:bitky/nav_bar_items/reminders_item.dart';
 import 'package:bitky/nav_bar_items/search_item.dart';
 import 'package:bitky/nav_bar_items/settings_item.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
+import '../l10n/app_localizations.dart';
 import '../nav_bar_items/diagnose_item.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
       const FlowItem(),
       const Reminder(),
       const MyGarden(),
+      // const SettingsItem()
     ];
   }
 
@@ -51,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.waveform_path_ecg, size: 20),
-        title: ("Diagnose"),
+        title: (AppLocalizations.of(context)!.diagnosetitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
 
         activeColorPrimary: kPrymaryColor,
@@ -59,33 +62,33 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.search, size: 20,),
-        title: ("Search"),
+        title: (AppLocalizations.of(context)!.searchtitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.flowchart, size: 20,),
-        title: ("Flow"),
+        title: (AppLocalizations.of(context)!.flowtitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.bell, size: 20),
-        title: ("Reminders"),
+        title: (AppLocalizations.of(context)!.remindertitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.leaf_arrow_circlepath, size: 20),
-        title: ("My Garden"),
+        title: (AppLocalizations.of(context)!.mygardentitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
-/*      PersistentBottomNavBarItem(
+/*     PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.settings, size: 20),
         title: ("Settings"),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),

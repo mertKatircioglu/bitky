@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../l10n/app_localizations.dart';
 import '../locator.dart';
 import '../view_models/planet_view_model.dart';
 import 'custom_error_dialog.dart';
@@ -32,7 +33,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
       if(passwordController.text.length <5 && confirmPasswordController.text.length <5){
         showDialog(context: context,
             builder: (c){
-              return CustomErrorDialog(message: 'Password must be longer than 6 characters',);
+              return CustomErrorDialog(message: AppLocalizations.of(context)!.passwordwarningone,);
             });
       }else{
         if(confirmPasswordController.text.isNotEmpty && emailController.text.isNotEmpty &&
@@ -44,14 +45,14 @@ class _RegisterWidgetState extends State<RegisterWidget> {
         }else{
           showDialog(context: context,
               builder: (c){
-                return CustomErrorDialog(message: 'Please fill all fields.',);
+                return CustomErrorDialog(message: AppLocalizations.of(context)!.fillallfields,);
               });
         }
       }
     } else{
       showDialog(context: context,
           builder: (c){
-            return CustomErrorDialog(message: 'Password and confirm password does not match',);
+            return CustomErrorDialog(message: AppLocalizations.of(context)!.passwordwarningtwo,);
           });
     }
 
@@ -123,9 +124,9 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-       const Text("Register with email & password",
+        Text(AppLocalizations.of(context)!.registertitle,
          textAlign: TextAlign.center,
-         style: TextStyle(
+         style: const TextStyle(
            color: kPrymaryColor,
           fontWeight: FontWeight.w500,
           fontSize: 16
@@ -142,7 +143,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     child: CustomTextField(
                       iconData: Icons.person,
                       controller: nameController,
-                      hintText: 'Name & surname',
+                      hintText: AppLocalizations.of(context)!.namesurname,
                       isObscreen: false,
                       height: 25,
                     ),
@@ -152,7 +153,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     child: CustomTextField(
                       iconData: Icons.email,
                       controller: emailController,
-                      hintText: 'e-mail',
+                      hintText: AppLocalizations.of(context)!.email,
                       height: 25,
                       isObscreen: false,
                     ),
@@ -163,7 +164,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                       iconData: Icons.key,
                       controller: passwordController,
                       height: 30,
-                      hintText: 'Password',
+                      hintText: AppLocalizations.of(context)!.password,
                       isObscreen: true,
                     ),
                   ),
@@ -173,7 +174,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                       height: 25,
                       controller: confirmPasswordController,
                       iconData: Icons.key,
-                      hintText: 'Confirm password',
+                      hintText: AppLocalizations.of(context)!.confirmpassword,
                       isObscreen: true,
                     ),
                   ),
@@ -189,7 +190,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             children: [
               Expanded(
                 child: CustomPrimaryButton(
-                  text: "Register",
+                  text: AppLocalizations.of(context)!.registerbutton,
                   radius: 3.0,
                   function: formValidation,
                 ),
@@ -213,8 +214,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                       onPressed:(){
                         Navigator.pop(context);
                       },
-                      child: const Text(
-                        "Cancel", style: TextStyle(color: Colors.white),
+                      child: Text(
+                        AppLocalizations.of(context)!.cancelbutton, style: const TextStyle(color: Colors.white),
                       )),
                 ),
               ),

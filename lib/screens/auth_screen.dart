@@ -1,3 +1,4 @@
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/widgets/custom_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -63,7 +64,7 @@ class _AuthScreenState extends State<AuthScreen> {
           Navigator.of(context).push(_createRoute());
         } else{
           showDialog(context: context, builder: (c){
-            return CustomErrorDialog(message: "User is not found.");
+            return CustomErrorDialog(message:AppLocalizations.of(context)!.usernotfound);
           });
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (c)=>const AuthScreen()));
 
@@ -76,7 +77,7 @@ class _AuthScreenState extends State<AuthScreen> {
       });
     }else{
       showDialog(context: context, builder: (c){
-        return CustomErrorDialog(message: "Please fill all fields",);
+        return CustomErrorDialog(message: AppLocalizations.of(context)!.fillallfields,);
       });
     }
   }
@@ -173,7 +174,7 @@ class _AuthScreenState extends State<AuthScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Sign in", style:GoogleFonts.sourceSansPro(color:Colors.black45,fontSize: 28, fontWeight: FontWeight.w600, shadows: [
+            Text(AppLocalizations.of(context)!.signin, style:GoogleFonts.sourceSansPro(color:Colors.black45,fontSize: 28, fontWeight: FontWeight.w600, shadows: [
               const Shadow(
                 offset: Offset(0.0, 0.0),
                 blurRadius: 2.0,
@@ -184,7 +185,7 @@ class _AuthScreenState extends State<AuthScreen> {
             CustomTextField(
               iconData: Icons.person,
               controller: emailController,
-              hintText: 'e-mail',
+              hintText: AppLocalizations.of(context)!.email,
               isObscreen: false,
             ),
             Container(
@@ -223,7 +224,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     border: InputBorder.none,
                     prefixIcon:const Icon(Icons.lock, color: Colors.black45,),
                     focusColor: Theme.of(context).primaryColor,
-                    hintText: "Password"
+                    hintText: AppLocalizations.of(context)!.password
                 ),
               ),
             ),
@@ -263,9 +264,9 @@ class _AuthScreenState extends State<AuthScreen> {
             const SizedBox(height: 50,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text("Forgot password? ", style:TextStyle(color: Colors.black45)),
-                Text("Click here", style:TextStyle(color: Colors.blueAccent),)
+              children:  [
+                Text(AppLocalizations.of(context)!.forgotpass, style:TextStyle(color: Colors.black45)),
+                Text(AppLocalizations.of(context)!.clickhere, style:TextStyle(color: Colors.blueAccent),)
               ],
             )
           ],
