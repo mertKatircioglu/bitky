@@ -265,8 +265,8 @@ class _AuthScreenState extends State<AuthScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children:  [
-                Text(AppLocalizations.of(context)!.forgotpass, style:TextStyle(color: Colors.black45)),
-                Text(AppLocalizations.of(context)!.clickhere, style:TextStyle(color: Colors.blueAccent),)
+                Text(AppLocalizations.of(context)!.forgotpass, style:const TextStyle(color: Colors.black45)),
+                Text(AppLocalizations.of(context)!.clickhere, style:const TextStyle(color: Colors.blueAccent),)
               ],
             )
           ],

@@ -1,4 +1,5 @@
 import 'package:bitky/globals/globals.dart';
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/models/bitky_data_model.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,8 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import '../helpers/notification_service.dart';
 import 'custom_error_dialog.dart';
@@ -101,8 +100,8 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
                       color: kPrymaryColor,
                       child: TextFormField(
                         controller: nameController,
-                        decoration: const InputDecoration(
-                            border: InputBorder.none, hintText: 'Plant name'),
+                        decoration:  InputDecoration(
+                            border: InputBorder.none, hintText: AppLocalizations.of(context)!.plantname),
                       ),
                     ),
                     const SizedBox(
@@ -113,8 +112,8 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
                       color: kPrymaryColor,
                       child: TextFormField(
                         controller: locationController,
-                        decoration: const InputDecoration(
-                            border: InputBorder.none, hintText: 'Room name'),
+                        decoration:  InputDecoration(
+                            border: InputBorder.none, hintText: AppLocalizations.of(context)!.roomname),
                         textInputAction: TextInputAction.next,
                       ),
                     ),
@@ -129,7 +128,7 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
                   room: locationController.text ?? "Room 1",
                   color: Colors.transparent,
                   title: nameController.text,
-                  content: "Watering Time")),
+                  content: AppLocalizations.of(context)!.wateringtime)),
           const SizedBox(
             height: 50,
           )
@@ -197,7 +196,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
               context: context,
               builder: (c) {
                 return CustomErrorDialog(
-                  message: 'Plant ${widget.plantName} watering alarms is set.',
+                  message: '${AppLocalizations.of(context)!.plant} ${widget.plantName} ${AppLocalizations.of(context)!.wateringalarmisset}',
                 );
               });
         });
@@ -214,15 +213,15 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
           return AlertDialog(
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15))),
-            title: const Text(
-              "Select Day",
+            title:  Text(
+              AppLocalizations.of(context)!.selectday,
               style: TextStyle(color: kPrymaryColor),
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 RadioListTile(
-                  title: const Text("Sunday"),
+                  title: Text(AppLocalizations.of(context)!.sunday),
                   value: 1,
                   groupValue: day,
                   onChanged: (value) {
@@ -233,7 +232,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
                   },
                 ),
                 RadioListTile(
-                  title: const Text("Monday"),
+                  title: Text(AppLocalizations.of(context)!.monday),
                   value: 2,
                   groupValue: day,
                   onChanged: (value) {
@@ -244,7 +243,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
                   },
                 ),
                 RadioListTile(
-                  title: const Text("Tuesday"),
+                  title: Text(AppLocalizations.of(context)!.tuesday),
                   value: 3,
                   groupValue: day,
                   onChanged: (value) {
@@ -255,7 +254,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
                   },
                 ),
                 RadioListTile(
-                  title: const Text("Wednesday"),
+                  title: Text(AppLocalizations.of(context)!.wednesday),
                   value: 4,
                   groupValue: day,
                   onChanged: (value) {
@@ -266,7 +265,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
                   },
                 ),
                 RadioListTile(
-                  title: const Text("Thursday"),
+                  title: Text(AppLocalizations.of(context)!.thursday),
                   value: 5,
                   groupValue: day,
                   onChanged: (value) {
@@ -277,7 +276,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
                   },
                 ),
                 RadioListTile(
-                  title: const Text("Friday"),
+                  title: Text(AppLocalizations.of(context)!.friday),
                   value: 6,
                   groupValue: day,
                   onChanged: (value) {
@@ -288,7 +287,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
                   },
                 ),
                 RadioListTile(
-                  title: const Text("Saturday"),
+                  title: Text(AppLocalizations.of(context)!.saturday),
                   value: 7,
                   groupValue: day,
                   onChanged: (value) {
@@ -328,7 +327,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
                 builder: (c) {
                   return CustomErrorDialog(
                     message:
-                        'Plant ${widget.plantName} watering alarms is set.',
+                        '${AppLocalizations.of(context)!.plant} ${widget.plantName} ${AppLocalizations.of(context)!.wateringalarmisset}',
                   );
                 });
           });
@@ -359,7 +358,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
           context: context,
           builder: (c) {
             return CustomErrorDialog(
-              message: 'Please fill all fields.',
+              message: AppLocalizations.of(context)!.fillallfields,
             );
           });
     }
@@ -389,12 +388,12 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
           ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: kPrymaryColor),
               onPressed: () => _daily(context),
-              child: const Text("Add daily reminder")),
+              child: Text(AppLocalizations.of(context)!.adddailyreminderbutton)),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepOrangeAccent),
               onPressed: () => _weakly(context),
-              child: const Text("Add weakly reminder"))
+              child: Text(AppLocalizations.of(context)!.addweeklyreminder))
         ],
       ),
     );

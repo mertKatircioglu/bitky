@@ -2,6 +2,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
+
 class CustomLoadingDialog extends StatelessWidget {
 
   BuildContext? context;
@@ -20,7 +22,7 @@ class CustomLoadingDialog extends StatelessWidget {
               child:const CupertinoActivityIndicator()
           ),
           const SizedBox(height: 10,),
-          Text(message!+". Please wait...", style: TextStyle(color: Colors.black54),)
+          Text("${message!}. ${AppLocalizations.of(context)!.plswait}", style: const TextStyle(color: Colors.black54),)
 
         ],
       ),
