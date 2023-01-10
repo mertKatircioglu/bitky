@@ -189,7 +189,7 @@ packages:
       name: firebase_auth_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.2.2"
+    version: "5.2.3"
   firebase_core:
     dependency: "direct main"
     description:
@@ -293,6 +293,18 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.0.0"
+  flutter_localization:
+    dependency: "direct main"
+    description:
+      name: flutter_localization
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.9"
+  flutter_localizations:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -345,6 +357,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "7.2.0"
+  get_time_ago:
+    dependency: "direct main"
+    description:
+      name: get_time_ago
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.8"
   google_fonts:
     dependency: "direct main"
     description:
@@ -449,7 +468,7 @@ packages:
       name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.18.0"
+    version: "0.17.0"
   js:
     dependency: transitive
     description:

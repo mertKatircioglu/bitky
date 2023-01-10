@@ -36,7 +36,7 @@ class _ReminderState extends State<Reminder> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   AnimationController? localAnimationController;
   bool notificationState = true;
-
+  String? day;
 
   _addFromCamera(){
     _imagePickerSourceCamera().whenComplete(() {
@@ -168,8 +168,8 @@ class _ReminderState extends State<Reminder> {
                 Color(0xFFFFFFFF),
                 Color(0xFFA5EFB0),
               ],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(3.0, 2.0),
+              begin: FractionalOffset(0.1, 1.0),
+              end: FractionalOffset(0.0, 0.0),
               stops: [0.0, 1.0],
               tileMode: TileMode.clamp),
         ),
@@ -181,15 +181,18 @@ class _ReminderState extends State<Reminder> {
               const SizedBox(
                 height: 50,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:  [
-                  Text(
-                    AppLocalizations.of(context)!.remindertitle,
-                    style: GoogleFonts.sourceSansPro(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children:  [
+                    Text(
+                      AppLocalizations.of(context)!.remindertitle,
+                      style: GoogleFonts.sourceSansPro(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
 
-                ],
+                  ],
+                ),
               ),
               const SizedBox(
                 height: 40,
@@ -206,8 +209,8 @@ class _ReminderState extends State<Reminder> {
                           fontSize: 18,
                           color: kPrymaryColor
                         ),
-                        text: const [
-                          "Please wait..."
+                        text: [
+                          AppLocalizations.of(context)!.plswait
                         ],
                         isRepeatingAnimation: true,
                         speed: const Duration(milliseconds: 150),
@@ -243,21 +246,67 @@ class _ReminderState extends State<Reminder> {
                       return Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
-                          children: const [
-                            Text("No reminder. Add your first.")
+                          children: [
+                            Text(AppLocalizations.of(context)!.noreminder)
                           ],
                         ),
                       );
                     }
                     final reminderDocs = reminderSnapshot.data!.docs;
+
                     return FutureBuilder(
                       builder:(context, futureSnapshot){
                         return ListView.builder(
                           shrinkWrap: true,
                             itemCount: reminderDocs.length,
                             itemBuilder: (context, index) {
+                            switch(reminderDocs[index]['day']){
+                              case 1:{
+
+                                  day=AppLocalizations.of(context)!.sunday;
+
+                              }
+                              break;
+                              case 2:{
+
+                                  day=AppLocalizations.of(context)!.monday;
+
+                              }
+                              break;
+                              case 3:{
+
+                                  day=AppLocalizations.of(context)!.tuesday;
+
+                              }
+                              break;
+                              case 4:{
+                                day=AppLocalizations.of(context)!.wednesday;
+
+                              }
+                              break;
+                              case 5:{
+                                day=AppLocalizations.of(context)!.thursday;
+
+                              }
+                              break;
+                              case 6:{
+                                day=AppLocalizations.of(context)!.friday;
+
+                              }
+                              break;
+                              case 7:{
+                                day=AppLocalizations.of(context)!.saturday;
+
+                              }
+                              break;
+                              default :{
+                                setState(() {
+                                  day="-";
+                                });
+                              }
+                            };
                               return Card(
-                                elevation: 0,
+                                elevation: 5,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15)
                                 ),
@@ -278,7 +327,6 @@ class _ReminderState extends State<Reminder> {
                                             actions: [
                                               CupertinoButton(
                                                 onPressed: ()  {
-
                                                   flutterLocalNotificationsPlugin.cancel(reminderDocs[index]["scheduleId"]).whenComplete(() {
                                                     String id = reminderDocs[index]["scheduleId"].toString();
                                                     FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/reminders").doc(id)
@@ -311,44 +359,82 @@ class _ReminderState extends State<Reminder> {
                                         });
 
                                   },
-                                  child: ListTile(
-                                    title: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(reminderDocs[index]["room"],style:GoogleFonts.sourceSansPro(),),
-                                        Row(
-                                          children: [
-                                            Expanded(child: Text("${AppLocalizations.of(context)!.plantname}: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)),
-                                            Expanded(child: Text(reminderDocs[index]["plantName"], style:GoogleFonts.sourceSansPro(),)),
-                                          ],
-                                        ),
-                                        reminderDocs[index]["scheduleType"] == "weekly" ?  Row(
-                                          children: [
-                                            Text("${AppLocalizations.of(context)!.day}: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                            Text(reminderDocs[index]["day"].toString(), style:GoogleFonts.sourceSansPro(),),
-                                          ],
-                                        ):Container(),
-                                        Row(
-                                          children: [
-                                            Text("${AppLocalizations.of(context)!.time}: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                            Text(reminderDocs[index]["time"].toString(), style:GoogleFonts.sourceSansPro(),),
+                                  child: Card(
+                                    elevation: 0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Flexible(
+                                            flex: 1,
+                                            child:
+                                                Card(
+                                                  margin: const EdgeInsets.all(0),
+                                                  elevation: 5,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(15)
+                                                  ),
+                                                  child: Container(
+                                                    height: 50,
+                                                    width: 50,
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color: kPrymaryColor,
+                                                          width: 0,
+                                                        ),
+                                                        borderRadius: BorderRadius.circular(15),
+                                                        image:  DecorationImage(
+                                                            fit: BoxFit.cover,
+                                                            image: NetworkImage(reminderDocs[index]["image"]))
+                                                    ),
+                                                  ),
+                                                ),
 
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text("${AppLocalizations.of(context)!.schduletype}: ", style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                            Text(reminderDocs[index]["scheduleType"].toString().toCapitalized(), style:GoogleFonts.sourceSansPro(color: Colors.deepOrange),),
-                                          ],
-                                        ),
-                                      ],
+                                          ),
+                                          const SizedBox(width: 5,),
+                                          Flexible(
+                                            flex: 4,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(reminderDocs[index]["plantName"], style:GoogleFonts.sourceSansPro(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600),),
+                                                const SizedBox(height: 3,),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    reminderDocs[index]["scheduleType"] == "weekly" ?  Row(
+                                                      children: [
+                                                        Text("${day!} ", style:GoogleFonts.sourceSansPro(color: Colors.grey),),
+                                                      ],
+                                                    ):Container(),
+                                                    Text("${reminderDocs[index]["time"]} ", style:GoogleFonts.sourceSansPro(color: Colors.grey),),
+                                                    Text("(${reminderDocs[index]["room"]})",style:GoogleFonts.sourceSansPro(fontSize: 9,
+                                                        fontWeight: FontWeight.w600),),
+                                                  ],
+                                                ),
+
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 5,),
+                                          Flexible(
+                                            flex: 1,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children:  [
+                                                const Icon(Icons.notifications,color: kPrymaryColor,),
+                                                Text(reminderDocs[index]["scheduleType"].toString().toCapitalized(), style:GoogleFonts.sourceSansPro(),),
+
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    leading: CircleAvatar(
-                                      backgroundColor: Colors.transparent,
-                                      backgroundImage: NetworkImage(reminderDocs[index]["image"]),
-                                      child: const CupertinoActivityIndicator(),
-                                    ),
-                                    trailing:const Icon(Icons.notifications_active_outlined, color: kPrymaryColor,),
                                   ),
                                 ),
                               );

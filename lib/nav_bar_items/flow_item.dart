@@ -1,14 +1,13 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:bitky/screens/open_blog_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../restart_app.dart';
+import 'package:get_time_ago/get_time_ago.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class FlowItem extends StatefulWidget {
   const FlowItem({Key? key}) : super(key: key);
@@ -32,8 +31,8 @@ class _FlowItemState extends State<FlowItem> {
                 Color(0xFFFFFFFF),
                 Color(0xFFA5EFB0),
               ],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(3.0, 2.0),
+              begin: FractionalOffset(0.1, 1.0),
+              end: FractionalOffset(0.0, 0.0),
               stops: [0.0, 1.0],
               tileMode: TileMode.clamp),
         ),
@@ -45,203 +44,207 @@ class _FlowItemState extends State<FlowItem> {
               const SizedBox(
                 height: 50,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:  [
-                  Text(
-                    AppLocalizations.of(context)!.flowtitle,
-                    style: GoogleFonts.sourceSansPro(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.flowtitle,
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                    Container(
+                      height: 25,
+                      width: 250,
+                      child: TextField(
+                        onSubmitted: (val){
+                        },
+                        focusNode: FocusNode(),
+                        decoration: InputDecoration(
+                            suffixIcon: const Icon(
+                              Icons.search,
+                              color: Colors.green,
+                              size: 16,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(
                 height: 5,
               ),
               isLoading == true
-                  ?    Center(
-                  child: SizedBox(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CupertinoActivityIndicator(color: kPrymaryColor,),
-                        WavyAnimatedTextKit(
-                          textStyle: GoogleFonts.sourceSansPro(
-                              fontSize: 18,
-                              color: kPrymaryColor
+                  ? Center(
+                      child: SizedBox(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CupertinoActivityIndicator(
+                            color: kPrymaryColor,
                           ),
-                          text:  [
-                            AppLocalizations.of(context)!.plswait
-                          ],
-                          isRepeatingAnimation: true,
-                          speed: const Duration(milliseconds: 150),
-                        ),
-                      ],
-                    ),
-                  )
-              ):StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection(
-                      'blog').orderBy("createdAt",descending: true)
-                      .snapshots(),
-                  builder: (ctx, recentSnapshot) {
-                    if (recentSnapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CupertinoActivityIndicator(),
-                      );
-                    }
-                    final recentDocs = recentSnapshot.data!.docs;
-                    return Expanded(
-                      child: FutureBuilder(
-                        builder: (context, futureSnapshot) {
-                          return ListView.builder(
-                            shrinkWrap: true,
-                              itemCount: recentDocs.length,
-                              itemBuilder: (context, index) {
-                                // print(recentDocs[index]['uploadedImages'].toString());
-                                var imagesJson = (recentDocs[index]['images'] as List);
-                                List<String> images =[];
-                                imagesJson.forEach((element) {
-                                  images.add(element);
-                                });
-                                return Padding(
-                                  padding: const EdgeInsets.all(18.0),
-                                  child: SizedBox(
-                                    height: MediaQuery.of(context).size.height * 1.1,
-                                    child: Card(
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15)
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(0.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
-                                              child: Container(
-                                                height: 200,
-                                                width: MediaQuery.of(context).size.width,
-                                                child: CarouselSlider.builder(
-                                                  itemCount: images.length,
-                                                  itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) =>
-                                                      ClipRRect(
-                                                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
-
-                                                        child: Container(
-                                                          width: MediaQuery.of(context).size.width,
-                                                          child: InkWell(
-                                                              onTap: (){
-                                                                final imageProvider = Image.network(images[itemIndex]).image;
-                                                                showImageViewer(context, imageProvider, onViewerDismissed: () {
-                                                                });
-                                                              },
-                                                              child: Image.network(images[itemIndex], fit: BoxFit.cover,)),
-                                                        ),
-                                                      ),
-                                                  options: CarouselOptions(
-                                                    height: 200,
-                                                    pauseAutoPlayOnManualNavigate: true,
-                                                    viewportFraction: 1,
-                                                    initialPage: 0,
-                                                    enableInfiniteScroll: true,
-                                                    reverse: false,
-                                                    autoPlay: true,
-                                                    autoPlayInterval: const Duration(seconds: 3),
-                                                    autoPlayAnimationDuration: const Duration(milliseconds: 1500),
-                                                    autoPlayCurve: Curves.fastOutSlowIn,
-                                                    enlargeCenterPage: true,
-                                                    enlargeFactor: 1.0,
-                                                    scrollDirection: Axis.horizontal,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(padding: const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [Text("${recentDocs[index]['title']}",style: GoogleFonts.sourceSansPro(fontSize: 22, fontWeight: FontWeight.w600) ),
-                                                  Text("${recentDocs[index]['subTitle']}",style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600, color: Colors.grey) ),
-                                                  const SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  const Divider(
-                                                    height: 2,
-                                                    color: kPrymaryColor,
-                                                  ),
-                                                  Text("${recentDocs[index]['description']}",style: GoogleFonts.sourceSansPro()),
-                                                  const SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  const Divider(
-                                                    height: 2,
-                                                    color: kPrymaryColor,
-                                                  ),
-                                                  Row(
-
-                                                    children: [
-                                                      Text(
-                                                        AppLocalizations.of(context)!.author,
-                                                        style: GoogleFonts.sourceSansPro(color: kPrymaryColor,fontSize: 10, fontWeight: FontWeight.w600),
-                                                      ),
-                                                      Text("${recentDocs[index]['author']}",style: GoogleFonts.sourceSansPro()),
-
-                                                      Text(
-                                                        AppLocalizations.of(context)!.date,
-                                                        style: GoogleFonts.sourceSansPro(color: kPrymaryColor,fontSize: 10, fontWeight: FontWeight.w600),
-                                                      ),
-                                                      Text((recentDocs[index]['createdAt']
-                                                      as Timestamp)
-                                                          .toDate()
-                                                          .day
-                                                          .toString(),style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600,fontSize: 10,)),
-                                                      const Text("-", style: TextStyle(fontSize: 10),),
-                                                      Text((recentDocs[index]['createdAt']
-                                                      as Timestamp)
-                                                          .toDate()
-                                                          .month
-                                                          .toString(),style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600,fontSize: 10,)),
-                                                      const Text("-", style: TextStyle(fontSize: 10)),
-                                                      Text((recentDocs[index]['createdAt']
-                                                      as Timestamp)
-                                                          .toDate()
-                                                          .year
-                                                          .toString(),style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600,fontSize: 10,)),
-                                                      const SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      Text(
-                                                        AppLocalizations.of(context)!.time,
-                                                        style: GoogleFonts.sourceSansPro(color: kPrymaryColor,fontSize: 10, fontWeight: FontWeight.w600),
-                                                      ),
-                                                      Text((recentDocs[index]['createdAt']
-                                                      as Timestamp)
-                                                          .toDate()
-                                                          .day
-                                                          .toString(),style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600,fontSize: 10,)),
-                                                      const Text(":", style: TextStyle(fontSize: 10)),
-                                                      Text((recentDocs[index]['createdAt']
-                                                      as Timestamp)
-                                                          .toDate()
-                                                          .second
-                                                          .toString(),style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600,fontSize: 10,)),
-                                                    ],
-                                                  ),],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              });
-                        },
+                          WavyAnimatedTextKit(
+                            textStyle: GoogleFonts.sourceSansPro(
+                                fontSize: 18, color: kPrymaryColor),
+                            text: [AppLocalizations.of(context)!.plswait],
+                            isRepeatingAnimation: true,
+                            speed: const Duration(milliseconds: 150),
+                          ),
+                        ],
                       ),
-                    );
-                  }),
+                    ))
+                  : StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('blog')
+                          .orderBy("createdAt", descending: true)
+                          .snapshots(),
+                      builder: (ctx, recentSnapshot) {
+
+                        final recentDocs = recentSnapshot.data!.docs;
+                        return Expanded(
+                          child: FutureBuilder(
+                            builder: (context, futureSnapshot) {
+                              return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: recentDocs.length,
+                                  itemBuilder: (context, index) {
+                                    // print(recentDocs[index]['uploadedImages'].toString());
+                                    var imagesJson =
+                                        (recentDocs[index]['images'] as List);
+                                    List<String> images = [];
+                                    imagesJson.forEach((element) {
+                                      images.add(element);
+                                    });
+                                 var date = DateTime.now().day - DateTime.parse(recentDocs[index]["createdAt"].toDate().toString()).day;
+                                    return InkWell(
+                                      onTap: (){
+
+                                        PersistentNavBarNavigator.pushNewScreen(
+                                          context,
+                                          screen: OpenBlogItemDetailScreen(images: images,title:recentDocs[index]["title"],
+                                            subTitle: recentDocs[index]["subTitle"],
+                                            description: recentDocs[index]["description"],
+                                            category: recentDocs[index]["category"],
+                                            author: recentDocs[index]["author"],
+                                            date: date.toString(),
+                                          ),
+                                          withNavBar: false,
+                                          pageTransitionAnimation:PageTransitionAnimation.cupertino,
+                                        );
+
+                                      },
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child: SizedBox(
+                                            height: 120,
+                                            child: Card(
+                                              elevation: 5,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15)),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Flexible(
+                                                    flex: 1,
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children: [
+                                                        Container(
+                                                          height: 90,
+                                                          padding: const EdgeInsets.only(left: 5),
+                                                          width: 90,
+                                                          child: GridView.builder(
+                                                              gridDelegate:const SliverGridDelegateWithMaxCrossAxisExtent(
+                                                                maxCrossAxisExtent: 60,
+                                                                childAspectRatio: 1,
+                                                                crossAxisSpacing: 1,
+                                                                mainAxisSpacing: 4
+                                                              ),
+                                                              itemCount: images.length,
+                                                              itemBuilder: (_, index){
+                                                                return Card(
+                                                                  elevation: 3,
+                                                                  child: Container(
+                                                                    decoration: BoxDecoration(
+                                                                      image: DecorationImage(
+                                                                        fit: BoxFit.cover,
+                                                                        image: NetworkImage(images[index])
+                                                                      ),
+                                                                      borderRadius: BorderRadius.circular(5)
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              }),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 5,),
+                                                  Flexible(
+                                                    flex: 3,
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(recentDocs[index]["title"],maxLines: 2,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: GoogleFonts.sourceSansPro(
+                                                          fontWeight: FontWeight.w600, fontSize: 16
+                                                        ),),
+                                                          const Padding(padding: EdgeInsets.symmetric(horizontal: 2),
+                                                          child: Divider(height: 2, thickness: 0.4,),
+                                                          ),
+                                                        Text(recentDocs[index]["subTitle"]+"   >>>",
+                                                          maxLines:2,
+                                                          textAlign: TextAlign.justify,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: GoogleFonts.sourceSansPro(
+                                                            fontSize: 14,
+                                                            color: Colors.black54
+                                                        ),),
+                                                        const Padding(padding: EdgeInsets.symmetric(horizontal: 2),
+                                                          child: Divider(height: 5, thickness: 0.4,),
+                                                        ), Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Text(recentDocs[index]["author"],
+                                                              style: GoogleFonts.sourceSansPro(
+                                                                  fontSize: 10,
+                                                                  fontStyle: FontStyle.italic,
+                                                                  color: Colors.black
+                                                              ),),
+                                                            Text("$date ${AppLocalizations.of(context)!.daysago}",
+                                                              style: GoogleFonts.sourceSansPro(
+                                                                  fontSize: 10,
+                                                                  fontStyle: FontStyle.italic,
+                                                                  color: Colors.black
+                                                              ),),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )),
+                                    );
+                                  });
+                            },
+                          ),
+                        );
+                      }),
             ],
           ),
         ),
@@ -249,3 +252,61 @@ class _FlowItemState extends State<FlowItem> {
     );
   }
 }
+/*
+
+ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              child: Stack(
+                                                alignment: Alignment.bottomCenter,
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                            colorFilter: const ColorFilter.mode(Colors.black45, BlendMode.darken),
+                                                            fit: BoxFit.cover,
+                                                            image: NetworkImage(
+                                                                images[0]
+                                                            )
+                                                        )
+                                                    ),
+                                                    width: MediaQuery.of(context)
+                                                        .size
+                                                        .width,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(8.0),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white54,
+                                                          borderRadius: BorderRadius.circular(15)
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.end,
+                                                        children: [
+                                                          Text(recentDocs[index]["title"], style: GoogleFonts.sourceSansPro(
+                                                              fontWeight: FontWeight.w600, fontSize: 16),),
+                                                          const Divider(color: Colors.black,thickness: 0.1,height: 5,),
+                                                          Text("${recentDocs[index]["subTitle"]}    >>", style: GoogleFonts.sourceSansPro(
+                                                              fontSize: 10),),
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.end,
+                                                            children: [
+
+                                                              Text("${AppLocalizations.of(context)!.author}", style: GoogleFonts.sourceSansPro(
+                                                                  fontWeight: FontWeight.w500, fontSize: 10),),
+                                                              Text(recentDocs[index]["author"], style: GoogleFonts.sourceSansPro(
+                                                                  fontWeight: FontWeight.w500, fontSize: 10),),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            )
+ */

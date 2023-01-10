@@ -20,7 +20,7 @@
   "plswait":"Lütfen bekleyin...",
   "author":"Yazar: ",
   "date":"Tarih: ",
-  "time":"Saat: ",
+  "time":"Saat",
   "searchtitle":"Arama",
   "remindertitle":"Hatırlatıcı",
   "diagnosetitle":"Hastalık",
@@ -70,5 +70,7 @@
   "reminderisdeleted":"Hatırlatırıcı silindi.",
   "yes":"Evet",
   "no":"Hayır",
-  "allresponse":"Gelen Bilgiler"
+  "allresponse":"Gelen Bilgiler",
+  "daysago":"Gün önce",
+  "category":"Kategory"
 }

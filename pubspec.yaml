@@ -67,6 +67,8 @@ dependencies:
   top_snackbar_flutter: ^3.0.0+1
   flutter_datetime_picker: ^1.5.1
   intl: 0.17.0
+  get_time_ago: ^1.1.0
+
 
 
 
