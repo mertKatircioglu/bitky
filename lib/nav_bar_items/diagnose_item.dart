@@ -156,6 +156,8 @@ class _DiagnosePageState extends State<DiagnosePage> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage('images/banner.png'),alignment: Alignment.topCenter),
         gradient: LinearGradient(
             colors: [
               Color(0xFFFFFFFF),

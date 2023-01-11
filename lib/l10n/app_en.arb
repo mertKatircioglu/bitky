@@ -230,6 +230,15 @@
 "description":"daysago"},
 "category":"Category",
 "@category":{
-"description":"category"}
+"description":"category"},
+"mygardentitle":"My Garden",
+"@mygardentitle":{
+"description":"mygardentitle"},
+"addyourfirstgardenbutton":"Add your first garden",
+"@addyourfirstgardenbutton":{
+"description":"addyourfirstgardenbutton"},
+"addyourgardentitle":"Add your garden/room etc.",
+"@addyourgardentitle":{
+"description":"addyourgardentitle"}
 
 }

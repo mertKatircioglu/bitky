@@ -3,7 +3,7 @@ import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/screens/open_blog_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dropdown_search/dropdown_search.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,6 +38,8 @@ class _FlowItemState extends State<FlowItem> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('images/banner.png'),alignment: Alignment.topCenter),
           gradient: LinearGradient(
               colors: [
                 Color(0xFFFFFFFF),

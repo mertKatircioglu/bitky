@@ -163,6 +163,8 @@ class _ReminderState extends State<Reminder> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('images/banner.png'),alignment: Alignment.topCenter),
           gradient: LinearGradient(
               colors: [
                 Color(0xFFFFFFFF),

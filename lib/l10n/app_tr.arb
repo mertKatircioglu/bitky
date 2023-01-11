@@ -72,5 +72,8 @@
   "no":"Hayır",
   "allresponse":"Gelen Bilgiler",
   "daysago":"Gün önce",
-  "category":"Kategory"
+  "category":"Kategory",
+  "mygardentitle":"Bahçem",
+  "addyourfirstgardenbutton":"İlk bahçeni ekle",
+  "addyourgardentitle":"Bahçeni veya odanı ekle. Örnek: Salon"
 }
