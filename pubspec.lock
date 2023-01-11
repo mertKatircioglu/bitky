@@ -141,6 +141,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0+3"
+  dropdown_search:
+    dependency: "direct main"
+    description:
+      name: dropdown_search
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.5"
   easy_image_viewer:
     dependency: "direct main"
     description:
@@ -357,13 +364,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "7.2.0"
-  get_time_ago:
-    dependency: "direct main"
-    description:
-      name: get_time_ago
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.8"
   google_fonts:
     dependency: "direct main"
     description:

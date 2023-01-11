@@ -3,10 +3,10 @@ import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/screens/open_blog_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:get_time_ago/get_time_ago.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class FlowItem extends StatefulWidget {
@@ -18,6 +18,18 @@ class FlowItem extends StatefulWidget {
 
 class _FlowItemState extends State<FlowItem> {
   bool isLoading = false;
+  Future<QuerySnapshot>? blogs;
+  String title="";
+
+
+
+
+  initSearching(String text) async{
+   blogs= FirebaseFirestore.instance.collection('blog').
+    where('title', isGreaterThanOrEqualTo: text).get();
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,27 +67,12 @@ class _FlowItemState extends State<FlowItem> {
                       style: GoogleFonts.sourceSansPro(
                           fontSize: 18, fontWeight: FontWeight.w600),
                     ),
-                    Container(
-                      height: 25,
-                      width: 250,
-                      child: TextField(
-                        onSubmitted: (val){
-                        },
-                        focusNode: FocusNode(),
-                        decoration: InputDecoration(
-                            suffixIcon: const Icon(
-                              Icons.search,
-                              color: Colors.green,
-                              size: 16,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Colors.white),
-                      ),
-                    ),
+                    IconButton(
+                        onPressed: (){
+                      showSearch(context: context,
+                          delegate: SearchDelegatee());
+                    },
+                        icon: const Icon(Icons.search_sharp))
                   ],
                 ),
               ),
@@ -107,7 +104,9 @@ class _FlowItemState extends State<FlowItem> {
                           .orderBy("createdAt", descending: true)
                           .snapshots(),
                       builder: (ctx, recentSnapshot) {
-
+                        if(recentSnapshot.connectionState == ConnectionState.waiting){
+                          return const CupertinoActivityIndicator(color: Colors.transparent,);
+                        }
                         final recentDocs = recentSnapshot.data!.docs;
                         return Expanded(
                           child: FutureBuilder(
@@ -126,7 +125,6 @@ class _FlowItemState extends State<FlowItem> {
                                  var date = DateTime.now().day - DateTime.parse(recentDocs[index]["createdAt"].toDate().toString()).day;
                                     return InkWell(
                                       onTap: (){
-
                                         PersistentNavBarNavigator.pushNewScreen(
                                           context,
                                           screen: OpenBlogItemDetailScreen(images: images,title:recentDocs[index]["title"],
@@ -252,6 +250,77 @@ class _FlowItemState extends State<FlowItem> {
     );
   }
 }
+
+
+class SearchDelegatee extends SearchDelegate{
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    IconButton(
+      icon: const Icon(Icons.clear),
+      onPressed: ()=>close(context, null),
+    );
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+  IconButton(
+    icon: const Icon(Icons.arrow_back),
+    onPressed: (){
+    if(query.isEmpty){
+      close(context, null);
+    }else{
+      query = '';
+    }
+    },
+  );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: implement buildResults
+    throw UnimplementedError();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+   var blogs = FirebaseFirestore.instance.collection('blog').
+    where('title', isGreaterThanOrEqualTo: query).get();
+
+    return FutureBuilder(
+      future: blogs,
+        builder: (context, snapshots){
+         var recentDocs = snapshots.data!.docs;
+         if(snapshots.connectionState == ConnectionState.waiting){
+           return const Center(child: CupertinoActivityIndicator(color: Colors.transparent,));
+         }
+          return ListView.builder(
+            itemCount: recentDocs.length,
+              itemBuilder: (context, index){
+              return ListTile(
+                title: Text(recentDocs[index]["title"]),
+                onTap: (){
+                  query = recentDocs[index]["title"];
+                  var date = DateTime.now().day - DateTime.parse(recentDocs[index]["createdAt"].toDate().toString()).day;
+                  PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    screen: OpenBlogItemDetailScreen(images: recentDocs[index]["images"],title:recentDocs[index]["title"],
+                      subTitle: recentDocs[index]["subTitle"],
+                      description: recentDocs[index]["description"],
+                      category: recentDocs[index]["category"],
+                      author: recentDocs[index]["author"],
+                      date: date.toString(),
+                    ),
+                    withNavBar: false,
+                    pageTransitionAnimation:PageTransitionAnimation.cupertino,
+                  );
+                },
+              );
+              });
+        });
+  }
+
+}
+
 /*
 
 ClipRRect(
