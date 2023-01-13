@@ -397,11 +397,10 @@ class _MyGardenState extends State<MyGarden> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const CupertinoActivityIndicator(
-                            color: kPrymaryColor,
                           ),
                           WavyAnimatedTextKit(
                             textStyle: GoogleFonts.sourceSansPro(
-                                fontSize: 18, color: kPrymaryColor),
+                                fontSize: 18),
                             text: [AppLocalizations.of(context)!.plswait],
                             isRepeatingAnimation: true,
                             speed: const Duration(milliseconds: 150),

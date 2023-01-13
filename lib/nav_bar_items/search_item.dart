@@ -319,12 +319,12 @@ class _SearchState extends State<Search> {
                 ? Column(
               children: [
                 const SizedBox(height: 20,),
-                const CupertinoActivityIndicator(color: kPrymaryColor,),
+                const CupertinoActivityIndicator(),
                 SizedBox(
                   child: WavyAnimatedTextKit(
                     textStyle: GoogleFonts.sourceSansPro(
                         fontSize: 18,
-                        color: kPrymaryColor
+
                     ),
                     text:  [
                       AppLocalizations.of(context)!.plswait

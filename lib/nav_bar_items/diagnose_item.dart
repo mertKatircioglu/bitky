@@ -435,12 +435,11 @@ class _DiagnosePageState extends State<DiagnosePage> {
                 const SizedBox(
                   height: 100,
                 ),
-                const CupertinoActivityIndicator(color: kPrymaryColor,),
+                const CupertinoActivityIndicator(),
                 SizedBox(
                   child: WavyAnimatedTextKit(
                     textStyle: GoogleFonts.sourceSansPro(
                         fontSize: 18,
-                        color: kPrymaryColor
                     ),
                     text: [
                       AppLocalizations.of(context)!.plswait

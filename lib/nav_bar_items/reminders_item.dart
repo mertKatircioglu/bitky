@@ -228,11 +228,10 @@ class _ReminderState extends State<Reminder> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const CupertinoActivityIndicator(color: kPrymaryColor,),
+                            const CupertinoActivityIndicator(),
                             WavyAnimatedTextKit(
                               textStyle: GoogleFonts.sourceSansPro(
                                   fontSize: 18,
-                                  color: kPrymaryColor
                               ),
                               text:  [
                                 AppLocalizations.of(context)!.plswait

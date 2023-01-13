@@ -129,6 +129,82 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                 ),
                               ),
                             ),
+
+                            widget.dataModel!.suggestions![index].plantDetails!.watering! !=null ? Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Container(
+                                height: 100,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.greenAccent[100]
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text(AppLocalizations.of(context)!.theplantspreferredmoisturelevel, style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, color: kPrymaryColor,
+                                              fontSize: 12
+                                          ),),
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text("Max: ",
+                                                    style: GoogleFonts.sourceSansPro( fontSize: 12),),
+                                                  SizedBox(
+                                                    height: 30,
+                                                    child: ListView.builder(
+                                                        itemCount: widget.dataModel!.suggestions![index].plantDetails!.watering!.max,
+                                                        shrinkWrap: true,
+                                                        scrollDirection: Axis.horizontal,
+                                                        itemBuilder: (context, index){
+                                                          return const Icon(Icons.water_drop, color: Colors.blue,size: 20,);
+                                                        }),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              const SizedBox(height: 5,),
+                                              Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text("Min: ",
+                                                    style: GoogleFonts.sourceSansPro( fontSize: 12),),
+                                                  SizedBox(
+                                                    height: 30,
+                                                    child: ListView.builder(
+                                                        itemCount: widget.dataModel!.suggestions![index].plantDetails!.watering!.min,
+                                                        shrinkWrap: true,
+                                                        scrollDirection: Axis.horizontal,
+                                                        itemBuilder: (context, index){
+                                                          return const Icon(Icons.water_drop, color: Colors.blue,size: 20,);
+                                                        }),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ): Container(),
                             const SizedBox(height: 10,),
                             Text(AppLocalizations.of(context)!.descrip,
                               style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w500, fontSize: 20),),

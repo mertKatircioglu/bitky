@@ -1,6 +1,7 @@
   class BitkyDataModel {
   int? id;
   MetaData? metaData;
+
   double? uploadedDatetime;
   double? finishedDatetime;
   List<Images>? images;
@@ -40,6 +41,7 @@
     if (metaData != null) {
       data['meta_data'] = metaData!.toJson();
     }
+
     data['uploaded_datetime'] = uploadedDatetime;
     data['finished_datetime'] = finishedDatetime;
     if (images != null) {
@@ -76,6 +78,24 @@ class MetaData {
   }
 }
 
+  class Watering {
+    int? max;
+    int? min;
+
+    Watering({ this.max, this.min});
+    Watering.fromJson(Map<String, dynamic> json) {
+      max = json['max'];
+      min = json['min'];
+    }
+
+    Map<String, dynamic> toJson() {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['max'] = max;
+      data['min'] = min;
+      return data;
+    }
+  }
+
 class Images {
   String? fileName;
   String? url;
@@ -98,6 +118,7 @@ class Images {
 class Suggestions {
   int? id;
   String? plantName;
+
   PlantDetails? plantDetails;
   double? probability;
   bool? confirmed;
@@ -124,6 +145,7 @@ class Suggestions {
     if (plantDetails != null) {
       data['plant_details'] = plantDetails!.toJson();
     }
+
     data['probability'] = probability;
     data['confirmed'] = confirmed;
     if (similarImages != null) {
@@ -136,6 +158,7 @@ class Suggestions {
 class PlantDetails {
   List<String>? commonNames;
   String? url;
+  Watering? watering;
   WikiDescription? wikiDescription;
   Taxonomy? taxonomy;
   List<WikiImages>? wikiImages;
@@ -143,12 +166,14 @@ class PlantDetails {
   String? scientificName;
   StructuredName? structuredName;
 
-  PlantDetails({this.commonNames, this.url, this.wikiDescription, this.taxonomy, this.wikiImages, this.language, this.scientificName, this.structuredName});
+  PlantDetails({this.commonNames, this.url, this.wikiDescription, this.watering,
+    this.taxonomy, this.wikiImages, this.language, this.scientificName, this.structuredName});
 
   PlantDetails.fromJson(Map<String, dynamic> json) {
     commonNames = json['common_names'].cast<String>();
     url = json['url'];
     wikiDescription = json['wiki_description'] != null ? WikiDescription.fromJson(json['wiki_description']) : null;
+    watering = json['watering'] != null ? Watering.fromJson(json['watering']) : null;
     taxonomy = json['taxonomy'] != null ? Taxonomy.fromJson(json['taxonomy']) : null;
     if (json['wiki_images'] != null) {
       wikiImages = <WikiImages>[];
@@ -165,6 +190,9 @@ class PlantDetails {
     data['url'] = url;
     if (wikiDescription != null) {
       data['wiki_description'] = wikiDescription!.toJson();
+    }
+    if (watering != null) {
+      data['watering'] = watering!.toJson();
     }
     if (taxonomy != null) {
       data['taxonomy'] = taxonomy!.toJson();

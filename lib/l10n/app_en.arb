@@ -260,6 +260,9 @@
 "description":"noplant"},
 "youdonthaveanyroomyet":"You don't have any rooms yet.",
 "@youdonthaveanyroomyet":{
-"description":"youdonthaveanyroomyet"}
+"description":"youdonthaveanyroomyet"},
+"theplantspreferredmoisturelevel":"The plant's preferred moisture level",
+"@theplantspreferredmoisturelevel":{
+"description":"theplantspreferredmoisturelevel"}
 
 }

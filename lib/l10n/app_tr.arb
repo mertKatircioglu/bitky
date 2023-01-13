@@ -82,5 +82,6 @@
   "areyousuredoyouwanttodelete":"Silmek istediğine emin misin? ",
   "isdeleted":"silindi.",
   "noplant":"Hiç bitkiniz bulunmuyor.",
-  "youdonthaveanyroomyet":"Henüz hiç bir alanınız bulunmuyor."
+  "youdonthaveanyroomyet":"Henüz hiç bir alanınız bulunmuyor.",
+  "theplantspreferredmoisturelevel":"Bitkinin tercih ettiği nem seviyesi"
 }
