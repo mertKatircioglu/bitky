@@ -368,7 +368,6 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
   void initState() {
     service = LocalNotificationService();
     service.initialize();
-
     super.initState();
   }
 

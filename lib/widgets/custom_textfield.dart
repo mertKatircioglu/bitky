@@ -44,7 +44,8 @@ class CustomTextField extends StatelessWidget {
           border: InputBorder.none,
           prefixIcon: Icon(iconData, color: Colors.black45, ),
           focusColor: Theme.of(context).primaryColor,
-          hintText: hintText
+          hintText: hintText,
+          hintStyle: const TextStyle(fontSize: 12)
         ),
       ),
     );

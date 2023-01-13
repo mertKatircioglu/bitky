@@ -15,7 +15,7 @@
   "cancelbutton":"İptal",
   "passwordwarningone":"Şifre 6 karakterden uzun olmalıdır.",
   "passwordwarningtwo":"Şifrelerer eşleşmiyor.",
-  "splashtitle":"Bitki ve Bitkilerde hastalıkları tespit edin",
+  "splashtitle":"Bitki ve Bitki hastalıklarını tespit edin",
   "flowtitle":"Akış",
   "plswait":"Lütfen bekleyin...",
   "author":"Yazar: ",
@@ -27,7 +27,7 @@
   "mygardentitle":"Bahçem",
   "addpicture":"Medya Seç",
   "addpictureerror":"Lütfen maksimum 5 fotoğraf seçin.",
-  "diagnosesubtitle":"Bitkinizde ki hastalığı bulun",
+  "diagnosesubtitle":"Bitkinizdeki hastalığı bulun",
   "takeaphotobutton":"Fotoğraf ekle",
   "recentsnaps":"Arama Geçmişi",
   "nothealthy":"Bitkiniz maalesef sağlıklı değil",
@@ -75,5 +75,12 @@
   "category":"Kategory",
   "mygardentitle":"Bahçem",
   "addyourfirstgardenbutton":"İlk bahçeni ekle",
-  "addyourgardentitle":"Bahçeni veya odanı ekle. Örnek: Salon"
+  "addyourgardentitle":"Bahçeni veya odanı ekle. Örnek: Salon",
+  "addedisokey":"Oda/Bahçe Ekleme İşleminiz Tamamlanmıştır.",
+  "save":"Kaydet",
+  "addplantmessage":"Bitkiniz eklenmiştir.",
+  "areyousuredoyouwanttodelete":"Silmek istediğine emin misin? ",
+  "isdeleted":"silindi.",
+  "noplant":"Hiç bitkiniz bulunmuyor.",
+  "youdonthaveanyroomyet":"Henüz hiç bir alanınız bulunmuyor."
 }

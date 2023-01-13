@@ -50,7 +50,7 @@ class _SearchState extends State<Search> {
   List<XFile>? imagefiles;
   BitkyViewModel? _bitkyViewModel;
   bool? datasContainer = false;
-  List? _response = [];
+
   List<String> imagesPaths = [];
   List<XFile>_imagesXfile=[];
   BitkyDataModel _bitkyDataModel = BitkyDataModel();

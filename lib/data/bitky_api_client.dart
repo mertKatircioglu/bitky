@@ -1,6 +1,5 @@
 
 import 'dart:convert';
-import 'package:bitky/l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../models/bitky_data_model.dart';
@@ -39,7 +38,7 @@ class BitkyApiClient{
     var body = json.encode({
       "images": images,
       "modifiers": ["similar_images"],
-      "plant_details": ["common_names","watering", "url", "wiki_description", "taxonomy", "wiki_images"],
+      "plant_details": ["common_names", "url", "wiki_description", "taxonomy", "wiki_images"],
     });
     var request = http.post(Uri.parse(finalUrl), headers: requestHeaders, body: body);
     var res = await request;

@@ -1,4 +1,4 @@
-class BitkyDataModel {
+  class BitkyDataModel {
   int? id;
   MetaData? metaData;
   double? uploadedDatetime;

@@ -1,15 +1,27 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:accordion/accordion.dart';
+import 'package:accordion/controllers.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:bitky/models/plant_data_model.dart';
 import 'package:bitky/widgets/add_room_widgets/add_room.dart';
+import 'package:bitky/widgets/add_room_widgets/plant_item_widget.dart';
 import 'package:bitky/widgets/primary_button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:provider/provider.dart';
 
 import '../globals/globals.dart';
 import '../l10n/app_localizations.dart';
-import '../screens/open_blog_item.dart';
+import '../models/bitky_data_model.dart';
+import '../view_models/planet_view_model.dart';
+import '../widgets/custom_error_dialog.dart';
 
 class MyGarden extends StatefulWidget {
   const MyGarden({Key? key}) : super(key: key);
@@ -20,9 +32,291 @@ class MyGarden extends StatefulWidget {
 
 class _MyGardenState extends State<MyGarden> {
   bool isLoading = false;
+  final _headerStyle =  GoogleFonts.sourceSansPro(
+      color: const Color(0xffffffff), fontSize: 15, fontWeight: FontWeight.bold);
+  final ImagePicker imgpicker = ImagePicker();
+  List<XFile>? imagefiles;
+  BitkyViewModel? _bitkyViewModel;
+  bool? datasContainer = false;
+  TextEditingController nameController = TextEditingController();
+  List<String> imagesPaths = [];
+  List<XFile>_imagesXfile=[];
+   BitkyDataModel _bitkyDataModel = BitkyDataModel();
+  List<String> base64ImgList = [];
+
+
+
+
+  _addFromGallery(String title, String id){
+    _addImageFromGallery().whenComplete(() {
+      setState(() {
+        isLoading = true;
+      });
+      if(base64ImgList.isNotEmpty){
+        _bitkyViewModel!.plantIdentifyFromUi(base64ImgList).then((value) {
+          _bitkyDataModel = value;
+        }).then((value) {
+          base64ImgList.clear();
+          showDialog(context: context, builder: (ctx){
+            nameController.text = _bitkyDataModel.suggestions![0].plantDetails!.commonNames![0].toString().toCapitalized();
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              elevation: 0,
+              title:Center(child: Text(title)) ,
+              content:Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)
+                    ),
+                    elevation: 4,
+                    child: Container(
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: kPrymaryColor,
+                            width: 0,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                          image:  DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(_bitkyDataModel.images![0].url!.toString())
+                          ),
+                        )
+                    ),
+                  ),
+                  const SizedBox(height: 5,),
+                  DottedBorder(
+                    padding: const EdgeInsets.only(right: 5, left: 5),
+                    strokeCap: StrokeCap.butt,
+                    color: kPrymaryColor,
+                    child: TextFormField(
+                      controller: nameController,
+                      decoration:  InputDecoration(
+                          border: InputBorder.none, hintText: AppLocalizations.of(context)!.plantname),
+                    ),
+                  ),
+                  const SizedBox(height: 5,),
+                  CustomPrimaryButton(
+                    text: AppLocalizations.of(context)!.save,
+                    radius: 15,
+                    function:(){
+                      formValidation(context,id,title,_bitkyDataModel.images![0].url!.toString());
+                    },
+                  ),
+                ],
+              ),
+            );
+          });
+
+          setState(() {
+            isLoading = false;
+          });
+        });
+      }else{
+        setState(() {
+          isLoading = false;
+        });
+        showDialog(context: context, builder: (c){
+          return CustomErrorDialog(message: "Something went wrong.");
+        });
+      }
+
+    });
+  }
+
+  Future<void> formValidation(BuildContext context, String id, String title, String url) async {
+    final plantId = UniqueKey().hashCode;
+
+    if (nameController.text.isNotEmpty) {
+      FirebaseFirestore.instance
+          .collection("users/${authUser.currentUser!.uid}/gardens")
+          .doc(id).collection(title).doc(plantId.toString())
+          .set({
+        "plantName": nameController.text.toCapitalized().trim(),
+        "plantId": plantId,
+        "location": title,
+        "image": url,
+        "createDate": DateTime.now()
+      }).whenComplete(() {
+        showDialog(
+            context: context,
+            builder: (c) {
+              return CustomErrorDialog(
+                message: AppLocalizations.of(context)!.addplantmessage,
+              );
+            }).whenComplete(() =>   Navigator.of(context, rootNavigator: true).pop("Discard")
+        );
+      });
+    } else {
+      showDialog(
+          context: context,
+          builder: (c) {
+            return CustomErrorDialog(
+              message: AppLocalizations.of(context)!.fillallfields,
+            );
+          });
+    }
+  }
+
+  _addFromCamera(String title){
+    _imagePickerSourceCamera().whenComplete(() {
+      setState(() {
+        isLoading = true;
+      });
+      if(base64ImgList.isNotEmpty){
+        _bitkyViewModel!.plantIdentifyFromUi(base64ImgList).then((value) {
+          _bitkyDataModel = value;
+        }).then((value) {
+          base64ImgList.clear();
+          showDialog(context: context, builder: (ctx){
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              elevation: 0,
+              title: Text("Deneme"),
+              content:Column(
+                children: [
+                  Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: kPrymaryColor,
+                          width: 0,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                        image:  DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(_bitkyDataModel.images![0].toString())
+                    ),
+                  )
+                  )
+                ],
+              ),
+            );
+          });
+
+          setState(() {
+            isLoading = false;
+          });
+        });
+      }else{
+        setState(() {
+          isLoading = false;
+        });
+        showDialog(context: context, builder: (c){
+          return CustomErrorDialog(message: "Something went wrong.");
+        });
+      }
+
+    });
+  }
+  openImages(String title, String id) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            elevation: 0,
+            title:  Center(
+                child: Text(
+                  AppLocalizations.of(context)!.addpicture,
+                )),
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Card(
+                  shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: kPrymaryColor, width: 1.0),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.camera_alt_outlined,
+                      color: kPrymaryColor,
+                    ),
+                    onPressed: () {
+                      _addFromCamera(title);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Card(
+                  shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: kPrymaryColor, width: 1.0),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.photo_library_outlined,
+                      color: kPrymaryColor,
+                    ),
+                    onPressed: () {
+                      _addFromGallery(title, id);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future _addImageFromGallery() async {
+    try {
+      var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 90);
+      if(pickedfiles.length>5){
+        showDialog(context: context, builder: (context){
+          return AlertDialog(content: Text(AppLocalizations.of(context)!.addpictureerror),);
+        });
+      }else{
+        if (pickedfiles.isNotEmpty) {
+          imagefiles = pickedfiles;
+          pickedfiles.forEach((element) async {
+            imagesPaths.add(element.path);
+          });
+          for (var element in pickedfiles) {
+            var bytes = await element.readAsBytes();
+            var base64img = base64Encode(bytes);
+            base64ImgList.add(base64img);
+          }
+          setState(() {});
+          //  print("GALLERYYYY: " + base64ImgList.length.toString());
+        } else {
+          // print("No image is selected.");
+        }
+      }
+
+    } catch (e) {
+      // print("error while picking file.");
+    }
+  }
+
+  Future _imagePickerSourceCamera() async {
+    try {
+      XFile? photos = await imgpicker.pickImage(
+          source: ImageSource.camera, imageQuality: 90);
+      if (photos != null) {
+        var bytes = await photos.readAsBytes();
+        var base64img = base64Encode(bytes);
+        imagesPaths.add(photos.path);
+        base64ImgList.add(base64img);
+      }
+      setState(() {});
+    } catch (e) {
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    _bitkyViewModel = Provider.of<BitkyViewModel>(context);
+
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -74,44 +368,38 @@ class _MyGardenState extends State<MyGarden> {
               isLoading == true
                   ? Center(
                   child: SizedBox(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CupertinoActivityIndicator(
-                          color: kPrymaryColor,
-                        ),
-                        WavyAnimatedTextKit(
-                          textStyle: GoogleFonts.sourceSansPro(
-                              fontSize: 18, color: kPrymaryColor),
-                          text: [AppLocalizations.of(context)!.plswait],
-                          isRepeatingAnimation: true,
-                          speed: const Duration(milliseconds: 150),
-                        ),
-                      ],
+                    child: Padding(
+                      padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CupertinoActivityIndicator(
+                            color: kPrymaryColor,
+                          ),
+                          WavyAnimatedTextKit(
+                            textStyle: GoogleFonts.sourceSansPro(
+                                fontSize: 18, color: kPrymaryColor),
+                            text: [AppLocalizations.of(context)!.plswait],
+                            isRepeatingAnimation: true,
+                            speed: const Duration(milliseconds: 150),
+                          ),
+                        ],
+                      ),
                     ),
                   ))
                   : StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('users/${authUser.currentUser!.uid}/gardens')
-                      .orderBy("createdAt", descending: true)
+                      .orderBy("createDate", descending: true)
                       .snapshots(),
                   builder: (ctx, recentSnapshot) {
                     if(recentSnapshot.connectionState == ConnectionState.waiting){
                       return const CupertinoActivityIndicator(color: Colors.transparent,);
                     }else if(recentSnapshot.data!.docs.isEmpty){
                       return Padding(
-                        padding:  EdgeInsets.only(top:MediaQuery.of(context).size.height/3  ),
-                        child: Center(
-                          child: CustomPrimaryButton(
-                            text: AppLocalizations.of(context)!.addyourfirstgardenbutton,
-                            radius: 15,
-                            function:()=>  PersistentNavBarNavigator.pushNewScreen(
-                              context,
-                              screen: const AddRoomWidget(),
-                              withNavBar: false,
-                              pageTransitionAnimation:PageTransitionAnimation.cupertino,
-                            ),
-                          ),
+                        padding: EdgeInsets.only(top:MediaQuery.of(context).size.height/3  ),
+                        child:  Center(
+                          child: Text(AppLocalizations.of(context)!.youdonthaveanyroomyet, style: GoogleFonts.sourceSansPro(),),
                         ),
                       );
                     }
@@ -123,128 +411,37 @@ class _MyGardenState extends State<MyGarden> {
                               shrinkWrap: true,
                               itemCount: recentDocs.length,
                               itemBuilder: (context, index) {
-                                // print(recentDocs[index]['uploadedImages'].toString());
-                                var imagesJson =
-                                (recentDocs[index]['images'] as List);
-                                List<String> images = [];
-                                imagesJson.forEach((element) {
-                                  images.add(element);
-                                });
-                                var date = DateTime.now().day - DateTime.parse(recentDocs[index]["createdAt"].toDate().toString()).day;
-                                return InkWell(
-                                  onTap: (){
-                                    PersistentNavBarNavigator.pushNewScreen(
-                                      context,
-                                      screen: OpenBlogItemDetailScreen(images: images,title:recentDocs[index]["title"],
-                                        subTitle: recentDocs[index]["subTitle"],
-                                        description: recentDocs[index]["description"],
-                                        category: recentDocs[index]["category"],
-                                        author: recentDocs[index]["author"],
-                                        date: date.toString(),
+                                var date = DateTime.now().day - DateTime.parse(recentDocs[index]["createDate"].toDate().toString()).day;
+                                return Accordion(
+                                  maxOpenSections: 2,
+                                  headerBackgroundColorOpened: Colors.black54,
+                                  scaleWhenAnimating: true,
+                                  openAndCloseAnimation: true,
+                                  headerPadding:
+                                  const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+                                  sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
+                                  sectionClosingHapticFeedback: SectionHapticFeedback.light,
+                                  children: [
+                                    AccordionSection(
+                                      isOpen: false,
+                                      leftIcon: const Icon(CupertinoIcons.leaf_arrow_circlepath, color: Colors.white),
+                                      headerBackgroundColor: Colors.black54,
+                                      headerBackgroundColorOpened: kPrymaryColor,
+                                      header: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(recentDocs[index]["roomName"], style: _headerStyle),
+                                          IconButton(onPressed: (){
+                                            openImages(recentDocs[index]["roomName"],recentDocs[index]["roomId"].toString());
+                                          }, icon: const Icon(Icons.add, color: Colors.white, )),
+                                        ],
                                       ),
-                                      withNavBar: false,
-                                      pageTransitionAnimation:PageTransitionAnimation.cupertino,
-                                    );
+                                      content: PlantItemWidget(roomName: recentDocs[index]["roomName"], roomId:  recentDocs[index]["roomId"],),
+                                      contentHorizontalPadding: 20,
+                                      contentBorderWidth: 1,
 
-                                  },
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(0.0),
-                                      child: SizedBox(
-                                        height: 120,
-                                        child: Card(
-                                          elevation: 5,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(15)),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Flexible(
-                                                flex: 1,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      height: 90,
-                                                      padding: const EdgeInsets.only(left: 5),
-                                                      width: 90,
-                                                      child: GridView.builder(
-                                                          gridDelegate:const SliverGridDelegateWithMaxCrossAxisExtent(
-                                                              maxCrossAxisExtent: 60,
-                                                              childAspectRatio: 1,
-                                                              crossAxisSpacing: 1,
-                                                              mainAxisSpacing: 4
-                                                          ),
-                                                          itemCount: images.length,
-                                                          itemBuilder: (_, index){
-                                                            return Card(
-                                                              elevation: 3,
-                                                              child: Container(
-                                                                decoration: BoxDecoration(
-                                                                    image: DecorationImage(
-                                                                        fit: BoxFit.cover,
-                                                                        image: NetworkImage(images[index])
-                                                                    ),
-                                                                    borderRadius: BorderRadius.circular(5)
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              const SizedBox(width: 5,),
-                                              Flexible(
-                                                flex: 3,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(recentDocs[index]["title"],maxLines: 2,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: GoogleFonts.sourceSansPro(
-                                                          fontWeight: FontWeight.w600, fontSize: 16
-                                                      ),),
-                                                    const Padding(padding: EdgeInsets.symmetric(horizontal: 2),
-                                                      child: Divider(height: 2, thickness: 0.4,),
-                                                    ),
-                                                    Text(recentDocs[index]["subTitle"]+"   >>>",
-                                                      maxLines:2,
-                                                      textAlign: TextAlign.justify,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: GoogleFonts.sourceSansPro(
-                                                          fontSize: 14,
-                                                          color: Colors.black54
-                                                      ),),
-                                                    const Padding(padding: EdgeInsets.symmetric(horizontal: 2),
-                                                      child: Divider(height: 5, thickness: 0.4,),
-                                                    ), Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        Text(recentDocs[index]["author"],
-                                                          style: GoogleFonts.sourceSansPro(
-                                                              fontSize: 10,
-                                                              fontStyle: FontStyle.italic,
-                                                              color: Colors.black
-                                                          ),),
-                                                        Text("$date ${AppLocalizations.of(context)!.daysago}",
-                                                          style: GoogleFonts.sourceSansPro(
-                                                              fontSize: 10,
-                                                              fontStyle: FontStyle.italic,
-                                                              color: Colors.black
-                                                          ),),
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )),
+                                    ),
+                                  ],
                                 );
                               });
                         },
@@ -255,7 +452,42 @@ class _MyGardenState extends State<MyGarden> {
           ),
         ) ,
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 18.0),
+        child: FloatingActionButton(
+          backgroundColor: kPrymaryColor,
+          onPressed: (){
+            PersistentNavBarNavigator.pushNewScreen(
+              context,
+              screen: AddRoomWidget(),
+              withNavBar: false,
+              pageTransitionAnimation:PageTransitionAnimation.cupertino,
+            );
+          },
+          child: const Icon(Icons.add,color: Colors.white,),
+        ),
+      ),
     );
 
   }
 }
+/*
+* DataTable(
+                                        sortAscending: true,
+                                        sortColumnIndex: 1,
+                                        dataRowHeight: 40,
+                                        showBottomBorder: false,
+                                        columns: [
+                                          DataColumn(
+                                              label: Text('Image', style: _contentStyleHeader),
+                                              numeric: true),
+                                          DataColumn(
+                                              label: Text('Plant Name', style: _contentStyleHeader)),
+                                          DataColumn(
+                                              label: Text('Action', style: _contentStyleHeader),
+                                              numeric: true),
+                                        ],
+                                        rows:[
+
+                                        ],
+                                      )*/

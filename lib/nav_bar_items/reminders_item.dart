@@ -4,6 +4,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/widgets/reminder_add_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +94,6 @@ class _ReminderState extends State<Reminder> {
             children: [
               TextButton(
                   onPressed: () {
-
                     Navigator.pop(context);
                   _addFromCamera();
 
@@ -378,18 +378,18 @@ class _ReminderState extends State<Reminder> {
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius: BorderRadius.circular(15)
                                                   ),
-                                                  child: Container(
-                                                    height: 50,
-                                                    width: 50,
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color: kPrymaryColor,
-                                                          width: 0,
-                                                        ),
-                                                        borderRadius: BorderRadius.circular(15),
-                                                        image:  DecorationImage(
-                                                            fit: BoxFit.cover,
-                                                            image: NetworkImage(reminderDocs[index]["image"]))
+                                                  child: ClipRRect(
+                                                    borderRadius: BorderRadius.circular(15),
+                                                    child: CachedNetworkImage(
+                                                      height: 50,
+                                                      width: 50,
+                                                      fit: BoxFit.cover,
+                                                      imageUrl: reminderDocs[index]["image"],
+                                                      placeholder: (context, url) =>
+                                                      const CupertinoActivityIndicator(),
+                                                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                                                      fadeOutDuration: const Duration(seconds: 1),
+                                                      fadeInDuration: const Duration(seconds: 3),
                                                     ),
                                                   ),
                                                 ),

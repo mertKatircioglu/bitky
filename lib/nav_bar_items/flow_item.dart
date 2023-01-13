@@ -2,6 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/screens/open_blog_item.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -161,31 +162,39 @@ class _FlowItemState extends State<FlowItem> {
                                                       crossAxisAlignment: CrossAxisAlignment.center,
                                                       children: [
                                                         Container(
-                                                          height: 90,
+                                                          height: 80,
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(15)
+                                                            ),
                                                           padding: const EdgeInsets.only(left: 5),
-                                                          width: 90,
-                                                          child: GridView.builder(
-                                                              gridDelegate:const SliverGridDelegateWithMaxCrossAxisExtent(
-                                                                maxCrossAxisExtent: 60,
-                                                                childAspectRatio: 1,
-                                                                crossAxisSpacing: 1,
-                                                                mainAxisSpacing: 4
+                                                          width: 80,
+                                                          child: Card(
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(15)
+                                                            ),
+                                                            elevation: 3,
+                                                            child:Card(
+                                                              margin: const EdgeInsets.all(0),
+                                                              elevation: 5,
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(15)
                                                               ),
-                                                              itemCount: images.length,
-                                                              itemBuilder: (_, index){
-                                                                return Card(
-                                                                  elevation: 3,
-                                                                  child: Container(
-                                                                    decoration: BoxDecoration(
-                                                                      image: DecorationImage(
-                                                                        fit: BoxFit.cover,
-                                                                        image: NetworkImage(images[index])
-                                                                      ),
-                                                                      borderRadius: BorderRadius.circular(5)
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              }),
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(15),
+                                                                child: CachedNetworkImage(
+                                                                  height: 80,
+                                                                  width: 80,
+                                                                  fit: BoxFit.cover,
+                                                                  imageUrl: images[0],
+                                                                  placeholder: (context, url) =>
+                                                                  const CupertinoActivityIndicator(),
+                                                                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                                                                  fadeOutDuration: const Duration(seconds: 1),
+                                                                  fadeInDuration: const Duration(seconds: 3),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
                                                         )
                                                       ],
                                                     ),
@@ -323,61 +332,3 @@ class SearchDelegatee extends SearchDelegate{
 
 }
 
-/*
-
-ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              child: Stack(
-                                                alignment: Alignment.bottomCenter,
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                        image: DecorationImage(
-                                                            colorFilter: const ColorFilter.mode(Colors.black45, BlendMode.darken),
-                                                            fit: BoxFit.cover,
-                                                            image: NetworkImage(
-                                                                images[0]
-                                                            )
-                                                        )
-                                                    ),
-                                                    width: MediaQuery.of(context)
-                                                        .size
-                                                        .width,
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Container(
-                                                      padding: EdgeInsets.all(8.0),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white54,
-                                                          borderRadius: BorderRadius.circular(15)
-                                                      ),
-                                                      child: Column(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisAlignment: MainAxisAlignment.end,
-                                                        children: [
-                                                          Text(recentDocs[index]["title"], style: GoogleFonts.sourceSansPro(
-                                                              fontWeight: FontWeight.w600, fontSize: 16),),
-                                                          const Divider(color: Colors.black,thickness: 0.1,height: 5,),
-                                                          Text("${recentDocs[index]["subTitle"]}    >>", style: GoogleFonts.sourceSansPro(
-                                                              fontSize: 10),),
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.end,
-                                                            children: [
-
-                                                              Text("${AppLocalizations.of(context)!.author}", style: GoogleFonts.sourceSansPro(
-                                                                  fontWeight: FontWeight.w500, fontSize: 10),),
-                                                              Text(recentDocs[index]["author"], style: GoogleFonts.sourceSansPro(
-                                                                  fontWeight: FontWeight.w500, fontSize: 10),),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            )
- */

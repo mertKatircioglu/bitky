@@ -239,6 +239,27 @@
 "description":"addyourfirstgardenbutton"},
 "addyourgardentitle":"Add your garden/room etc.",
 "@addyourgardentitle":{
-"description":"addyourgardentitle"}
+"description":"addyourgardentitle"},
+"addedisokey":"Your garden is added.",
+"@addedisokey":{
+"description":"addedisokey"},
+"save":"Save",
+"@save":{
+"description":"save"},
+"addplantmessage":"Your plant is added.",
+"@addplantmessage":{
+"description":"addplantmessage"},
+"areyousuredoyouwanttodelete":"Are you sure? Do you want to delete ",
+"@areyousuredoyouwanttodelete":{
+"description":"areyousuredoyouwanttodelete"},
+"isdeleted":"is deleted.",
+"@isdeleted":{
+"description":"isdeleted"},
+"noplant":"No plant.",
+"@noplant":{
+"description":"noplant"},
+"youdonthaveanyroomyet":"You don't have any rooms yet.",
+"@youdonthaveanyroomyet":{
+"description":"youdonthaveanyroomyet"}
 
 }
