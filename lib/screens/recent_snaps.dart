@@ -1,5 +1,6 @@
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 
@@ -149,15 +150,19 @@ class RecentSnapsScreen extends StatelessWidget {
                                                           print("dismissed");
                                                         });
                                                       },
-                                                      child: Image
-                                                          .network(
-                                                        images[index],
-                                                        height:
-                                                        20,
-                                                        width:
-                                                        20,
-                                                        fit: BoxFit
-                                                            .cover,
+                                                      child:       ClipRRect(
+                                                        borderRadius: BorderRadius.circular(15),
+                                                        child: CachedNetworkImage(
+                                                          height: 20,
+                                                          width: 20,
+                                                          fit: BoxFit.cover,
+                                                          imageUrl: images[index],
+                                                          placeholder: (context, url) =>
+                                                          const CupertinoActivityIndicator(),
+                                                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                                                          fadeOutDuration: const Duration(seconds: 1),
+                                                          fadeInDuration: const Duration(seconds: 1),
+                                                        ),
                                                       ),
                                                     )),
                                               );

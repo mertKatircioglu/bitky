@@ -14,8 +14,10 @@ import '../helpers/notification_service.dart';
 import 'custom_error_dialog.dart';
 
 class ReminderAddWidget extends StatefulWidget {
-  BitkyDataModel? bitkyDataModel;
-  ReminderAddWidget({Key? key, this.bitkyDataModel}) : super(key: key);
+  String? name;
+  String? image;
+  String? location;
+  ReminderAddWidget({Key? key, this.name, this.image, this.location}) : super(key: key);
 
   @override
   State<ReminderAddWidget> createState() => _ReminderAddWidgetState();
@@ -29,11 +31,16 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.bitkyDataModel?.suggestions?[0].plantDetails?.commonNames?[0] !=
+    if (widget.name !=
         null) {
       nameController.text = widget
-          .bitkyDataModel!.suggestions![0].plantDetails!.commonNames![0]
-          .toCapitalized()
+          .name!.toCapitalized()
+          .toString();
+    }
+    if (widget.location !=
+        null) {
+      locationController.text = widget
+          .location!.toCapitalized()
           .toString();
     }
   }
@@ -63,7 +70,7 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
                         colorFilter: ColorFilter.mode(
                             Colors.black.withOpacity(0.5), BlendMode.darken),
                         image: NetworkImage(
-                            widget.bitkyDataModel!.images![0].url!))),
+                            widget.image!))),
                 width: MediaQuery.of(context).size.width,
                 height: 150,
               ),
@@ -73,8 +80,7 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
                   child: Column(
                     children: [
                       Text(
-                        widget.bitkyDataModel!.suggestions![0].plantDetails!
-                            .commonNames![0]
+                        widget.name!
                             .toCapitalized()
                             .toString(),
                         style: GoogleFonts.sourceSansPro(
@@ -93,6 +99,7 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     DottedBorder(
                       padding: const EdgeInsets.only(right: 5, left: 5),
@@ -107,7 +114,7 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
                     const SizedBox(
                       height: 15,
                     ),
-                    DottedBorder(
+                  widget.location == null ?  DottedBorder(
                       padding: const EdgeInsets.only(right: 5, left: 5),
                       color: kPrymaryColor,
                       child: TextFormField(
@@ -116,6 +123,11 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
                             border: InputBorder.none, hintText: AppLocalizations.of(context)!.roomname),
                         textInputAction: TextInputAction.next,
                       ),
+                    ) : Row(
+                      children: [
+                        Text("${AppLocalizations.of(context)!.roomname}: ",style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text(locationController.text,style: GoogleFonts.sourceSansPro( fontSize: 14, fontWeight: FontWeight.w600)),
+                      ],
                     ),
                   ],
                 ),
@@ -123,7 +135,7 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
           SizedBox(
               height: 80,
               child: NoteThumbnail(
-                  imagE: widget.bitkyDataModel!.images![0].url!,
+                  imagE: widget.image!,
                   plantName: nameController.text,
                   room: locationController.text ?? "Room 1",
                   color: Colors.transparent,
@@ -206,7 +218,6 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
 
   Future _weakly(BuildContext context) async {
     final notificationId = UniqueKey().hashCode;
-
     showDialog(
         context: context,
         builder: (context) {
@@ -215,7 +226,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
                 borderRadius: BorderRadius.all(Radius.circular(15))),
             title:  Text(
               AppLocalizations.of(context)!.selectday,
-              style: TextStyle(color: kPrymaryColor),
+              style: const TextStyle(color: kPrymaryColor),
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,

@@ -190,7 +190,7 @@ class _FlowItemState extends State<FlowItem> {
                                                                   const CupertinoActivityIndicator(),
                                                                   errorWidget: (context, url, error) => const Icon(Icons.error),
                                                                   fadeOutDuration: const Duration(seconds: 1),
-                                                                  fadeInDuration: const Duration(seconds: 3),
+                                                                  fadeInDuration: const Duration(seconds: 2),
                                                                 ),
                                                               ),
                                                             ),

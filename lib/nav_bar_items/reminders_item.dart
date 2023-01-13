@@ -62,7 +62,8 @@ class _ReminderState extends State<Reminder> {
                       padding: EdgeInsets.only(
                           bottom: MediaQuery.of(context).viewInsets.bottom),
                       child: ReminderAddWidget(
-                        bitkyDataModel: _bitkyDataModel,
+                        name: _bitkyDataModel.suggestions?[0].plantDetails?.commonNames?[0],
+                        image: _bitkyDataModel.images![0].url!,
                       ),
                     );
               });
@@ -74,9 +75,7 @@ class _ReminderState extends State<Reminder> {
         setState(() {
           isLoading = false;
         });
-        showDialog(context: context, builder: (c){
-          return CustomErrorDialog(message: "Something went wrong.");
-        });
+
       }
 
     });
@@ -302,9 +301,7 @@ class _ReminderState extends State<Reminder> {
                               }
                               break;
                               default :{
-                                setState(() {
-                                  day="-";
-                                });
+
                               }
                             };
                               return Card(
@@ -344,7 +341,6 @@ class _ReminderState extends State<Reminder> {
                                                     );
                                                   });
                                                   Navigator.of(context, rootNavigator: true).pop("Discard");
-
                                                 },
 
                                                 child: Text(AppLocalizations.of(context)!.yes),

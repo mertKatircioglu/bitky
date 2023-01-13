@@ -8,6 +8,7 @@ import 'package:bitky/models/plant_data_model.dart';
 import 'package:bitky/widgets/add_room_widgets/add_room.dart';
 import 'package:bitky/widgets/add_room_widgets/plant_item_widget.dart';
 import 'package:bitky/widgets/primary_button_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
@@ -121,9 +122,6 @@ class _MyGardenState extends State<MyGarden> {
         setState(() {
           isLoading = false;
         });
-        showDialog(context: context, builder: (c){
-          return CustomErrorDialog(message: "Something went wrong.");
-        });
       }
 
     });
@@ -140,6 +138,7 @@ class _MyGardenState extends State<MyGarden> {
         "plantName": nameController.text.toCapitalized().trim(),
         "plantId": plantId,
         "location": title,
+        "reminder":false,
         "image": url,
         "createDate": DateTime.now()
       }).whenComplete(() {
@@ -163,7 +162,7 @@ class _MyGardenState extends State<MyGarden> {
     }
   }
 
-  _addFromCamera(String title){
+  _addFromCamera(String title, String id){
     _imagePickerSourceCamera().whenComplete(() {
       setState(() {
         isLoading = true;
@@ -178,24 +177,50 @@ class _MyGardenState extends State<MyGarden> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15)),
               elevation: 0,
-              title: Text("Deneme"),
+              title:Center(child: Text(title)) ,
               content:Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color: kPrymaryColor,
-                          width: 0,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                        image:  DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(_bitkyDataModel.images![0].toString())
+                  Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)
                     ),
-                  )
-                  )
+                    elevation: 4,
+                    child:
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: CachedNetworkImage(
+                        height: 120,
+                        width: 120,
+                        fit: BoxFit.cover,
+                        imageUrl: _bitkyDataModel.images![0].url!.toString(),
+                        placeholder: (context, url) =>
+                        const CupertinoActivityIndicator(),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                        fadeOutDuration: const Duration(seconds: 1),
+                        fadeInDuration: const Duration(seconds: 2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5,),
+                  DottedBorder(
+                    padding: const EdgeInsets.only(right: 5, left: 5),
+                    strokeCap: StrokeCap.butt,
+                    color: kPrymaryColor,
+                    child: TextFormField(
+                      controller: nameController,
+                      decoration:  InputDecoration(
+                          border: InputBorder.none, hintText: AppLocalizations.of(context)!.plantname),
+                    ),
+                  ),
+                  const SizedBox(height: 5,),
+                  CustomPrimaryButton(
+                    text: AppLocalizations.of(context)!.save,
+                    radius: 15,
+                    function:(){
+                      formValidation(context,id,title,_bitkyDataModel.images![0].url!.toString());
+                    },
+                  ),
                 ],
               ),
             );
@@ -209,9 +234,7 @@ class _MyGardenState extends State<MyGarden> {
         setState(() {
           isLoading = false;
         });
-        showDialog(context: context, builder: (c){
-          return CustomErrorDialog(message: "Something went wrong.");
-        });
+
       }
 
     });
@@ -241,7 +264,7 @@ class _MyGardenState extends State<MyGarden> {
                       color: kPrymaryColor,
                     ),
                     onPressed: () {
-                      _addFromCamera(title);
+                      _addFromCamera(title,id);
                       Navigator.pop(context);
                     },
                   ),
@@ -437,7 +460,7 @@ class _MyGardenState extends State<MyGarden> {
                                         ],
                                       ),
                                       content: PlantItemWidget(roomName: recentDocs[index]["roomName"], roomId:  recentDocs[index]["roomId"],),
-                                      contentHorizontalPadding: 20,
+                                      contentHorizontalPadding: 5,
                                       contentBorderWidth: 1,
 
                                     ),

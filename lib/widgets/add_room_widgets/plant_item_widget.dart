@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,185 +9,218 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../globals/globals.dart';
 import '../../l10n/app_localizations.dart';
+import '../reminder_add_widget.dart';
 
 class PlantItemWidget extends StatefulWidget {
   String? roomName;
   int? roomId;
-   PlantItemWidget({Key? key, this.roomName, this.roomId}) : super(key: key);
+
+  PlantItemWidget({Key? key, this.roomName, this.roomId}) : super(key: key);
 
   @override
   State<PlantItemWidget> createState() => _PlantItemWidgetState();
 }
 
 class _PlantItemWidgetState extends State<PlantItemWidget> {
-
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   AnimationController? localAnimationController;
-
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('users/${authUser.currentUser!.uid}/gardens/${widget.roomId}/${widget.roomName}')
+          .collection(
+              'users/${authUser.currentUser!.uid}/gardens/${widget.roomId}/${widget.roomName}')
           .snapshots(),
-        builder: (ctx,recentSnapshot){
-          if(recentSnapshot.connectionState == ConnectionState.waiting){
-            return const CupertinoActivityIndicator(color: Colors.transparent,);
-          }else if(recentSnapshot.data!.docs.isEmpty){
-            return Padding(
-              padding: const EdgeInsets.only(top:0 ),
-              child:  Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children:  [
-                    Text(AppLocalizations.of(context)!.noplant, style:GoogleFonts.sourceSansPro() ,),
-
-                  ],
-                ),
-              ),
-            );
-          }
-          final recentDocs = recentSnapshot.data!.docs;
-          return FutureBuilder(
-            builder: (ctx, futureSnap){
-              return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: recentDocs.length,
-                  itemBuilder: (context, index){
-                    return DataTable(
-                        sortAscending: true,
-                        showCheckboxColumn: false,
-                        sortColumnIndex: 0,
-                        columnSpacing: 0.0,
-                        headingRowHeight: 0.0,
-                        dividerThickness: 0.0,
-                        dataRowHeight: 50,
-                        showBottomBorder: false,
-                        columns:  [
-                          DataColumn(
-                            label: Text('Image', style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600), ),
-                          ),
-                          DataColumn(
-                            label: Text(AppLocalizations.of(context)!.plantname, style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600) ),
-                          ),  DataColumn(
-                            label: Text(AppLocalizations.of(context)!.plantname, style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600) ),
-                          ),
-
-                          DataColumn(
-                            label: Text(AppLocalizations.of(context)!.plantname, style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontWeight: FontWeight.w600) ),
-                          ),
-
-
-
-                        ], rows: [
-                      DataRow(
-                        cells: [
-                          DataCell(
-                              Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              image: DecorationImage(
-                                image: NetworkImage(recentDocs[index]["image"]),
-                                  fit: BoxFit.cover
-                              )
-                            ),
-                          )),
-                          DataCell(Text(recentDocs[index]["plantName"])),
-                          DataCell(IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red,),
-                            onPressed: (){
-                              showDialog(
-                                  context: context,
-                                  builder: (c) {
-                                    return CupertinoAlertDialog(
-                                      content:  Text(
-                                          "${AppLocalizations.of(context)!.areyousuredoyouwanttodelete} ${recentDocs[index]["plantName"]}",
-                                          textAlign: TextAlign.center),
-                                      actions: [
-                                        CupertinoButton(
-                                          onPressed: ()  {
-                                            String id = recentDocs[index]["plantId"].toString();
-                                            FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/gardens/${widget.roomId}/${widget.roomName}").doc(id)
-                                                .delete();
-                                            showTopSnackBar(
-                                              Overlay.of(context)!,
-                                              CustomSnackBar.error(
-                                                message:
-                                                "${recentDocs[index]["plantName"]}, ${AppLocalizations.of(context)!.isdeleted}",
-                                              ),
-                                              onAnimationControllerInit: (controller) =>
-                                              localAnimationController = controller,
-                                            );
-                                            Navigator.of(context, rootNavigator: true).pop("Discard");
-                                          },
-                                          child: Text(AppLocalizations.of(context)!.yes),
-                                        ),
-                                        CupertinoButton(
-                                          onPressed: () {
-                                            Navigator.of(context, rootNavigator: true).pop("Discard");
-
-                                          },
-                                          child: Text(AppLocalizations.of(context)!.no),
-                                        ),
-                                      ],
-                                    );
-                                  });
-                            },
-                          )),
-                          DataCell(IconButton(
-                            icon: const Icon(Icons.add_alarm, color: kPrymaryColor,),
-                            onPressed: (){
-                              showDialog(
-                                  context: context,
-                                  builder: (c) {
-                                    return CupertinoAlertDialog(
-                                      content:  Text(
-                                          "${AppLocalizations.of(context)!.areyousuredoyouwanttodelete} ${recentDocs[index]["plantName"]}",
-                                          textAlign: TextAlign.center),
-                                      actions: [
-                                        CupertinoButton(
-                                          onPressed: ()  {
-                                            String id = recentDocs[index]["plantId"].toString();
-                                            FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/gardens/${widget.roomId}/${widget.roomName}").doc(id)
-                                                .delete();
-                                            showTopSnackBar(
-                                              Overlay.of(context)!,
-                                              CustomSnackBar.error(
-                                                message:
-                                                "${recentDocs[index]["plantName"]}, ${AppLocalizations.of(context)!.isdeleted}",
-                                              ),
-                                              onAnimationControllerInit: (controller) =>
-                                              localAnimationController = controller,
-                                            );
-                                            Navigator.of(context, rootNavigator: true).pop("Discard");
-                                          },
-                                          child: Text(AppLocalizations.of(context)!.yes),
-                                        ),
-                                        CupertinoButton(
-                                          onPressed: () {
-                                            Navigator.of(context, rootNavigator: true).pop("Discard");
-
-                                          },
-                                          child: Text(AppLocalizations.of(context)!.no),
-                                        ),
-                                      ],
-                                    );
-                                  });
-                            },
-                          )),
-
-                        ],
-                      )
-                    ]);
-                  });
-            },
+      builder: (ctx, recentSnapshot) {
+        if (recentSnapshot.connectionState == ConnectionState.waiting) {
+          return const CupertinoActivityIndicator(
+            color: Colors.transparent,
           );
-        },
-
+        } else if (recentSnapshot.data!.docs.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 0),
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.noplant,
+                    style: GoogleFonts.sourceSansPro(),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        final recentDocs = recentSnapshot.data!.docs;
+        return FutureBuilder(
+          builder: (ctx, futureSnap) {
+            return ListView.builder(
+                shrinkWrap: true,
+                itemCount: recentDocs.length,
+                itemBuilder: (context, index) {
+                  return DataTable(
+                      sortAscending: true,
+                      showCheckboxColumn: false,
+                      sortColumnIndex: 1,
+                      columnSpacing: 0.0,
+                      headingRowHeight: 0.0,
+                      dividerThickness: 0.0,
+                      dataRowHeight: 50,
+                      showBottomBorder: false,
+                      columns: [
+                        DataColumn(
+                          label: Text(
+                            'Image',
+                            style: GoogleFonts.sourceSansPro(
+                                color: kPrymaryColor,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(AppLocalizations.of(context)!.plantname,
+                              style: GoogleFonts.sourceSansPro(
+                                  color: kPrymaryColor,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                        DataColumn(
+                          label: Text(AppLocalizations.of(context)!.plantname,
+                              style: GoogleFonts.sourceSansPro(
+                                  color: kPrymaryColor,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                        DataColumn(
+                          label: Text(AppLocalizations.of(context)!.plantname,
+                              style: GoogleFonts.sourceSansPro(
+                                  color: kPrymaryColor,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                      ],
+                      rows: [
+                        DataRow(
+                          cells: [
+                            DataCell(ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: CachedNetworkImage(
+                                height: 40,
+                                width: 40,
+                                fit: BoxFit.cover,
+                                imageUrl: recentDocs[index]["image"],
+                                placeholder: (context, url) =>
+                                    const CupertinoActivityIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                                fadeOutDuration: const Duration(seconds: 1),
+                                fadeInDuration: const Duration(seconds: 1),
+                              ),
+                            )),
+                            DataCell(Text(recentDocs[index]["plantName"],maxLines: 1, style: GoogleFonts.sourceSansPro(),)),
+                            DataCell(IconButton(
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (c) {
+                                      return CupertinoAlertDialog(
+                                        content: Text(
+                                            "${AppLocalizations.of(context)!.areyousuredoyouwanttodelete} ${recentDocs[index]["plantName"]}",
+                                            textAlign: TextAlign.center),
+                                        actions: [
+                                          CupertinoButton(
+                                            onPressed: () {
+                                              String id = recentDocs[index]
+                                                      ["plantId"]
+                                                  .toString();
+                                              FirebaseFirestore.instance
+                                                  .collection(
+                                                      "users/${authUser.currentUser!.uid}/gardens/${widget.roomId}/${widget.roomName}")
+                                                  .doc(id)
+                                                  .delete();
+                                              showTopSnackBar(
+                                                Overlay.of(context)!,
+                                                CustomSnackBar.error(
+                                                  message:
+                                                      "${recentDocs[index]["plantName"]}, ${AppLocalizations.of(context)!.isdeleted}",
+                                                ),
+                                                onAnimationControllerInit:
+                                                    (controller) =>
+                                                        localAnimationController =
+                                                            controller,
+                                              );
+                                              Navigator.of(context,
+                                                      rootNavigator: true)
+                                                  .pop("Discard");
+                                            },
+                                            child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .yes),
+                                          ),
+                                          CupertinoButton(
+                                            onPressed: () {
+                                              Navigator.of(context,
+                                                      rootNavigator: true)
+                                                  .pop("Discard");
+                                            },
+                                            child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .no),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              },
+                            )),
+                            DataCell(IconButton(
+                              icon: Icon(
+                                Icons.add_alarm,
+                                color: recentDocs[index]["reminder"] == false
+                                    ? kPrymaryColor
+                                    : kPrymaryColor,
+                              ),
+                              onPressed: () {
+                                /*    FirebaseFirestore.instance
+                                    .collection(
+                                    'users/${authUser.currentUser!.uid}/gardens/${widget.roomId}/${widget.roomName}').doc(recentDocs[index]["plantId"]).
+                                    update({
+                                  "reminder": true
+                                });*/
+                                showModalBottomSheet(
+                                    useRootNavigator: true,
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(20),
+                                    )),
+                                    context: context,
+                                    builder: (context) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                .viewInsets
+                                                .bottom),
+                                        child: ReminderAddWidget(
+                                          name: recentDocs[index]["plantName"],
+                                          image: recentDocs[index]["image"],
+                                          location: recentDocs[index]
+                                              ["location"],
+                                        ),
+                                      );
+                                    });
+                              },
+                            )),
+                          ],
+                        )
+                      ]);
+                });
+          },
+        );
+      },
     );
   }
 }
