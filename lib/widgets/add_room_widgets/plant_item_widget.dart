@@ -60,6 +60,7 @@ class _PlantItemWidgetState extends State<PlantItemWidget> {
           builder: (ctx, futureSnap) {
             return ListView.builder(
                 shrinkWrap: true,
+                physics: const ScrollPhysics(),
                 itemCount: recentDocs.length,
                 itemBuilder: (context, index) {
                   return DataTable(
@@ -70,6 +71,7 @@ class _PlantItemWidgetState extends State<PlantItemWidget> {
                       headingRowHeight: 0.0,
                       dividerThickness: 0.0,
                       dataRowHeight: 50,
+
                       showBottomBorder: false,
                       columns: [
                         DataColumn(

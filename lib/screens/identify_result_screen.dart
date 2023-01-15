@@ -20,9 +20,12 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    widget.dataModel!.suggestions![0].plantDetails!.wikiImages!.forEach((element) {
-      images!.add(element.value!);
-    });
+    if(widget.dataModel!.suggestions![0].plantDetails!.wikiImages != null){
+      widget.dataModel!.suggestions![0].plantDetails!.wikiImages!.forEach((element) {
+        images!.add(element.value!);
+      });
+    }
+
     print(images.toString());
     return Scaffold(
       body:Stack(
@@ -61,11 +64,12 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
           ),
         ),
           Padding(
-            padding: const EdgeInsets.only(left: 8.0, top: 30),
+            padding: const EdgeInsets.only(left: 8.0, top: 50),
             child: SizedBox(
-              height: 35,
-              width: 35,
+              height: 45,
+              width: 45,
               child: Card(
+                elevation: 4,
                 color: Colors.white,
                 child: IconButton(
                   padding: EdgeInsets.zero,
@@ -96,7 +100,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(widget.dataModel!.suggestions![index].plantDetails!.commonNames![0].toCapitalized().toString(),
+                            Text(widget.dataModel!.suggestions![index].plantDetails!.commonNames![0] ==null ? "": widget.dataModel!.suggestions![index].plantDetails!.commonNames![0].toCapitalized().toString(),
                               style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, fontSize: 22),),
                             const SizedBox(height: 10,),
                             Padding(

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
+import 'package:bitky/widgets/add_manuel_plant_wdiget.dart';
+import 'package:bitky/widgets/add_room_widgets/add_room.dart';
 import 'package:bitky/widgets/reminder_add_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -155,6 +157,20 @@ class _ReminderState extends State<Reminder> {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   Widget build(BuildContext context) {
     _bitkyViewModel = Provider.of<BitkyViewModel>(context);
     return Scaffold(
@@ -253,7 +269,6 @@ class _ReminderState extends State<Reminder> {
                       );
                     }
                     final reminderDocs = reminderSnapshot.data!.docs;
-
                     return FutureBuilder(
                       builder:(context, futureSnapshot){
                         return ListView.builder(
@@ -262,19 +277,14 @@ class _ReminderState extends State<Reminder> {
                             itemBuilder: (context, index) {
                             switch(reminderDocs[index]['day']){
                               case 1:{
-
                                   day=AppLocalizations.of(context)!.sunday;
-
                               }
                               break;
                               case 2:{
-
                                   day=AppLocalizations.of(context)!.monday;
-
                               }
                               break;
                               case 3:{
-
                                   day=AppLocalizations.of(context)!.tuesday;
 
                               }

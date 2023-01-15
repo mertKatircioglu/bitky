@@ -64,11 +64,12 @@ class _OpenBlogItemDetailScreenState extends State<OpenBlogItemDetailScreen> {
           ),
         ),
           Padding(
-            padding: const EdgeInsets.only(left: 8.0, top: 30),
+            padding: const EdgeInsets.only(left: 8.0, top: 50),
             child: SizedBox(
-              height: 35,
-              width: 35,
+              height: 45,
+              width: 45,
               child: Card(
+                elevation: 4,
                 color: Colors.white,
                 child: IconButton(
                   padding: EdgeInsets.zero,

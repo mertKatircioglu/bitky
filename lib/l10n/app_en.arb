@@ -263,6 +263,24 @@
 "description":"youdonthaveanyroomyet"},
 "theplantspreferredmoisturelevel":"The plant's preferred moisture level",
 "@theplantspreferredmoisturelevel":{
-"description":"theplantspreferredmoisturelevel"}
+"description":"theplantspreferredmoisturelevel"},
+"plsselectaphoto":"Please select a photo.",
+"@plsselectaphoto":{
+"description":"plsselectaphoto"},
+"yourplantisadded":"Your plant is being added.",
+"@yourplantisadded":{
+"description":"yourplantisadded"},
+"plsselectthearearoomyourplant":"Please select the area/room where your plant is located",
+"@plsselectthearearoomyourplant":{
+"description":"plsselectthearearoomyourplant"},
+"plsenterthenameofyourplant":"Please enter the name of your plant",
+"@plsenterthenameofyourplant":{
+"description":"plsenterthenameofyourplant"},
+"camera":"Camera",
+"@camera":{
+"description":"camera"},
+"gallery":"Gallery",
+"@gallery":{
+"description":"gallery"}
 
 }

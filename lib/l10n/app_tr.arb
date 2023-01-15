@@ -83,5 +83,11 @@
   "isdeleted":"silindi.",
   "noplant":"Hiç bitkiniz bulunmuyor.",
   "youdonthaveanyroomyet":"Henüz hiç bir alanınız bulunmuyor.",
-  "theplantspreferredmoisturelevel":"Bitkinin tercih ettiği nem seviyesi"
+  "theplantspreferredmoisturelevel":"Bitkinin tercih ettiği nem seviyesi",
+  "plsselectaphoto":"Lütfen bir fotoğraf seçin.",
+  "yourplantisadded":"Bitkiniz ekleniyor.",
+  "plsselectthearearoomyourplant":"Lütfen bitkinizin bulunduğu alanı/odayı seçiniz",
+  "plsenterthenameofyourplant":"Lütfen bitkinizin adını yazın",
+  "camera":"Kamera",
+  "gallery":"Galeri  "
 }

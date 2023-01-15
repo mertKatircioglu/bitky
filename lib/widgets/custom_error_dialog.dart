@@ -14,7 +14,7 @@ class CustomErrorDialog extends StatelessWidget {
       actions: [
         CupertinoButton(
           onPressed: (){
-            Navigator.pop(context);
+            Navigator.of(context, rootNavigator: true).pop("Discard");
           },
 
             child: const Center(

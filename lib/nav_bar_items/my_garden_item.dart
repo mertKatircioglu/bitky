@@ -22,6 +22,7 @@ import '../globals/globals.dart';
 import '../l10n/app_localizations.dart';
 import '../models/bitky_data_model.dart';
 import '../view_models/planet_view_model.dart';
+import '../widgets/add_manuel_plant_wdiget.dart';
 import '../widgets/custom_error_dialog.dart';
 
 class MyGarden extends StatefulWidget {
@@ -239,7 +240,7 @@ class _MyGardenState extends State<MyGarden> {
 
     });
   }
-  openImages(String title, String id) async {
+  openImages(BuildContext context, String title, String id) async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -249,7 +250,7 @@ class _MyGardenState extends State<MyGarden> {
             elevation: 0,
             title:  Center(
                 child: Text(
-                  AppLocalizations.of(context)!.addpicture,
+                  AppLocalizations.of(context)!.addpicture, style: GoogleFonts.sourceSansPro(),
                 )),
             content: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -258,30 +259,99 @@ class _MyGardenState extends State<MyGarden> {
                   shape: RoundedRectangleBorder(
                       side: const BorderSide(color: kPrymaryColor, width: 1.0),
                       borderRadius: BorderRadius.circular(10)),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.camera_alt_outlined,
-                      color: kPrymaryColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: InkWell(
+                        onTap: (){
+                          _addFromCamera(title,id);
+                          Navigator.pop(context);
+                                 },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                       const Icon(
+                              Icons.camera_alt_outlined,
+                              color: kPrymaryColor,
+                            ),
+                          Text(AppLocalizations.of(context)!.camera,textAlign: TextAlign.center, style: GoogleFonts.sourceSansPro(fontSize: 11),)
+
+                        ],
+                      ),
                     ),
-                    onPressed: () {
-                      _addFromCamera(title,id);
-                      Navigator.pop(context);
-                    },
                   ),
                 ),
                 Card(
                   shape: RoundedRectangleBorder(
                       side: const BorderSide(color: kPrymaryColor, width: 1.0),
                       borderRadius: BorderRadius.circular(10)),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.photo_library_outlined,
-                      color: kPrymaryColor,
-                    ),
-                    onPressed: () {
-                      _addFromGallery(title, id);
-                      Navigator.pop(context);
+                  child: InkWell(
+                    onTap: () async{
+                      Future.delayed(const Duration(seconds: 0), (){
+                        showGeneralDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          barrierLabel: "go",
+                          pageBuilder: (ctx, a1, a2) {
+                            return Container();
+                          },
+                          transitionBuilder: (ctx, a1, a2, child) {
+                            var curve = Curves.easeInOut.transform(a1.value);
+                            return Transform.scale(
+                              scale: curve,
+                              child:AlertDialog(
+                                contentPadding:const EdgeInsets.all(0.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                                elevation: 0,
+                                content:AddPlantManuelWidget(roomId: id, roomName: title,),
+                              ),
+                            );
+                          },
+                          transitionDuration: const Duration(milliseconds: 300),
+                        );
+                      });
+
+                      Navigator.of(context, rootNavigator: true).pop("Discard");
                     },
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Column(
+                        mainAxisSize:MainAxisSize.min,
+                        children: [
+                        const Icon(
+                              Icons.add,
+                              color: kPrymaryColor,
+                            ),
+
+                          Text("Manuel",textAlign: TextAlign.center, style: GoogleFonts.sourceSansPro(fontSize: 11),)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Card(
+                  shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: kPrymaryColor, width: 1.0),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: InkWell(
+                        onTap: (){
+                          _addFromGallery(title, id);
+                          Navigator.pop(context);
+                          },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                           const Icon(
+                              Icons.photo_library_outlined,
+                              color: kPrymaryColor,
+                            ),
+                          Text(AppLocalizations.of(context)!.gallery,textAlign: TextAlign.center, style: GoogleFonts.sourceSansPro(fontSize: 11),)
+
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -289,6 +359,7 @@ class _MyGardenState extends State<MyGarden> {
           );
         });
   }
+
 
   Future _addImageFromGallery() async {
     try {
@@ -342,138 +413,149 @@ class _MyGardenState extends State<MyGarden> {
 
     return Scaffold(
       body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration:  const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('images/plant1.png'),alignment: Alignment.bottomCenter),
-          gradient: LinearGradient(
-              colors: [
-                Color(0xFFFFFFFF),
-                Color(0xFFA5EFB0),
-              ],
-              begin: FractionalOffset(0.1, 1.0),
-              end: FractionalOffset(0.0, 0.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const SizedBox(
-                height: 50,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.mygardentitle,
-                      style: GoogleFonts.sourceSansPro(
-                          fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                  /*  IconButton(
-                        onPressed: (){
-                          showSearch(context: context,
-                              delegate: SearchDelegatee());
-                        },
-                        icon: const Icon(Icons.search_sharp))*/
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              isLoading == true
-                  ? Center(
-                  child: SizedBox(
-                    child: Padding(
-                      padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const CupertinoActivityIndicator(
-                          ),
-                          WavyAnimatedTextKit(
-                            textStyle: GoogleFonts.sourceSansPro(
-                                fontSize: 18),
-                            text: [AppLocalizations.of(context)!.plswait],
-                            isRepeatingAnimation: true,
-                            speed: const Duration(milliseconds: 150),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ))
-                  : StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('users/${authUser.currentUser!.uid}/gardens')
-                      .orderBy("createDate", descending: true)
-                      .snapshots(),
-                  builder: (ctx, recentSnapshot) {
-                    if(recentSnapshot.connectionState == ConnectionState.waiting){
-                      return const CupertinoActivityIndicator(color: Colors.transparent,);
-                    }else if(recentSnapshot.data!.docs.isEmpty){
-                      return Padding(
-                        padding: EdgeInsets.only(top:MediaQuery.of(context).size.height/3  ),
-                        child:  Center(
-                          child: Text(AppLocalizations.of(context)!.youdonthaveanyroomyet, style: GoogleFonts.sourceSansPro(),),
-                        ),
-                      );
-                    }
-                    final recentDocs = recentSnapshot.data!.docs;
-                    return Expanded(
-                      child: FutureBuilder(
-                        builder: (context, futureSnapshot) {
-                          return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: recentDocs.length,
-                              itemBuilder: (context, index) {
-                                var date = DateTime.now().day - DateTime.parse(recentDocs[index]["createDate"].toDate().toString()).day;
-                                return Accordion(
-                                  maxOpenSections: 2,
-                                  headerBackgroundColorOpened: Colors.black54,
-                                  scaleWhenAnimating: true,
-                                  openAndCloseAnimation: true,
-                                  headerPadding:
-                                  const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
-                                  sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
-                                  sectionClosingHapticFeedback: SectionHapticFeedback.light,
-                                  children: [
-                                    AccordionSection(
-                                      isOpen: false,
-                                      leftIcon: const Icon(CupertinoIcons.leaf_arrow_circlepath, color: Colors.white),
-                                      headerBackgroundColor: Colors.black54,
-                                      headerBackgroundColorOpened: kPrymaryColor,
-                                      header: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(recentDocs[index]["roomName"], style: _headerStyle),
-                                          IconButton(onPressed: (){
-                                            openImages(recentDocs[index]["roomName"],recentDocs[index]["roomId"].toString());
-                                          }, icon: const Icon(Icons.add, color: Colors.white, )),
-                                        ],
-                                      ),
-                                      content: PlantItemWidget(roomName: recentDocs[index]["roomName"], roomId:  recentDocs[index]["roomId"],),
-                                      contentHorizontalPadding: 5,
-                                      contentBorderWidth: 1,
-
-                                    ),
-                                  ],
-                                );
-                              });
-                        },
-                      ),
-                    );
-                  }),
-            ],
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration:  const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('images/plant1.png'),alignment: Alignment.bottomCenter),
+            gradient: LinearGradient(
+                colors: [
+                  Color(0xFFFFFFFF),
+                  Color(0xFFA5EFB0),
+                ],
+                begin: FractionalOffset(0.1, 1.0),
+                end: FractionalOffset(0.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp),
           ),
-        ) ,
-      ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView(
+              children: [
+                const SizedBox(
+                  height: 50,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.mygardentitle,
+                        style: GoogleFonts.sourceSansPro(
+                            fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                      /*  IconButton(
+                            onPressed: (){
+                              showSearch(context: context,
+                                  delegate: SearchDelegatee());
+                            },
+                            icon: const Icon(Icons.search_sharp))*/
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 60,),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    isLoading == true
+                        ? Center(
+                        child: SizedBox(
+                          child: Padding(
+                            padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const CupertinoActivityIndicator(
+                                ),
+                                WavyAnimatedTextKit(
+                                  textStyle: GoogleFonts.sourceSansPro(
+                                      fontSize: 18),
+                                  text: [AppLocalizations.of(context)!.plswait],
+                                  isRepeatingAnimation: true,
+                                  speed: const Duration(milliseconds: 150),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ))
+                        : StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users/${authUser.currentUser!.uid}/gardens')
+                            .orderBy("createDate", descending: true)
+                            .snapshots(),
+                        builder: (ctx, recentSnapshot) {
+                          if(recentSnapshot.connectionState == ConnectionState.waiting){
+                            return const CupertinoActivityIndicator(color: Colors.transparent,);
+                          }else if(recentSnapshot.data!.docs.isEmpty){
+                            return Padding(
+                              padding: EdgeInsets.only(top:MediaQuery.of(context).size.height/3  ),
+                              child:  Center(
+                                child: Text(AppLocalizations.of(context)!.youdonthaveanyroomyet, style: GoogleFonts.sourceSansPro(),),
+                              ),
+                            );
+                          }
+                          final recentDocs = recentSnapshot.data!.docs;
+                          return  FutureBuilder(
+                            builder: (context, futureSnapshot) {
+                              return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: recentDocs.length,
+                                  itemBuilder: (context, index) {
+                                    var date = DateTime.now().day - DateTime.parse(recentDocs[index]["createDate"].toDate().toString()).day;
+                                    return Accordion(
+                                      paddingListBottom: 2.0,
+                                      paddingListTop: 2.0,
+                                      disableScrolling: true,
+                                      scrollIntoViewOfItems: 	ScrollIntoViewOfItems.fast,
+                                      maxOpenSections: 5,
+                                      headerBackgroundColorOpened: Colors.black54,
+                                      scaleWhenAnimating: true,
+                                      openAndCloseAnimation: true,
+                                      headerPadding:
+                                      const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+                                      sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
+                                      sectionClosingHapticFeedback: SectionHapticFeedback.light,
+                                      children: [
+                                        AccordionSection(
+                                          isOpen: false,
+                                          contentVerticalPadding: 2,
+                                          leftIcon: const Icon(CupertinoIcons.leaf_arrow_circlepath, color: Colors.white),
+                                          headerBackgroundColor: Colors.black54,
+                                          headerBackgroundColorOpened: kPrymaryColor,
+                                          header: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(recentDocs[index]["roomName"], style: _headerStyle),
+                                              IconButton(onPressed: (){
+                                                openImages(context,recentDocs[index]["roomName"],recentDocs[index]["roomId"].toString());
+                                              }, icon: const Icon(Icons.add, color: Colors.white, )),
+                                            ],
+                                          ),
+                                          content: PlantItemWidget(roomName: recentDocs[index]["roomName"], roomId:  recentDocs[index]["roomId"],),
+                                          contentHorizontalPadding: 3,
+                                          contentBorderWidth: 1,
+
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
+                          );
+
+                        }),
+
+                  ],
+                )
+              ],
+            ),
+
+          ) ,
+        ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 18.0),
         child: FloatingActionButton(
@@ -493,23 +575,3 @@ class _MyGardenState extends State<MyGarden> {
 
   }
 }
-/*
-* DataTable(
-                                        sortAscending: true,
-                                        sortColumnIndex: 1,
-                                        dataRowHeight: 40,
-                                        showBottomBorder: false,
-                                        columns: [
-                                          DataColumn(
-                                              label: Text('Image', style: _contentStyleHeader),
-                                              numeric: true),
-                                          DataColumn(
-                                              label: Text('Plant Name', style: _contentStyleHeader)),
-                                          DataColumn(
-                                              label: Text('Action', style: _contentStyleHeader),
-                                              numeric: true),
-                                        ],
-                                        rows:[
-
-                                        ],
-                                      )*/
