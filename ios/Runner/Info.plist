@@ -3,11 +3,12 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<array>
-      <string>tr</string>
-      <string>en</string>
-    </array>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key></key>
+	<array>
+		<string>tr</string>
+		<string>en</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Bitky</string>
 	<key>CFBundleExecutable</key>
@@ -50,10 +51,12 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Kamera Lazım</string>
+	<string>Bitkilerin görselleri için kameraya ihtiyacımız var.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Galeri lazım</string>
+	<string>Bitkilerin görselleri için galeri erişimine ihtiyacımız var.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Doğru bilgi verebilmemiz için konum bilginize ihtiyacımız var.</string>
 </dict>
 </plist>
