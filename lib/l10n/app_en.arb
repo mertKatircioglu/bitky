@@ -281,6 +281,9 @@
 "description":"camera"},
 "gallery":"Gallery",
 "@gallery":{
-"description":"gallery"}
+"description":"gallery"},
+"discover":"Discover",
+"@discover":{
+"description":"discover"}
 
 }

@@ -118,12 +118,10 @@ class Images {
 class Suggestions {
   int? id;
   String? plantName;
-
   PlantDetails? plantDetails;
   double? probability;
   bool? confirmed;
   List<SimilarImages>? similarImages;
-
   Suggestions({this.id, this.plantName, this.plantDetails, this.probability, this.confirmed, this.similarImages});
 
   Suggestions.fromJson(Map<String, dynamic> json) {
@@ -170,7 +168,8 @@ class PlantDetails {
     this.taxonomy, this.wikiImages, this.language, this.scientificName, this.structuredName});
 
   PlantDetails.fromJson(Map<String, dynamic> json) {
-    commonNames = json['common_names'].cast<String>();
+    // ignore: prefer_null_aware_operators
+    commonNames = json['common_names'] != null ? json['common_names'].cast<String>() : null;
     url = json['url'];
     wikiDescription = json['wiki_description'] != null ? WikiDescription.fromJson(json['wiki_description']) : null;
     watering = json['watering'] != null ? Watering.fromJson(json['watering']) : null;

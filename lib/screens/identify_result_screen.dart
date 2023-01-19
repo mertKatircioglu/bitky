@@ -4,7 +4,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../models/bitky_data_model.dart';
 
 class IdentifyResultScreen extends StatefulWidget {
@@ -20,12 +19,15 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if(widget.dataModel!.suggestions![0].plantDetails!.wikiImages != null){
-      widget.dataModel!.suggestions![0].plantDetails!.wikiImages!.forEach((element) {
-        images!.add(element.value!);
-      });
-    }
-
+  if(widget.dataModel!.suggestions![0].plantDetails!.wikiImages !=null){
+    widget.dataModel!.suggestions![0].plantDetails!.wikiImages!.forEach((element) {
+      images!.add(element.value!);
+    });
+  } else{
+    widget.dataModel!.suggestions![0].similarImages!.forEach((element) {
+      images!.add(element.url!);
+    });
+  }
     print(images.toString());
     return Scaffold(
       body:Stack(
@@ -100,7 +102,9 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(widget.dataModel!.suggestions![index].plantDetails!.commonNames![0] ==null ? "": widget.dataModel!.suggestions![index].plantDetails!.commonNames![0].toCapitalized().toString(),
+                            // ignore: unnecessary_null_comparison
+                            Text( widget.dataModel!.suggestions![index].plantDetails!.commonNames == null ?
+                            widget.dataModel!.suggestions![index].plantName! : widget.dataModel!.suggestions![index].plantDetails!.commonNames![0].toCapitalized().toString(),
                               style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.w600, fontSize: 22),),
                             const SizedBox(height: 10,),
                             Padding(

@@ -29,7 +29,6 @@ class _FlowItemState extends State<FlowItem> {
    blogs= FirebaseFirestore.instance.collection('blog').
     where('title', isGreaterThanOrEqualTo: text).get();
 
-
   }
 
   @override

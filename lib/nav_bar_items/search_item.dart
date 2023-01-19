@@ -347,7 +347,6 @@ class _SearchState extends State<Search> {
                       .then((value) {
                     _bitkyDataModel = value;
                   }).whenComplete(() {
-                    //print("GGGGGGGGGGGGG:    "+_bitkyDataModel.bestMatch.toString());
                     base64ImgList.clear();
                     imagesPaths.clear();
                     PersistentNavBarNavigator.pushNewScreen(

@@ -1,11 +1,10 @@
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/helpers/notification_service.dart';
+import 'package:bitky/nav_bar_items/discover_item.dart';
 import 'package:bitky/nav_bar_items/flow_item.dart';
 import 'package:bitky/nav_bar_items/my_garden_item.dart';
 import 'package:bitky/nav_bar_items/reminders_item.dart';
 import 'package:bitky/nav_bar_items/search_item.dart';
-import 'package:bitky/nav_bar_items/settings_item.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,8 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       const DiagnosePage(),
       const Search(),
+      const DiscoverItemScreen(),
       const FlowItem(),
-      const Reminder(),
       const MyGarden(),
       // const SettingsItem()
     ];
@@ -68,19 +67,20 @@ class _HomeScreenState extends State<HomeScreen> {
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
+        icon: const Icon(CupertinoIcons.paperplane, size: 20),
+        title: (AppLocalizations.of(context)!.discover),
+        textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
+        activeColorPrimary: kPrymaryColor,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
+      PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.flowchart, size: 20,),
         title: (AppLocalizations.of(context)!.flowtitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
-      PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.bell, size: 20),
-        title: (AppLocalizations.of(context)!.remindertitle),
-        textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
-        activeColorPrimary: kPrymaryColor,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.leaf_arrow_circlepath, size: 20),
         title: (AppLocalizations.of(context)!.mygardentitle),
