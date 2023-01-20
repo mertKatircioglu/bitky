@@ -37,7 +37,7 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
 
   getData() async {
     await FirebaseFirestore.instance
-        .collection('discover')
+        .collection('discover').orderBy("createDate", descending: false)
         .snapshots()
         .listen((event) {
       final data = event.docs;
@@ -51,6 +51,7 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
           imgUrl: doc.data()["imgUrl"],
           descrip: doc.data()["description"],
           user: doc.data()["user"],
+          approveCount: doc.data()["approve"].toString(),
         ));
       }
       setState(() {});

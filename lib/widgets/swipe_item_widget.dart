@@ -14,6 +14,7 @@ class ExampleCard extends StatelessWidget {
   String? imgUrl;
   String? descrip;
   String? user;
+  String? approveCount;
 
   ExampleCard(
       {Key? key,
@@ -22,6 +23,7 @@ class ExampleCard extends StatelessWidget {
       this.imgUrl,
       this.subTile,
       this.user,
+        this.approveCount,
       this.descrip})
       : super(key: key);
 
@@ -49,8 +51,10 @@ class ExampleCard extends StatelessWidget {
             Expandable(
                 collapsed: ExpandableButton(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Stack(children: [
+
                         ClipRRect(
                           borderRadius: const BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15)),
                           child: CachedNetworkImage(
@@ -65,20 +69,37 @@ class ExampleCard extends StatelessWidget {
                             fadeInDuration: const Duration(seconds: 1),
                           ),
                         ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                            color: Colors.black54,
+                        Column(
+                          children: [
+                            Container(
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
 
-                          ),
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children:  [
-                              const Icon(Icons.done,size: 24, color: kPrymaryColor,),
-                              Text("1.342 kişi tarafından onaylandı.", style:GoogleFonts.sourceSansPro(fontStyle: FontStyle.italic, color: Colors.white) ,),
-                            ],
-                          ),
-                        )
+                                color: Colors.black54,
+                              ),
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children:  [
+                                  const Icon(Icons.label,size: 24, color: kPrymaryColor,),
+                                  Text(title!, style:GoogleFonts.sourceSansPro(fontSize: 18,fontWeight: FontWeight.w600, color: Colors.white) ,),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.black54,
+                              ),
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children:  [
+                                  const Icon(Icons.done,size: 24, color: kPrymaryColor,),
+                                  Text("${approveCount!} kişi tarafından onaylandı.", style:GoogleFonts.sourceSansPro(fontStyle: FontStyle.italic, color: Colors.white) ,),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
                       ],),
 
                      const Icon(Icons.arrow_drop_down, color: kPrymaryColor, size: 36,)
@@ -104,49 +125,40 @@ class ExampleCard extends StatelessWidget {
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height / 5,
                         ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                            color: Colors.black54,
-
-                          ),
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children:  [
-                              const Icon(Icons.done,size: 12, color: kPrymaryColor,),
-                              Text("1.342 kişi tarafından onaylandı.", style:GoogleFonts.sourceSansPro(fontStyle: FontStyle.italic,
-                                  fontSize: 12,
-                                  color: Colors.white) ,),
-                            ],
-                          ),
-                        )
-                      ],),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Column(
                           children: [
-                            Text(
-                              title.toString(),
-                              style: GoogleFonts.sourceSansPro(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20,
+                            Container(
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                                color: Colors.black54,
+                              ),
+                              padding: const EdgeInsets.all(3.0),
+                              child: Row(
+                                children:  [
+                                  const Icon(Icons.label,size: 14, color: kPrymaryColor,),
+                                  Text(title!, style:GoogleFonts.sourceSansPro(fontSize: 12,fontWeight: FontWeight.w600, color: Colors.white) ,),
+                                ],
                               ),
                             ),
-                            Text(
-                              "${dateTame!} ${AppLocalizations.of(context)!.daysago}",
-                              style: GoogleFonts.sourceSansPro(
-                                color: Colors.black,
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12,
+                            Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.black54,
+                              ),
+                              padding: const EdgeInsets.all(3.0),
+                              child: Row(
+                                children:  [
+                                  const Icon(Icons.done,size: 9, color: kPrymaryColor,),
+                                  Text("${approveCount} kişi tarafından onaylandı.", style:GoogleFonts.sourceSansPro(fontStyle: FontStyle.italic,
+                                      fontSize: 12,
+                                      color: Colors.white) ,),
+                                ],
                               ),
                             ),
                           ],
-                        ),
-                      ),
+                        )
+                      ],),
+
+
 
                       const SizedBox(
                         height: 5,
@@ -193,18 +205,31 @@ class ExampleCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-
-                            const Icon(Icons.person, color: kPrymaryColor, size: 12,),
-
+                            Row(
+                              children: [
+                                const Icon(Icons.person, color: kPrymaryColor, size: 12,),
+                                Text(
+                                  user!,
+                                  style: GoogleFonts.sourceSansPro(
+                                      color: Colors.black,
+                                      fontSize: 12,
+                                      fontStyle: FontStyle.italic
+                                  ),
+                                ),
+                              ],
+                            ),
                             Text(
-                              user!,
+                              "${dateTame!} ${AppLocalizations.of(context)!.daysago}",
                               style: GoogleFonts.sourceSansPro(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontStyle: FontStyle.italic
+                                color: Colors.black,
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
                               ),
                             ),
+
                           ],
                         ),
                       ),
