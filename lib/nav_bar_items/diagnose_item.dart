@@ -180,7 +180,17 @@ class _DiagnosePageState extends State<DiagnosePage> {
               children:  [
                  Text(
                    AppLocalizations.of(context)!.diagnosetitle,
-                  style: GoogleFonts.sourceSansPro(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.sourceSansPro(
+                    color: Colors.white,
+                      shadows: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 2), // changes position of shadow
+                        )
+                      ],
+                      fontSize: 22, fontWeight: FontWeight.w600),
                 ),
                 Visibility(
                   visible:_diseases.id !=null,
@@ -201,9 +211,9 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(Icons.clear, size:
-                        15,color: kPrymaryColor,),
+                        15,color: Colors.white,),
                         const SizedBox(width: 2,),
-                        Text(AppLocalizations.of(context)!.clear, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)
+                        Text(AppLocalizations.of(context)!.clear, style: GoogleFonts.sourceSansPro(color: Colors.white),)
                       ],),),
                 )
 
@@ -221,10 +231,11 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     "images/diognasPageTopIcons.png",
                     width: 80,
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                   Text(AppLocalizations.of(context)!.diagnosesubtitle, style: GoogleFonts.sourceSansPro(fontSize: 18),),
+
+                   Text(AppLocalizations.of(context)!.diagnosesubtitle,
+                     style: GoogleFonts.sourceSansPro(
+
+                         fontSize: 18),),
                   const SizedBox(
                     height: 10,
                   ),
@@ -394,9 +405,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+
                   InkWell(
                     onTap: (){
                       PersistentNavBarNavigator.pushNewScreen(

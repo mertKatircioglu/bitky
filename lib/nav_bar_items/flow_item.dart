@@ -67,6 +67,15 @@ class _FlowItemState extends State<FlowItem> {
                     Text(
                       AppLocalizations.of(context)!.flowtitle,
                       style: GoogleFonts.sourceSansPro(
+                          color: Colors.white,
+                          shadows: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(0, 2), // changes position of shadow
+                            )
+                          ],
                           fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                     IconButton(
@@ -74,7 +83,7 @@ class _FlowItemState extends State<FlowItem> {
                       showSearch(context: context,
                           delegate: SearchDelegatee());
                     },
-                        icon: const Icon(Icons.search_sharp))
+                        icon: const Icon(Icons.search_sharp, color: Colors.white,))
                   ],
                 ),
               ),

@@ -80,7 +80,7 @@ class ExampleCard extends StatelessWidget {
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
                                 children:  [
-                                  const Icon(Icons.label,size: 24, color: kPrymaryColor,),
+                                  const Icon(Icons.label_important_outline_sharp,size: 24, color: kPrymaryColor,),
                                   Text(title!, style:GoogleFonts.sourceSansPro(fontSize: 18,fontWeight: FontWeight.w600, color: Colors.white) ,),
                                 ],
                               ),

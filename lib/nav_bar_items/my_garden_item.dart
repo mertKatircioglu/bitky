@@ -417,7 +417,8 @@ class _MyGardenState extends State<MyGarden> {
           width: MediaQuery.of(context).size.width,
           decoration:  const BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('images/plant1.png'),alignment: Alignment.bottomCenter),
+                image: AssetImage('images/bt_banner.png',),
+                alignment: Alignment.bottomCenter),
             gradient: LinearGradient(
                 colors: [
                   Color(0xFFFFFFFF),
@@ -444,7 +445,16 @@ class _MyGardenState extends State<MyGarden> {
                       Text(
                         AppLocalizations.of(context)!.mygardentitle,
                         style: GoogleFonts.sourceSansPro(
-                            fontSize: 18, fontWeight: FontWeight.w600),
+                          color: Colors.white,
+                            shadows: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: const Offset(0, 2), // changes position of shadow
+                              )
+                            ],
+                            fontSize: 22, fontWeight: FontWeight.w600),
                       ),
                       /*  IconButton(
                             onPressed: (){

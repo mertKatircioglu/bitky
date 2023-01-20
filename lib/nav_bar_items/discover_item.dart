@@ -71,8 +71,8 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
           alignment: Alignment.center,
           content: Container(
             color: Colors.transparent,
-              height: 80,
-              width: 80,
+              height: 200,
+              width: 200,
               child: Lottie.asset("images/done.json", repeat: false)),
         );
       });
@@ -88,8 +88,8 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
           alignment: Alignment.center,
           content: Container(
               color: Colors.transparent,
-              height: 80,
-              width: 80,
+              height: 200,
+              width: 200,
               child: Lottie.asset("images/cancel.json", repeat: false)),
         );
       });
@@ -145,6 +145,15 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
                     Text(
                       AppLocalizations.of(context)!.discover,
                       style: GoogleFonts.sourceSansPro(
+                          color: Colors.white,
+                          shadows: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(0, 2), // changes position of shadow
+                            )
+                          ],
                           fontSize: 18, fontWeight: FontWeight.w600),
                     ),
 

@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.waveform_path_ecg, size: 20),
+        icon: const Icon(CupertinoIcons.waveform_path_ecg, size: 24),
         title: (AppLocalizations.of(context)!.diagnosetitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
 
@@ -60,21 +60,21 @@ class _HomeScreenState extends State<HomeScreen> {
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.search, size: 20,),
+        icon: const Icon(CupertinoIcons.search, size: 24,),
         title: (AppLocalizations.of(context)!.searchtitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.paperplane, size: 20),
+        icon: const Icon(CupertinoIcons.paperplane, size: 24),
         title: (AppLocalizations.of(context)!.discover),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.flowchart, size: 20,),
+        icon: const Icon(CupertinoIcons.flowchart, size: 24,),
         title: (AppLocalizations.of(context)!.flowtitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.leaf_arrow_circlepath, size: 20),
+        icon: const Icon(CupertinoIcons.leaf_arrow_circlepath, size: 24),
         title: (AppLocalizations.of(context)!.mygardentitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
         activeColorPrimary: kPrymaryColor,
@@ -114,10 +114,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
         },*/
         handleAndroidBackButtonPress: true,
-        navBarStyle: NavBarStyle.style6,
+        navBarStyle: NavBarStyle.style9,
         hideNavigationBarWhenKeyboardShows: true,
         decoration: NavBarDecoration(
-          borderRadius: BorderRadius.circular(20.0),
+          boxShadow:[
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 2), // changes position of shadow
+            )
+          ] ,
+          borderRadius: const BorderRadius.only(topLeft:Radius.circular( 20.0), topRight:Radius.circular( 20.0)),
           colorBehindNavBar: Colors.white,
 
         ),
