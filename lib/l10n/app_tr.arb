@@ -90,5 +90,8 @@
   "plsenterthenameofyourplant":"Lütfen bitkinizin adını yazın",
   "camera":"Kamera",
   "gallery":"Galeri  ",
-  "discover":"Keşfet  "
+  "discover":"Keşfet  ",
+  "approved":"kişi tarafından onaylandı.",
+  "solution":"Çözüm",
+  "prevention":"Önleme"
 }

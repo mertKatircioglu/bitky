@@ -208,20 +208,71 @@ class SimilarImages {
 }
 
 class DiseaseDetails {
+  String? cause;
+  List<String>? classification;
+  List<String>? commonNames;
+  String? description;
+  Treatment? treatment;
+  String? url;
   String? localName;
   String? language;
 
-  DiseaseDetails({this.localName, this.language});
+  DiseaseDetails(
+      {this.cause,
+        this.classification,
+        this.commonNames,
+        this.description,
+        this.treatment,
+        this.url,
+        this.localName,
+        this.language});
 
   DiseaseDetails.fromJson(Map<String, dynamic> json) {
-    localName = json['local_name'];
+    cause = json['cause'];
+    classification = json['classification'] != null ? json['classification'].cast<String>() : null;
+    commonNames = json['common_names'] != null ? json['common_names'].cast<String>() : null;
+    description = json['description'];
+    treatment = json['treatment'] != null
+        ? Treatment.fromJson(json['treatment'])
+        : null;
+    url = json['url'];
+    localName = json['local_name'] ;
     language = json['language'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['cause'] = cause;
+    data['classification'] = classification;
+    data['common_names'] = commonNames;
+    data['description'] = description;
+    if (treatment != null) {
+      data['treatment'] = treatment!.toJson();
+    }
+    data['url'] = url;
     data['local_name'] = localName;
     data['language'] = language;
+    return data;
+  }
+}
+class Treatment {
+  List<String>? prevention;
+  List<String>? biological;
+  List<String>? chemical;
+
+  Treatment({this.prevention, this.biological, this.chemical});
+
+  Treatment.fromJson(Map<String, dynamic> json) {
+    prevention = json['prevention'] != null ? json['prevention'].cast<String>() : null;
+    biological = json['biological'] != null ? json['biological'].cast<String>() : null;
+    chemical = json['chemical'] != null ? json['chemical'].cast<String>() : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['prevention'] = prevention;
+    data['biological'] = biological;
+    data['chemical'] = chemical;
     return data;
   }
 }

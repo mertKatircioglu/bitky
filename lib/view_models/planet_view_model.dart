@@ -1,5 +1,6 @@
 import 'package:bitky/data/bitky_repository.dart';
 import 'package:bitky/models/bitky_health_data_model.dart';
+import 'package:bitky/models/weather_data_model.dart';
 import 'package:flutter/material.dart';
 
 import '../locator.dart';
@@ -13,16 +14,19 @@ class BitkyViewModel with ChangeNotifier {
   PlanetRepository _repository = locator<PlanetRepository>();
   BitkyDataModel? _bitkyDataModel;
   HealthDataModel? _healthDataModel;
+  WeatherDataModel? _weatherDataModel;
   List? _bitkyHealthList;
 
   BitkyViewModel() {
     _bitkyDataModel = BitkyDataModel();
     _healthDataModel = HealthDataModel();
+    _weatherDataModel = WeatherDataModel();
     _bitkyHealthList = [];
     _state = DataState.initialPlantState;
   }
 
   BitkyDataModel get getPlanet => _bitkyDataModel!;
+  WeatherDataModel get getWeather => _weatherDataModel!;
   HealthDataModel get getPlantHealth => _healthDataModel!;
   List get getBitkyHealths => _bitkyHealthList!;
   DataState get state => _state!;
@@ -68,5 +72,17 @@ class BitkyViewModel with ChangeNotifier {
       print("Model View Hata: $e");
     }
     return _bitkyDataModel!;
+  }
+
+  Future<WeatherDataModel> getWeatherFromUi(double lat, double lon) async {
+    try {
+      state = DataState.loadingState;
+      _weatherDataModel = await _repository.weatherFromRepository(lat,lon);
+      state = DataState.loadedState;
+    } catch (e) {
+      state = DataState.errorState;
+      print("Model View Hata: $e");
+    }
+    return _weatherDataModel!;
   }
 }

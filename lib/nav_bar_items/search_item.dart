@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
 import '../view_models/planet_view_model.dart';
+import '../widgets/custom_appbar_widget.dart';
 
 class CurvePainter extends CustomPainter {
   @override
@@ -162,7 +163,7 @@ class _SearchState extends State<Search> {
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
         image: DecorationImage(
-            image: AssetImage('images/banner.png'),alignment: Alignment.topCenter),
+            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),
         gradient: LinearGradient(
             colors: [
               Color(0xFFFFFFFF),
@@ -174,24 +175,24 @@ class _SearchState extends State<Search> {
             tileMode: TileMode.clamp),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(0.0),
         child: Column(
           children: [
             const SizedBox(
-              height: 100,
+              height: 180,
             ),
 
             Text(
               AppLocalizations.of(context)!.searchpagesubtitle,
-              style: const TextStyle(
-                  color: kPrymaryColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500),
-            ),
+              style: GoogleFonts.sourceSansPro(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black54
+              ),),
             const SizedBox(
-              height: 20,
+              height: 0,
             ),
-            Padding(
+           /* Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Card(
                 elevation: 10,
@@ -216,9 +217,9 @@ class _SearchState extends State<Search> {
                       fillColor: Colors.white70),
                 ),
               ),
-            ),
+            ),*/
             const SizedBox(
-              height: 100,
+              height: 50,
             ),
             Container(
               alignment: Alignment.center,

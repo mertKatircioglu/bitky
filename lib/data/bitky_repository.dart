@@ -2,6 +2,7 @@
 import 'dart:typed_data';
 
 import 'package:bitky/models/bitky_health_data_model.dart';
+import 'package:bitky/models/weather_data_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -23,6 +24,10 @@ class PlanetRepository{
 
   Future<BitkyDataModel> plantIdentifyFromRepository(List<String> images) async{
     return await planetApiClient.plantIdentify(images);
+  }
+
+  Future<WeatherDataModel> weatherFromRepository(double lat, double lon) async{
+    return await planetApiClient.getWeather(lat, lon);
   }
 
 }

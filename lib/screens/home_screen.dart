@@ -5,8 +5,10 @@ import 'package:bitky/nav_bar_items/flow_item.dart';
 import 'package:bitky/nav_bar_items/my_garden_item.dart';
 import 'package:bitky/nav_bar_items/reminders_item.dart';
 import 'package:bitky/nav_bar_items/search_item.dart';
+import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -26,13 +28,17 @@ class _HomeScreenState extends State<HomeScreen> {
   bool? _hideBar=false;
   late final LocalNotificationService service;
 
+
+
+
+
+
   @override
   void initState() {
     service = LocalNotificationService();
     service.initialize();
     super.initState();
     _controller = PersistentTabController(initialIndex: 2);
-
 
   }
 
@@ -102,6 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+
+      appBar: const CustomAppBarWidget(),
       resizeToAvoidBottomInset: false,
       body: PersistentTabView(
         context,

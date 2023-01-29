@@ -38,8 +38,6 @@ class _FlowItemState extends State<FlowItem> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('images/banner.png'),alignment: Alignment.topCenter),
           gradient: LinearGradient(
               colors: [
                 Color(0xFFFFFFFF),
@@ -53,43 +51,16 @@ class _FlowItemState extends State<FlowItem> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const SizedBox(
-                height: 50,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.flowtitle,
-                      style: GoogleFonts.sourceSansPro(
-                          color: Colors.white,
-                          shadows: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: const Offset(0, 2), // changes position of shadow
-                            )
-                          ],
-                          fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                    IconButton(
-                        onPressed: (){
-                      showSearch(context: context,
-                          delegate: SearchDelegatee());
-                    },
-                        icon: const Icon(Icons.search_sharp, color: Colors.white,))
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
+          /*    IconButton(
+                padding: const EdgeInsets.all(0),
+                  onPressed: (){
+                    showSearch(context: context,
+                        delegate: SearchDelegatee());
+                  },
+                  icon: const Icon(Icons.search_sharp, color: Colors.white,)),*/
               isLoading == true
                   ? Center(
                       child: SizedBox(
@@ -97,7 +68,6 @@ class _FlowItemState extends State<FlowItem> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const CupertinoActivityIndicator(
-
                           ),
                           WavyAnimatedTextKit(
                             textStyle: GoogleFonts.sourceSansPro(

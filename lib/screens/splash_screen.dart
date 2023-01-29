@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bitky/l10n/app_localizations.dart';
+import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -86,7 +87,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
+     CustomAppBarWidget();
     startTimer(context);
   }
 

@@ -284,6 +284,15 @@
 "description":"gallery"},
 "discover":"Discover",
 "@discover":{
-"description":"discover"}
+"description":"discover"},
+"approved":"people approved.",
+"@approved":{
+"description":"approved"},
+"solution":"Solution",
+"@solution":{
+"description":"solution"},
+"prevention":"Prevention",
+"@prevention":{
+"description":"prevention"}
 
 }

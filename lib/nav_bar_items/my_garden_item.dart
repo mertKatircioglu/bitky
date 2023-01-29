@@ -433,39 +433,7 @@ class _MyGardenState extends State<MyGarden> {
             padding: const EdgeInsets.all(8.0),
             child: ListView(
               children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.mygardentitle,
-                        style: GoogleFonts.sourceSansPro(
-                          color: Colors.white,
-                            shadows: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: const Offset(0, 2), // changes position of shadow
-                              )
-                            ],
-                            fontSize: 22, fontWeight: FontWeight.w600),
-                      ),
-                      /*  IconButton(
-                            onPressed: (){
-                              showSearch(context: context,
-                                  delegate: SearchDelegatee());
-                            },
-                            icon: const Icon(Icons.search_sharp))*/
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 60,),
+
                 Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [

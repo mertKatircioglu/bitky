@@ -32,7 +32,7 @@ class ExampleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height / 1,
+      height: MediaQuery.of(context).size.height * 0.70,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         color: CupertinoColors.white,
@@ -59,7 +59,7 @@ class ExampleCard extends StatelessWidget {
                           borderRadius: const BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15)),
                           child: CachedNetworkImage(
                             width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height/1.7,
+                            height: MediaQuery.of(context).size.height/1.6,
                             fit: BoxFit.cover,
                             imageUrl: imgUrl!,
                             placeholder: (context, url) =>
@@ -93,7 +93,7 @@ class ExampleCard extends StatelessWidget {
                               child: Row(
                                 children:  [
                                   const Icon(Icons.done,size: 24, color: kPrymaryColor,),
-                                  Text("${approveCount!} kişi tarafından onaylandı.", style:GoogleFonts.sourceSansPro(fontStyle: FontStyle.italic, color: Colors.white) ,),
+                                  Text("${approveCount!} ${AppLocalizations.of(context)!.approved}", style:GoogleFonts.sourceSansPro(fontStyle: FontStyle.italic, color: Colors.white) ,),
                                 ],
                               ),
                             ),
@@ -123,7 +123,7 @@ class ExampleCard extends StatelessWidget {
                                   image: NetworkImage(imgUrl!),
                                   fit: BoxFit.cover)),
                           width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 5,
+                          height: MediaQuery.of(context).size.height / 4,
                         ),
                         Column(
                           children: [
@@ -148,7 +148,7 @@ class ExampleCard extends StatelessWidget {
                               child: Row(
                                 children:  [
                                   const Icon(Icons.done,size: 9, color: kPrymaryColor,),
-                                  Text("${approveCount} kişi tarafından onaylandı.", style:GoogleFonts.sourceSansPro(fontStyle: FontStyle.italic,
+                                  Text("${approveCount} ${AppLocalizations.of(context)!.approved}", style:GoogleFonts.sourceSansPro(fontStyle: FontStyle.italic,
                                       fontSize: 12,
                                       color: Colors.white) ,),
                                 ],

@@ -4,6 +4,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:bitky/screens/recent_snaps.dart';
 import 'package:bitky/screens/see_all_screen.dart';
+import 'package:bitky/widgets/diagnose_solution_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,11 +12,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import '../globals/globals.dart';
 import '../l10n/app_localizations.dart';
 import '../view_models/planet_view_model.dart';
+import '../widgets/custom_appbar_widget.dart';
 import '../widgets/primary_button_widget.dart';
 
 class DiagnosePage extends StatefulWidget {
@@ -74,7 +77,36 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       color: kPrymaryColor,
                     ),
                     onPressed: () {
-                      _addImageFromCamera();
+                      _addImageFromCamera().whenComplete(() {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        _bitkyViewModel!
+                            .getPlantHealthFromUi(base64ImgList, context)
+                            .then((value) {
+                          _diseases = value;
+                        }).whenComplete(() {
+                          List<String> disasNames =[];
+                          _diseases.healthAssessment!.diseases!.forEach((element) {
+                            disasNames.add(element.name!);
+                            responseImages.add(element.similarImages![0].url.toString());
+                            //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
+                          });
+                          print(responseImages.toString());
+                          FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
+                          set({
+                            "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
+                            "problemName":disasNames,
+                            "createdAt": DateTime.now(),
+                            "isHealty":_diseases.healthAssessment!.isHealthy
+                          });
+
+                          // print("GGGGGGGGGGGGG:    "+_response!.length.toString());
+                          setState(() {
+                            isLoading = false;
+                          });
+                        });
+                      });
                       Navigator.pop(context);
                     },
                   ),
@@ -89,7 +121,36 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       color: kPrymaryColor,
                     ),
                     onPressed: () {
-                      _addImageFromGallery();
+                      _addImageFromGallery().whenComplete(() {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        _bitkyViewModel!
+                            .getPlantHealthFromUi(base64ImgList, context)
+                            .then((value) {
+                          _diseases = value;
+                        }).whenComplete(() {
+                          List<String> disasNames =[];
+                          _diseases.healthAssessment!.diseases!.forEach((element) {
+                            disasNames.add(element.name!);
+                          responseImages.add(element.similarImages![0].url.toString());
+                            //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
+                          });
+                          print(responseImages.toString());
+                          FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
+                          set({
+                            "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
+                            "problemName":disasNames,
+                            "createdAt": DateTime.now(),
+                            "isHealty":_diseases.healthAssessment!.isHealthy
+                          });
+
+                          // print("GGGGGGGGGGGGG:    "+_response!.length.toString());
+                          setState(() {
+                            isLoading = false;
+                          });
+                        });
+                      });
                       Navigator.pop(context);
                     },
                   ),
@@ -147,7 +208,43 @@ class _DiagnosePageState extends State<DiagnosePage> {
     }
   }
 
+  Widget _dialog(BuildContext context,String title, String url, List<String>bio, List<String>pre ){
+    return AlertDialog(
+      contentPadding:const EdgeInsets.all(0.0),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15)),
+      elevation: 0,
+      content: Padding(
+        padding: const EdgeInsets.all(0),
+        child: Container(
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(
+                  Radius.circular(15))),
+          child:  DiagnoseSolutionItemWidget(title: title, imgUrl: url, biological: bio, prevention: pre,),
+        ),
+      ),
 
+    );
+  }
+
+  void _scaleDialog(Widget dialog) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "go",
+      pageBuilder: (ctx, a1, a2) {
+        return Container();
+      },
+      transitionBuilder: (ctx, a1, a2, child) {
+        var curve = Curves.easeInOut.transform(a1.value);
+        return Transform.scale(
+          scale: curve,
+          child:dialog,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +254,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
         image: DecorationImage(
-            image: AssetImage('images/banner.png'),alignment: Alignment.topCenter),
+            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),
         gradient: LinearGradient(
             colors: [
               Color(0xFFFFFFFF),
@@ -172,14 +269,12 @@ class _DiagnosePageState extends State<DiagnosePage> {
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Column(
           children: [
-            const SizedBox(
-              height: 50,
-            ),
+          const SizedBox(height: 130,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:  [
                  Text(
-                   AppLocalizations.of(context)!.diagnosetitle,
+                   "",
                   style: GoogleFonts.sourceSansPro(
                     color: Colors.white,
                       shadows: [
@@ -192,6 +287,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       ],
                       fontSize: 22, fontWeight: FontWeight.w600),
                 ),
+
                 Visibility(
                   visible:_diseases.id !=null,
                   child: InkWell(
@@ -227,10 +323,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    "images/diognasPageTopIcons.png",
-                    width: 80,
-                  ),
+
 
                    Text(AppLocalizations.of(context)!.diagnosesubtitle,
                      style: GoogleFonts.sourceSansPro(
@@ -253,159 +346,8 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    height: 80,
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      direction: Axis.horizontal,
-                      children: List.generate(
-                          (imagesPaths.isNotEmpty ? imagesPaths.length : 5), (index) {
-                            if (imagesPaths.isNotEmpty) {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    side: const BorderSide(
-                                        color: kPrymaryColor, width: 1.0)),
-                                elevation: 0,
-                                color: Colors.transparent,
-                                clipBehavior: Clip.antiAlias,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Image.file(
-                                      File(imagesPaths[index]),
-                                      fit: BoxFit.cover,
-                                      width: 60,
-                                      height: 60,
-                                    ),
-                                    Positioned(
-                                      right: 5,
-                                      child: InkWell(
-                                        child: const Icon(
-                                          Icons.remove_circle_rounded,
-                                          size: 20,
-                                          color: Colors.red,
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            imagesPaths.removeAt(index);
-                                            base64ImgList.removeAt(index);
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                        color: kPrymaryColor, width: 1.0),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: IconButton(
-                                  icon:const Icon(
-                                    Icons.add,
-                                    color: kPrymaryColor,
-                                  ),
-                                  onPressed: () {
-                                    openImages();
-                                  },
-                                ),
-                              );
-                            }
-                          }
-                          ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: imagesPaths.length > 0 ? true : false,
-                    child: Column(
-                      children: [
-                        imagesPaths.length > 0
-                            ? Container(
-                          height: 6,
-                          width: imagesPaths.length * 100,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              gradient: LinearGradient(colors: [
-                                Colors.white54,
-                                imagesPaths.length >= 1
-                                    ? Colors.yellowAccent
-                                    : Colors.white54,
-                                imagesPaths.length > 2
-                                    ? Colors.yellow
-                                    : Colors.yellowAccent,
-                                imagesPaths.length > 3
-                                    ? Colors.yellow
-                                    : Colors.yellow,
-                                imagesPaths.length >= 4
-                                    ? Colors.greenAccent
-                                    : Colors.greenAccent,
-                                imagesPaths.length >= 5
-                                    ? Colors.green
-                                    : Colors.greenAccent
-                              ])),
-                        )
-                            : Container(),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () async {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            _bitkyViewModel!
-                                .getPlantHealthFromUi(base64ImgList, context)
-                                .then((value) {
-                              _diseases = value;
-                            }).whenComplete(() {
-                             List<String> disasNames =[];
-                              _diseases.healthAssessment!.diseases!.forEach((element) {
-                                disasNames.add(element.name!);
-                                responseImages.add(element.similarImages![0].url.toString());
-                                //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
-                              });
-                             print(responseImages.toString());
-                          FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
-                              set({
-                                "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
-                                "problemName":disasNames,
-                                "createdAt": DateTime.now(),
-                                "isHealty":_diseases.healthAssessment!.isHealthy
-                              });
-
-                              // print("GGGGGGGGGGGGG:    "+_response!.length.toString());
-                              setState(() {
-                                isLoading = false;
-                              });
-                            });
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.search,
-                                color: kPrymaryColor,
-                                size: 20,
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                AppLocalizations.of(context)!.searchtitle,
-                                style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontSize: 22),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
                   InkWell(
                     onTap: (){
                       PersistentNavBarNavigator.pushNewScreen(
@@ -415,25 +357,48 @@ class _DiagnosePageState extends State<DiagnosePage> {
                         pageTransitionAnimation:PageTransitionAnimation.cupertino,
                       );
                     },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children:  [
-                        const Icon(
-                          Icons.access_time_outlined,
-                          color: kPrymaryColor,
-                          size: 15,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.recentsnaps,
-                          style: GoogleFonts.sourceSansPro(
-                              color: kPrymaryColor, fontWeight: FontWeight.w500, fontSize: 16),
-                        )
-                      ],
+                    child: const Icon(
+                      Icons.access_time_outlined,
+                      color: kPrymaryColor,
+
+                      size: 30,
                     ),
                   ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    height: 80,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      direction: Axis.horizontal,
+                      children: List.generate(
+                          (imagesPaths.length < 1 ? 1 : imagesPaths.length), (index) {
+                            if (imagesPaths.isNotEmpty) {
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: const BorderSide(
+                                        color: kPrymaryColor, width: 1.0)),
+                                elevation: 0,
+                                color: Colors.transparent,
+                                clipBehavior: Clip.antiAlias,
+                                child:   Image.file(
+                                  File(imagesPaths[index]),
+                                  fit: BoxFit.cover,
+                                  width: 60,
+                                  height: 60,
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }
+                          ),
+                    ),
+                  ),
+
                 ],
               ),
             ),
@@ -470,36 +435,28 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     alignment: FractionalOffset.bottomCenter,
                     child: Column(
                       children: [
-                        Expanded(
-                          child: Container(
-                            padding:const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 30),
-                            width: MediaQuery.of(context).size.width,
+                        const SizedBox(height: 10,),
+
+                          Container(
+                            padding: const EdgeInsets.only(left: 50.0,right: 50.0),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(10)
                             ),
-                            child: Card(
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 10.0,right: 10.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(AppLocalizations.of(context)!.nothealthy, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                    const SizedBox(height: 5,),
-                                    Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
-                                    "images/smile.png":"images/sad.png":"images/sad.png", width: 50,height: 50,),
-                                    const SizedBox(height: 5,),
-                                  ],
-                                ),
-                              ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(AppLocalizations.of(context)!.nothealthy, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                const SizedBox(height: 5,),
+                                Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
+                                "images/smile.png":"images/sad.png":"images/sad.png", width: 20,height: 20,),
+                                const SizedBox(height: 5,),
+
+                              ],
                             ),
                           ),
-                        ),
-
+                        const SizedBox(height: 10,),
                         Visibility(
                           visible: true,
                           child: Row(
@@ -547,10 +504,22 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                     return Bounce(
                                       duration: const Duration(milliseconds: 200),
                                       onPressed: () {
-                                        final imageProvider = Image.network(responseImages[index]).image;
+
+                                        if(_diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.prevention != null
+                                        ){
+                                          _scaleDialog(_dialog(context,
+                                              _diseases.healthAssessment!.diseases![index].name.toString(),
+                                              responseImages[index].toString(),
+                                              _diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.biological!,
+                                              _diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.prevention!
+                                          ));
+                                        }else{
+                                          final imageProvider = Image.network(responseImages[index]).image;
                                         showImageViewer(context, imageProvider, onViewerDismissed: () {
                                           print("dismissed");
                                         });
+                                        }
+
                                       },
                                       child: Card(
                                         shadowColor: kPrymaryColor,
@@ -571,9 +540,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                                             colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.darken),
                                                             image: NetworkImage(responseImages[index].toString()))
                                                     ),
-
                                                 )),
-
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
@@ -593,7 +560,8 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                                 Padding(
                                                   padding: const EdgeInsets.all(5.0),
                                                   child: Text(
-                                                    "${AppLocalizations.of(context)!.similarity}: %${_diseases.healthAssessment!.diseases![index].similarImages![0].similarity.toString().substring(0,1)}0",
+                                                    "${AppLocalizations.of(context)!.similarity}: %${_diseases.healthAssessment!.diseases![index].
+                                                    probability!.toStringAsFixed(2).substring(2).toString()}",
                                                     textAlign: TextAlign.center,
                                                     style:  GoogleFonts.sourceSansPro(
                                                         fontSize: 12,
@@ -601,6 +569,14 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                                         fontWeight: FontWeight.w600),
                                                   ),
                                                 ),
+
+                                                _diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.prevention != null ?  Padding(
+                                                    padding: const EdgeInsets.all(5.0),
+                                                child: SizedBox(
+                                                  height: 35,
+                                                  width: 35,
+                                                  child: Lottie.asset("images/info.json"),
+                                                )):Container(),
                                               ],
                                             )
                                           ],

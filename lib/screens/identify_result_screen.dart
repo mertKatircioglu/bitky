@@ -1,5 +1,6 @@
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
+import 'package:bitky/widgets/primary_button_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
@@ -305,6 +306,14 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                     ],
                                   ),
                                 ),
+                              ),
+                            ),
+
+                            Center(
+                              child: CustomPrimaryButton(
+                                text: "${AppLocalizations.of(context)!.similarity}: %${widget.dataModel!.suggestions![index].probability!.toStringAsFixed(2).substring(2).toString()} Paylaş",
+                                radius: 15.0,
+                                function: ()=>print("tıklandı"),
                               ),
                             ),
                             const Divider(height: 20, color: kPrymaryColor,)

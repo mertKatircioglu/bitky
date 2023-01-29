@@ -1,7 +1,10 @@
 
 import 'dart:convert';
+import 'package:bitky/l10n/app_localizations.dart';
+import 'package:bitky/models/weather_data_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:weather/weather.dart';
 import '../models/bitky_data_model.dart';
 import '../models/bitky_health_data_model.dart';
 
@@ -10,7 +13,8 @@ class BitkyApiClient{
 
   //static const baseUrl = "https://my-api.plantnet.org/v2/identify/";
   final http.Client httpClient = http.Client();
-
+  WeatherFactory wf = WeatherFactory("629f158607d6b5dbe26cff79e7e61ce0",
+      language: Language.ENGLISH);
   /*Future<BitkyDataModel> getPlanet(List<XFile> images) async {
     const finalUrl = "${baseUrl}all?api-key=IMbQyKlYsdqhMnQiiuSozAKUzb557rYOWaqYf1RHu1skX3tePm";
     var request = http.MultipartRequest('POST', Uri.parse(finalUrl));
@@ -43,9 +47,9 @@ class BitkyApiClient{
     var request = http.post(Uri.parse(finalUrl), headers: requestHeaders, body: body);
     var res = await request;
     final responseJson = (jsonDecode(res.body));
-    debugPrint(res.body, wrapWidth: 1024);
+   // debugPrint(res.body, wrapWidth: 1024);
     if(res.statusCode == 200){
-      //debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
+     // debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
       var son = await responseJson;
       return BitkyDataModel.fromJson(son);
     }else{
@@ -57,24 +61,36 @@ class BitkyApiClient{
   Future<HealthDataModel> getPlanetHealth(List<String> images, BuildContext context) async {
     const finalUrl = "https://api.plant.id/v2/health_assessment";
     Map<String, String> requestHeaders = {
-      'Api-Key': '4FevuT7eMgLKdMqvSO8l6jdaNCixmhQQbNH1Ey7Ym57AHUMx86',
+      'Api-Key': 'IMbQyKlYsdqhMnQiiuSozAKUzb557rYOWaqYf1RHu1skX3tePm',
       'content-type': 'application/json',
     };
     var body = json.encode({
       "images": images,
       "modifiers": ["similar_images"],
-      "plant_details": ["common_names", "taxonomy", "url", "wiki_description", "wiki_images"],
+      "disease_details": ["common_names", "taxonomy", "url", "wiki_description", "wiki_images","treatment"],
     });
     var request = http.post(Uri.parse(finalUrl), headers: requestHeaders, body: body);
     var res = await request;
     final responseJson = (jsonDecode(res.body));
     if(res.statusCode == 200){
-      //debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
+      debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
       var son = await responseJson;
       return HealthDataModel.fromJson(son);
     }else{
       throw Exception("Veri getirelemedi");
     }
+  }
+
+ Future<WeatherDataModel> getWeather(double lat, double lon) async {
+    var response = await wf.currentWeatherByLocation(lat, lon);
+
+    print("GELEN: "+response.weatherIcon.toString());
+
+ return WeatherDataModel(max:response.tempMax.toString(),temp: response.temperature.toString(),
+    placeName: response.areaName.toString(),date: response.date.toString(),wind: response.windSpeed.toString(),
+    feels: response.tempFeelsLike.toString(),wthr: response.weatherDescription.toString(),hummudity: response.humidity.toString(),
+ icon: response.weatherIcon.toString()
+ );
   }
 }
 
