@@ -1,7 +1,7 @@
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/models/bitky_data_model.dart';
@@ -12,11 +12,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
-
-
 import '../l10n/app_localizations.dart';
+import '../main.dart';
 import '../view_models/planet_view_model.dart';
-import '../widgets/custom_appbar_widget.dart';
 
 class CurvePainter extends CustomPainter {
   @override
@@ -51,13 +49,23 @@ class _SearchState extends State<Search> {
   List<XFile>? imagefiles;
   BitkyViewModel? _bitkyViewModel;
   bool? datasContainer = false;
-
+  Timer? _timer;
+  int _start = 8;
   List<String> imagesPaths = [];
   List<XFile>_imagesXfile=[];
   BitkyDataModel _bitkyDataModel = BitkyDataModel();
   bool isLoading = false;
   List<String> base64ImgList = [];
+  bool messageShow = true;
 
+
+  showMessage() async{
+    Future.delayed(const Duration(milliseconds: 8000)).whenComplete(() {
+      setState(() {
+        messageShow = false;
+      });
+    });
+  }
 
   openImages() async {
     showDialog(
@@ -154,6 +162,43 @@ class _SearchState extends State<Search> {
     } catch (e) {
     }
   }
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+          (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    showMessage();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer!.cancel();
+    super.dispose();
+    imagefiles!.clear();
+    _bitkyViewModel = BitkyViewModel();
+    imagesPaths.clear();
+    _bitkyDataModel = BitkyDataModel();
+    base64ImgList.clear();
+    isLoading = false;
+    isLoading = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,8 +207,8 @@ class _SearchState extends State<Search> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),
+   /*     image: DecorationImage(
+            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),*/
         gradient: LinearGradient(
             colors: [
               Color(0xFFFFFFFF),
@@ -175,20 +220,52 @@ class _SearchState extends State<Search> {
             tileMode: TileMode.clamp),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(0.0),
+        padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 100+15),
         child: Column(
           children: [
-            const SizedBox(
-              height: 180,
+            Visibility(
+              visible:messageShow == true ? false: true,
+              child: InkWell(
+                onTap: (){
+                  setState(() {
+                    messageShow = true;
+                  });
+                },
+                child: const Icon(Icons.info_rounded, size:25
+                  ,color: kPrymaryColor,),),
+            ),
+            AnimatedOpacity(
+              opacity: messageShow ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 900),
+              child: Container(
+                decoration:  BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(20.0)
+                ),
+                padding: const EdgeInsets.all(12.00),
+                child: Column(
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.searchpagesubtitle,
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54
+                      ),),
+                    Text(
+                      AppLocalizations.of(context)!.searchpagesubtitle2,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black54
+                      ),),
+                    Text(_start == 0 ? "" :_start.toString(),style: GoogleFonts.sourceSansPro())
+                  ],
+                ),
+              ),
             ),
 
-            Text(
-              AppLocalizations.of(context)!.searchpagesubtitle,
-              style: GoogleFonts.sourceSansPro(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black54
-              ),),
             const SizedBox(
               height: 0,
             ),
@@ -219,7 +296,7 @@ class _SearchState extends State<Search> {
               ),
             ),*/
             const SizedBox(
-              height: 50,
+              height: 20,
             ),
             Container(
               alignment: Alignment.center,
@@ -344,18 +421,39 @@ class _SearchState extends State<Search> {
                     isLoading = true;
                   });
                   _bitkyViewModel!
-                      .plantIdentifyFromUi(base64ImgList)
-                      .then((value) {
+                      .plantIdentifyFromUi(base64ImgList).timeout(const Duration(seconds: 17),
+                    onTimeout: ()async{
+                      setState(() {
+                        isLoading = false;
+                      });
+                      return await showDialog(context: navigatorKey.currentContext!,
+                          builder: (context){
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)
+                              ),
+                              content:
+                              Text(AppLocalizations.of(context)!.connectiontimeout,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.sourceSansPro(),),
+
+                            );
+                          });
+
+                    },
+                  ).then((value) {
                     _bitkyDataModel = value;
                   }).whenComplete(() {
                     base64ImgList.clear();
                     imagesPaths.clear();
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: IdentifyResultScreen(dataModel: _bitkyDataModel,),
-                      withNavBar: false,
-                      pageTransitionAnimation:PageTransitionAnimation.cupertino,
-                    );
+                    if(_bitkyDataModel.id !=null){
+                      PersistentNavBarNavigator.pushNewScreen(
+                        context,
+                        screen: IdentifyResultScreen(dataModel: _bitkyDataModel,),
+                        withNavBar: false,
+                        pageTransitionAnimation:PageTransitionAnimation.cupertino,
+                      );
+                    }
                     setState(() {
                       isLoading = false;
                     });

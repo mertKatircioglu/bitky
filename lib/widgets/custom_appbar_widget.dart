@@ -1,4 +1,5 @@
 import 'package:bitky/globals/globals.dart';
+import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/models/weather_data_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,12 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:weather/weather.dart';
 
 import '../view_models/planet_view_model.dart';
 
 class CustomAppBarWidget extends StatefulWidget implements PreferredSizeWidget {
-  Size get preferredSize => const Size.fromHeight(100);
+  Size get preferredSize => const Size.fromHeight(80);
 
   const CustomAppBarWidget({Key? key}) : super(key: key);
 
@@ -30,18 +30,18 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
+      return Future.error(AppLocalizations.of(context)!.locationservicesaredisable);
     }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
+        return Future.error(AppLocalizations.of(context)!.locationpermissionaredenied);
       }
     }
     if (permission == LocationPermission.deniedForever) {
       return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+          AppLocalizations.of(context)!.locationpermissionpermanetly);
     }
     return await Geolocator.getCurrentPosition();
   }
@@ -49,8 +49,9 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
   @override
   void initState() {
     super.initState();
+  //  print("kullanıcı: ${authUser.currentUser!}");
     _determinePosition().then((value) {
-      _bitkyViewModel!.getWeatherFromUi(value.latitude, value.longitude).then((value) {
+      _bitkyViewModel!.getWeatherFromUi(value.latitude, value.longitude, context).then((value) {
         _weatherDataModel = value;
         print(_weatherDataModel.toJson().toString());
       });
@@ -61,14 +62,15 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
 
   Widget _appBarContent() {
     return Container(
-      height: 195,
-      width: 400,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      height: 80,
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
       child: Column(
+
         children: [
           //_header(),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           _userInfo()
         ],
@@ -77,22 +79,50 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
   }
 
   Widget _userInfo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: [
-        _weatherIcon(),
-        Column(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text("${authUser.currentUser!.displayName.toString()}",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.sourceSansPro(
-                    color: Colors.black54,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600)),
-
+            _weatherInfo(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: CachedNetworkImage(
+                      height: 25,
+                      width: 25,
+                      fit: BoxFit.cover,
+                      imageUrl: authUser.currentUser!.photoURL.toString(),
+                      placeholder: (context, url) =>
+                      const CupertinoActivityIndicator(),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      fadeOutDuration: const Duration(seconds: 1),
+                      fadeInDuration: const Duration(seconds: 1),
+                    ),
+                  ),
+                ),
+                Text(authUser.currentUser!.displayName.toString(),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.sourceSansPro(
+                        color: Colors.black54,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold)),
+              ],
+            ),
+            _weatherIcon(),
           ],
         ),
-        _userPersonalInfo(),
+
+
       ],
     );
   }
@@ -101,41 +131,35 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
     return Column(
       children: [
         CachedNetworkImage(
-          height: 45,
-          width: 45,
+          height: 30,
+          width: 40,
           fit: BoxFit.cover,
-          imageUrl:"http://openweathermap.org/img/w/${_weatherDataModel.icon}.png",
+          imageUrl:"http://openweathermap.org/img/wn/${_weatherDataModel.icon}@4x.png",
           placeholder: (context, url) =>
           const CupertinoActivityIndicator(),
           errorWidget: (context, url, error) => const Icon(Icons.error),
           fadeOutDuration: const Duration(seconds: 1),
           fadeInDuration: const Duration(seconds: 2),
         ),
-        Row(
-          children: [
-            const Icon(
-              CupertinoIcons.location_solid,
-              color: Colors.black54,
-              size: 10,
-            ),
-            Text(_weatherDataModel.placeName.toString(),
-                style: GoogleFonts.sourceSansPro(
-                    color: Colors.black54,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600)),
-          ],
-        ),
-        Text("${_weatherDataModel.wthr.toString().toCapitalized()}",
-            textAlign: TextAlign.center,
+        Column(children: [
+          Text(_weatherDataModel.placeName.toString().toCapitalized(),
             style: GoogleFonts.sourceSansPro(
                 color: Colors.black54,
                 fontSize: 10,
-                fontWeight: FontWeight.w600)),
+                fontWeight: FontWeight.w600
+            ),),
+          Text("${_weatherDataModel.wthr.toString().toCapitalized()}",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.sourceSansPro(
+                  color: Colors.black54,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600)),
+        ],),
       ],
     );
   }
 
-  Widget _userPersonalInfo() {
+  Widget _weatherInfo() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -143,15 +167,15 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("${_weatherDataModel.temp.toString().substring(0, 4) ?? ""}°C",
+              Text("${_weatherDataModel.temp.toString().substring(0, 4)}°C",
                   style: GoogleFonts.sourceSansPro(
-                    fontSize: 35,
+                    fontSize: 18,
                     color: Colors.black54,
                     fontWeight: FontWeight.bold,
                   )),
-              Text("Hissedilen: ${_weatherDataModel.feels.toString().substring(0, 4) ?? ""}°C",
+              Text("${AppLocalizations.of(context)!.feelslike} ${_weatherDataModel.feels.toString().substring(0, 4) ?? ""}°C",
                   style: GoogleFonts.sourceSansPro(
-                    fontSize: 14,
+                    fontSize: 9,
                     color: Colors.black54,
                   )),
               Row(
@@ -160,12 +184,12 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
                   const Icon(
                     CupertinoIcons.wind,
                     color: Colors.black54,
-                    size: 12,
+                    size: 9,
                   ),
                   Text(_weatherDataModel.wind.toString(),
                       style: GoogleFonts.sourceSansPro(
                           color: Colors.black54,
-                          fontSize: 12,
+                          fontSize: 9,
                           fontWeight: FontWeight.w600)),
                   const SizedBox(
                     width: 2,
@@ -173,57 +197,66 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
                   const Icon(
                     Icons.water_drop_outlined,
                     color: Colors.black54,
-                    size: 12,
+                    size: 9,
                   ),
-                  Text("${_weatherDataModel.hummudity.toString()}",
+                  Text(_weatherDataModel.hummudity.toString(),
                       style: GoogleFonts.sourceSansPro(
                           color: Colors.black54,
-                          fontSize: 12,
+                          fontSize: 9,
                           fontWeight: FontWeight.w600)),
                 ],
-              )
+              ),
+
+
             ],
           ),
-        )
+        ),
+
       ],
     );
   }
 
+/*  Future<String> changeBackGorund(String code) async{
+
+    switch(code){
+
+      case
+    }
+
+  }*/
+
   @override
   Widget build(BuildContext context) {
     _bitkyViewModel = Provider.of<BitkyViewModel>(context);
-    return CustomPaint(
-        painter: LogoPainter(),
-        size: const Size(400, 195),
-        child: _appBarContent());
-  }
-}
-
-class LogoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    var rect = Offset.zero & size;
-    Paint paint = Paint();
-    Path path = Path();
-    paint.shader = const LinearGradient(
-      begin: Alignment.centerLeft,
-      end: Alignment.centerRight,
-      colors: [
-        Color.fromARGB(255, 176, 236, 170),
-        Color.fromARGB(255, 255, 255, 255),
-      ],
-    ).createShader(rect);
-    path.lineTo(0, size.height - size.height / 8);
-    path.conicTo(size.width / 1.2, size.height, size.width,
-        size.height - size.height / 8, 9);
-    path.lineTo(size.width, 0);
-    path.close();
-    canvas.drawShadow(path, const Color.fromARGB(255, 0, 0, 0), 3, false);
-    canvas.drawPath(path, paint);
+    return Card(
+      margin: const EdgeInsets.all(0),
+      elevation: 4,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25), bottomRight: Radius.circular(25))
+      ),
+      child: Container(
+        padding: const EdgeInsets.only(top: 5),
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  Color(0xFFFFFFFF),
+                  Color(0xFFA5EFB0),
+                ],
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(0.1, 1.0),
+                stops: [0.0, 0.1],
+                tileMode: TileMode.clamp),
+            borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(25),
+              bottomLeft: Radius.circular(25)
+            )
+        ),
+        child: _appBarContent(),),
+    );
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
+
 }
+
+
+

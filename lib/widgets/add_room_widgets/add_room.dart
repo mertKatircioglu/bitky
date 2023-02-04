@@ -85,6 +85,7 @@ class AddRoomWidget extends StatelessWidget {
               height: 30,
             ),
           ),
+          const SizedBox(height: 20,),
           CustomPrimaryButton(
             text: AppLocalizations.of(context)!.save,
             radius: 15,

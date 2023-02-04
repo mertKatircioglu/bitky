@@ -50,6 +50,13 @@ class RecentSnapsScreen extends StatelessWidget {
                   return const Center(
                     child: CupertinoActivityIndicator(),
                   );
+                }else if(recentSnapshot.data!.docs.isEmpty){
+                  return Padding(
+                    padding: EdgeInsets.only(top:MediaQuery.of(context).size.height/3  ),
+                    child:  Center(
+                      child: Text(AppLocalizations.of(context)!.nodata, style: GoogleFonts.sourceSansPro(color: Colors.black54),),
+                    ),
+                  );
                 }
                 final recentDocs = recentSnapshot.data!.docs;
                 return FutureBuilder(
@@ -133,6 +140,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                                 mainAxisSpacing: 1),
                                             itemBuilder: (ctx, index) {
                                               return Card(
+                                                margin: EdgeInsets.zero,
                                                 shadowColor: kPrymaryColor,
                                                 elevation: 0.5,
                                                 shape:
@@ -150,7 +158,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                                           print("dismissed");
                                                         });
                                                       },
-                                                      child:       ClipRRect(
+                                                      child: ClipRRect(
                                                         borderRadius: BorderRadius.circular(15),
                                                         child: CachedNetworkImage(
                                                           height: 20,
@@ -195,21 +203,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          Text(
-                                            "${AppLocalizations.of(context)!.time}: ",
-                                            style: GoogleFonts.sourceSansPro(color: kPrymaryColor,fontSize: 10, fontWeight: FontWeight.w600),
-                                          ),
-                                          Text((recentDocs[index]['createdAt']
-                                          as Timestamp)
-                                              .toDate()
-                                              .day
-                                              .toString(),style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600,fontSize: 10,)),
-                                          const Text(":", style: TextStyle(fontSize: 10)),
-                                          Text((recentDocs[index]['createdAt']
-                                          as Timestamp)
-                                              .toDate()
-                                              .second
-                                              .toString(),style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600,fontSize: 10,)),
+
                                         ],
                                       ),
                                       const SizedBox(height: 10,)

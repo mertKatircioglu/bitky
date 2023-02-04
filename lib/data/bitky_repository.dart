@@ -26,8 +26,8 @@ class PlanetRepository{
     return await planetApiClient.plantIdentify(images);
   }
 
-  Future<WeatherDataModel> weatherFromRepository(double lat, double lon) async{
-    return await planetApiClient.getWeather(lat, lon);
+  Future<WeatherDataModel> weatherFromRepository(double lat, double lon, BuildContext context) async{
+    return await planetApiClient.getWeather(lat, lon, context);
   }
 
 }

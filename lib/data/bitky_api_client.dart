@@ -1,8 +1,10 @@
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/models/weather_data_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:weather/weather.dart';
 import '../models/bitky_data_model.dart';
@@ -13,8 +15,7 @@ class BitkyApiClient{
 
   //static const baseUrl = "https://my-api.plantnet.org/v2/identify/";
   final http.Client httpClient = http.Client();
-  WeatherFactory wf = WeatherFactory("629f158607d6b5dbe26cff79e7e61ce0",
-      language: Language.ENGLISH);
+
   /*Future<BitkyDataModel> getPlanet(List<XFile> images) async {
     const finalUrl = "${baseUrl}all?api-key=IMbQyKlYsdqhMnQiiuSozAKUzb557rYOWaqYf1RHu1skX3tePm";
     var request = http.MultipartRequest('POST', Uri.parse(finalUrl));
@@ -69,22 +70,27 @@ class BitkyApiClient{
       "modifiers": ["similar_images"],
       "disease_details": ["common_names", "taxonomy", "url", "wiki_description", "wiki_images","treatment"],
     });
+
     var request = http.post(Uri.parse(finalUrl), headers: requestHeaders, body: body);
     var res = await request;
     final responseJson = (jsonDecode(res.body));
     if(res.statusCode == 200){
-      debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
+     // debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
       var son = await responseJson;
       return HealthDataModel.fromJson(son);
     }else{
       throw Exception("Veri getirelemedi");
     }
+
+
   }
 
- Future<WeatherDataModel> getWeather(double lat, double lon) async {
+ Future<WeatherDataModel> getWeather(double lat, double lon, BuildContext context) async {
+   WeatherFactory wf = WeatherFactory("629f158607d6b5dbe26cff79e7e61ce0",
+       language: AppLocalizations.of(context)!.languagecode == "tr" ? Language.TURKISH: Language.ENGLISH);
     var response = await wf.currentWeatherByLocation(lat, lon);
 
-    print("GELEN: "+response.weatherIcon.toString());
+   // print("GELEN: "+response.weatherIcon.toString());
 
  return WeatherDataModel(max:response.tempMax.toString(),temp: response.temperature.toString(),
     placeName: response.areaName.toString(),date: response.date.toString(),wind: response.windSpeed.toString(),

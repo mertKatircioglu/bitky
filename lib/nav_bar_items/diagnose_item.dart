@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:bitky/main.dart';
 import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:bitky/screens/recent_snaps.dart';
 import 'package:bitky/screens/see_all_screen.dart';
@@ -18,7 +20,6 @@ import 'package:provider/provider.dart';
 import '../globals/globals.dart';
 import '../l10n/app_localizations.dart';
 import '../view_models/planet_view_model.dart';
-import '../widgets/custom_appbar_widget.dart';
 import '../widgets/primary_button_widget.dart';
 
 class DiagnosePage extends StatefulWidget {
@@ -36,11 +37,16 @@ class _DiagnosePageState extends State<DiagnosePage> {
   HealthDataModel _diseases = HealthDataModel();
   List<String> base64ImgList = [];
   bool isLoading = false;
+  bool messageShow = true;
   List<String> responseImages = [];
-
+  Timer? _timer;
+  int _start = 8;
+  bool visibleInfo = true;
+  String connectionTimeOutMessage="";
 
   @override
   void dispose() {
+    _timer!.cancel();
     super.dispose();
     imagefiles!.clear();
     _bitkyViewModel = BitkyViewModel();
@@ -49,6 +55,23 @@ class _DiagnosePageState extends State<DiagnosePage> {
     base64ImgList.clear();
    isLoading = false;
     responseImages.clear();
+  }
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+          (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
   }
 
 
@@ -82,29 +105,56 @@ class _DiagnosePageState extends State<DiagnosePage> {
                           isLoading = true;
                         });
                         _bitkyViewModel!
-                            .getPlantHealthFromUi(base64ImgList, context)
+                            .getPlantHealthFromUi(base64ImgList, context).timeout(const Duration(seconds: 17),
+                          onTimeout: ()async{
+                            setState(() {
+                              isLoading = false;
+                            });
+                            return await showDialog(context: navigatorKey.currentContext!,
+                                builder: (context){
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15)
+                                    ),
+                                    content:
+                                    Text(AppLocalizations.of(context)!.connectiontimeout,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(),),
+
+                                  );
+                                });
+
+                          },
+                        )
                             .then((value) {
                           _diseases = value;
                         }).whenComplete(() {
                           List<String> disasNames =[];
-                          _diseases.healthAssessment!.diseases!.forEach((element) {
-                            disasNames.add(element.name!);
-                            responseImages.add(element.similarImages![0].url.toString());
-                            //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
-                          });
-                          print(responseImages.toString());
-                          FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
-                          set({
-                            "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
-                            "problemName":disasNames,
-                            "createdAt": DateTime.now(),
-                            "isHealty":_diseases.healthAssessment!.isHealthy
-                          });
+                          if(_diseases.healthAssessment !=null){
+                            _diseases.healthAssessment!.diseases!.forEach((element) {
+                              disasNames.add(element.name!);
+                              responseImages.add(element.similarImages![0].url.toString());
+                              //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
+                            });
+                            // print(responseImages.toString());
+                            FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
+                            set({
+                              "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
+                              "problemName":disasNames,
+                              "createdAt": DateTime.now(),
+                              "isHealty":_diseases.healthAssessment!.isHealthy
+                            });
 
-                          // print("GGGGGGGGGGGGG:    "+_response!.length.toString());
-                          setState(() {
-                            isLoading = false;
-                          });
+                            // print("GGGGGGGGGGGGG:    "+_response!.length.toString());
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }else{
+
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
                         });
                       });
                       Navigator.pop(context);
@@ -125,32 +175,63 @@ class _DiagnosePageState extends State<DiagnosePage> {
                         setState(() {
                           isLoading = true;
                         });
-                        _bitkyViewModel!
-                            .getPlantHealthFromUi(base64ImgList, context)
-                            .then((value) {
-                          _diseases = value;
-                        }).whenComplete(() {
-                          List<String> disasNames =[];
-                          _diseases.healthAssessment!.diseases!.forEach((element) {
-                            disasNames.add(element.name!);
-                          responseImages.add(element.similarImages![0].url.toString());
-                            //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
-                          });
-                          print(responseImages.toString());
-                          FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
-                          set({
-                            "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
-                            "problemName":disasNames,
-                            "createdAt": DateTime.now(),
-                            "isHealty":_diseases.healthAssessment!.isHealthy
-                          });
+                          _bitkyViewModel!
+                              .getPlantHealthFromUi(base64ImgList, context).timeout(const Duration(seconds: 17),
+                            onTimeout: ()async{
+                              setState(() {
+                                isLoading = false;
+                              });
+                              return await showDialog(context: navigatorKey.currentContext!,
+                                  builder: (context){
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)
+                                    ),
+                                    content:
+                                  Text(AppLocalizations.of(context)!.connectiontimeout,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.sourceSansPro(),),
 
-                          // print("GGGGGGGGGGGGG:    "+_response!.length.toString());
-                          setState(() {
-                            isLoading = false;
+                                  );
+                                });
+
+                            },
+                          )
+                              .then((value) {
+                            _diseases = value;
+                          }).whenComplete(() {
+                            setState(() {
+                              connectionTimeOutMessage = "";
+                            });
+                            List<String> disasNames =[];
+                            if(_diseases.healthAssessment !=null){
+                              _diseases.healthAssessment!.diseases!.forEach((element) {
+                                disasNames.add(element.name!);
+                                responseImages.add(element.similarImages![0].url.toString());
+                                //print("AÇIKLAMAAA: "+element.diseaseDetails!.toJson().toString());
+                              });
+                              // print(responseImages.toString());
+                              FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
+                              set({
+                                "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
+                                "problemName":disasNames,
+                                "createdAt": DateTime.now(),
+                                "isHealty":_diseases.healthAssessment!.isHealthy
+                              });
+
+                              // print("GGGGGGGGGGGGG:    "+_response!.length.toString());
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }else{
+
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+
                           });
                         });
-                      });
                       Navigator.pop(context);
                     },
                   ),
@@ -246,6 +327,20 @@ class _DiagnosePageState extends State<DiagnosePage> {
     );
   }
 
+  showMessage() async{
+    Future.delayed(const Duration(milliseconds: 8000)).whenComplete(() {
+      setState(() {
+        messageShow = false;
+      });
+    });
+  }
+  @override
+  void initState() {
+    super.initState();
+    showMessage();
+    startTimer();
+  }
+
   @override
   Widget build(BuildContext context) {
     _bitkyViewModel = Provider.of<BitkyViewModel>(context);
@@ -253,8 +348,8 @@ class _DiagnosePageState extends State<DiagnosePage> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),
+     /*   image: DecorationImage(
+            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),*/
         gradient: LinearGradient(
             colors: [
               Color(0xFFFFFFFF),
@@ -266,28 +361,23 @@ class _DiagnosePageState extends State<DiagnosePage> {
             tileMode: TileMode.clamp),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 100+20),
         child: Column(
           children: [
-          const SizedBox(height: 130,),
+            Visibility(
+              visible:messageShow == true ? false: true,
+              child: InkWell(
+                onTap: (){
+                  setState(() {
+                    messageShow = true;
+                  });
+                },
+                child: const Icon(Icons.info_rounded, size:25
+                  ,color: kPrymaryColor,),),
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children:  [
-                 Text(
-                   "",
-                  style: GoogleFonts.sourceSansPro(
-                    color: Colors.white,
-                      shadows: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: const Offset(0, 2), // changes position of shadow
-                        )
-                      ],
-                      fontSize: 22, fontWeight: FontWeight.w600),
-                ),
-
                 Visibility(
                   visible:_diseases.id !=null,
                   child: InkWell(
@@ -315,22 +405,48 @@ class _DiagnosePageState extends State<DiagnosePage> {
 
               ],
             ),
-            const SizedBox(
-              height: 20,
-            ),
+
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
-
-                   Text(AppLocalizations.of(context)!.diagnosesubtitle,
-                     style: GoogleFonts.sourceSansPro(
-
-                         fontSize: 18),),
+                  AnimatedOpacity(
+                    opacity: messageShow ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 900),
+                    child: Visibility(
+                      visible: visibleInfo,
+                      child: Container(
+                        decoration:  BoxDecoration(
+                            color: Colors.white24,
+                            borderRadius: BorderRadius.circular(20.0)
+                        ),
+                        padding: const EdgeInsets.all(12.00),
+                        child: Column(
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!.diagnosesubtitle,
+                              style: GoogleFonts.sourceSansPro(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54
+                              ),),
+                            Text(
+                              AppLocalizations.of(context)!.diagnosesubtitle2,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.sourceSansPro(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black54
+                              ),),
+                            Text(_start == 0 ? "" :_start.toString(),style: GoogleFonts.sourceSansPro())
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(
-                    height: 10,
+                    height: 30,
                   ),
                   Visibility(
                     visible: imagesPaths.length >= 5 ? false : true,
@@ -340,13 +456,14 @@ class _DiagnosePageState extends State<DiagnosePage> {
                         text: AppLocalizations.of(context)!.takeaphotobutton,
                         radius: 15.0,
                         function: () {
+                          visibleInfo = false;
                           openImages();
                         },
                       ),
                     ),
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: 20,
                   ),
                   InkWell(
                     onTap: (){
@@ -360,7 +477,6 @@ class _DiagnosePageState extends State<DiagnosePage> {
                     child: const Icon(
                       Icons.access_time_outlined,
                       color: kPrymaryColor,
-
                       size: 30,
                     ),
                   ),
@@ -384,7 +500,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                 elevation: 0,
                                 color: Colors.transparent,
                                 clipBehavior: Clip.antiAlias,
-                                child:   Image.file(
+                                child: Image.file(
                                   File(imagesPaths[index]),
                                   fit: BoxFit.cover,
                                   width: 60,
@@ -398,6 +514,11 @@ class _DiagnosePageState extends State<DiagnosePage> {
                           ),
                     ),
                   ),
+                  Text(connectionTimeOutMessage, textAlign: TextAlign.center,style: GoogleFonts.sourceSansPro(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black54
+                  ))
 
                 ],
               ),

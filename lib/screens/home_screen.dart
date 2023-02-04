@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-
+      extendBody: true,
       appBar: const CustomAppBarWidget(),
       resizeToAvoidBottomInset: false,
       body: PersistentTabView(

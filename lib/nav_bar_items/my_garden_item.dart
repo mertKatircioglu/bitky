@@ -416,9 +416,9 @@ class _MyGardenState extends State<MyGarden> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration:  const BoxDecoration(
-            image: DecorationImage(
+  /*          image: DecorationImage(
                 image: AssetImage('images/bt_banner.png',),
-                alignment: Alignment.bottomCenter),
+                alignment: Alignment.bottomCenter),*/
             gradient: LinearGradient(
                 colors: [
                   Color(0xFFFFFFFF),
@@ -473,7 +473,7 @@ class _MyGardenState extends State<MyGarden> {
                             return Padding(
                               padding: EdgeInsets.only(top:MediaQuery.of(context).size.height/3  ),
                               child:  Center(
-                                child: Text(AppLocalizations.of(context)!.youdonthaveanyroomyet, style: GoogleFonts.sourceSansPro(),),
+                                child: Text(AppLocalizations.of(context)!.youdonthaveanyroomyet, style: GoogleFonts.sourceSansPro(color: Colors.black54),),
                               ),
                             );
                           }

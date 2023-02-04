@@ -3,6 +3,7 @@ import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:bitky/models/weather_data_model.dart';
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../locator.dart';
 import '../models/bitky_data_model.dart';
 
@@ -11,6 +12,7 @@ enum DataState { initialPlantState, loadingState, loadedState, errorState }
 class BitkyViewModel with ChangeNotifier {
   DataState? _state;
 
+  var navigatorKey;
   PlanetRepository _repository = locator<PlanetRepository>();
   BitkyDataModel? _bitkyDataModel;
   HealthDataModel? _healthDataModel;
@@ -19,6 +21,7 @@ class BitkyViewModel with ChangeNotifier {
 
   BitkyViewModel() {
     _bitkyDataModel = BitkyDataModel();
+    navigatorKey = GlobalKey<NavigatorState>().currentContext;
     _healthDataModel = HealthDataModel();
     _weatherDataModel = WeatherDataModel();
     _bitkyHealthList = [];
@@ -57,7 +60,7 @@ class BitkyViewModel with ChangeNotifier {
       state = DataState.loadedState;
     } catch (e) {
       state = DataState.errorState;
-      print("Model View Hata: $e");
+      print("Model View Hata: $e  GEThELATH");
     }
     return _healthDataModel!;
   }
@@ -69,15 +72,16 @@ class BitkyViewModel with ChangeNotifier {
       state = DataState.loadedState;
     } catch (e) {
       state = DataState.errorState;
+
       print("Model View Hata: $e");
     }
     return _bitkyDataModel!;
   }
 
-  Future<WeatherDataModel> getWeatherFromUi(double lat, double lon) async {
+  Future<WeatherDataModel> getWeatherFromUi(double lat, double lon, BuildContext context) async {
     try {
       state = DataState.loadingState;
-      _weatherDataModel = await _repository.weatherFromRepository(lat,lon);
+      _weatherDataModel = await _repository.weatherFromRepository(lat,lon, context);
       state = DataState.loadedState;
     } catch (e) {
       state = DataState.errorState;

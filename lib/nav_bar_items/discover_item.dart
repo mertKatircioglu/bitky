@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
-import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:bitky/widgets/swipe_item_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,7 +59,9 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
 
   void _swipe(int index, AppinioSwiperDirection direction) {
     if(direction == AppinioSwiperDirection.right){
-      showDialog(context: context, builder: (c){
+      showDialog(context: context,
+          barrierDismissible: false,
+          builder: (c){
         Future.delayed(const Duration(milliseconds: 1450), () {
           Navigator.of(context, rootNavigator: true).pop("Discard");
         });
@@ -77,7 +78,9 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
       });
 
     }else if(direction == AppinioSwiperDirection.left){
-      showDialog(context: context, builder: (c){
+      showDialog(context: context,
+          barrierDismissible: false,
+          builder: (c){
         Future.delayed(const Duration(milliseconds: 1450), () {
           Navigator.of(context, rootNavigator: true).pop("Discard");
         });
@@ -110,7 +113,6 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
         body:Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
@@ -125,49 +127,51 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp),
           ),
-          child: Column(
-            children: [
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 100+10),
+            child: Column(
+              children: [
 
-              isLoading == true
-                  ? Center(
-                  child: SizedBox(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CupertinoActivityIndicator(
-                        ),
-                        WavyAnimatedTextKit(
-                          textStyle: GoogleFonts.sourceSansPro(
-                              fontSize: 18),
-                          text: [AppLocalizations.of(context)!.plswait],
-                          isRepeatingAnimation: true,
-                          speed: const Duration(milliseconds: 150),
-                        ),
-                      ],
+                isLoading == true
+                    ? Center(
+                    child: SizedBox(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CupertinoActivityIndicator(
+                          ),
+                          WavyAnimatedTextKit(
+                            textStyle: GoogleFonts.sourceSansPro(
+                                fontSize: 18),
+                            text: [AppLocalizations.of(context)!.plswait],
+                            isRepeatingAnimation: true,
+                            speed: const Duration(milliseconds: 150),
+                          ),
+                        ],
+                      ),
+                    )):
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.65,
+                  child: AppinioSwiper(
+                    duration: const Duration(milliseconds: 600),
+                    unlimitedUnswipe: true,
+                    controller: controller,
+                    unswipe: _unswipe,
+                    cards: cards,
+                    onSwipe: _swipe,
+                    padding: const EdgeInsets.only(
+                      left: 25,
+                      right: 25,
+                      top: 40,
+                      bottom: 0,
                     ),
-                  )):
-              const SizedBox(height: 100,),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.75,
-                child: AppinioSwiper(
-                  duration: const Duration(milliseconds: 600),
-                  unlimitedUnswipe: true,
-                  controller: controller,
-                  unswipe: _unswipe,
-                  cards: cards,
-                  onSwipe: _swipe,
-                  padding: const EdgeInsets.only(
-                    left: 25,
-                    right: 25,
-                    top: 40,
-                    bottom: 10,
                   ),
                 ),
-              ),
 
 
 
-            ],
+              ],
+            ),
           ),
         ) );
   }

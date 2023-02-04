@@ -936,6 +936,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.1"
+  toast:
+    dependency: "direct main"
+    description:
+      name: toast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.9"
   top_snackbar_flutter:
     dependency: "direct main"
     description:
@@ -971,6 +978,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  widget_and_text_animator:
+    dependency: "direct main"
+    description:
+      name: widget_and_text_animator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.9"
   win32:
     dependency: transitive
     description:

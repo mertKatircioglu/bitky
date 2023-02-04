@@ -87,9 +87,12 @@
 "addpictureerror":"Please select 5 or less photos.",
 "@addpictureerror":{
 "description":"Please select 5 or less photos."},
-"diagnosesubtitle":"Identify a plant problem.",
+"diagnosesubtitle":"Identify a Plant Problem.",
 "@diagnosesubtitle":{
-"description":"Identify a plant problem."},
+"description":"diagnosesubtitle"},
+"diagnosesubtitle2":"You can diagnose all the diseases that you have observed in your plants but do not know the cause and solution by using your camera or photo gallery.",
+"@diagnosesubtitle2":{
+"description":"diagnosesubtitle2"},
 "takeaphotobutton":"Take a photo.",
 "@takeaphotobutton":{
 "description":"Take a photo."},
@@ -123,9 +126,12 @@
 "uploads":"Uploads",
 "@uploads":{
 "description":"Uploads"},
-"searchpagesubtitle":"Find Perfect Plants & Veggies",
+"searchpagesubtitle":"Find!",
 "@searchpagesubtitle":{
 "description":"searchpagesubtitle"},
+"searchpagesubtitle2":"Discover the perfect herbs and vegetables using the camera or adding photos from the gallery.",
+"@searchpagesubtitle2":{
+"description":"searchpagesubtitle2"},
 "typeaplantname":"Type a plant name",
 "@typeaplantname":{
 "description":"typeaplantname"},
@@ -293,6 +299,30 @@
 "description":"solution"},
 "prevention":"Prevention",
 "@prevention":{
-"description":"prevention"}
+"description":"prevention"},
+"locationservicesaredisable":"Location services are disabled.",
+"@locationservicesaredisable":{
+"description":"locationservicesaredisable"},
+"locationpermissionaredenied":"Location permissions are denied.",
+"@locationpermissionaredenied":{
+"description":"locationpermissionaredenied"},
+"locationpermissionpermanetly":"Location permissions are permanently denied, we cannot request permissions.",
+"@locationpermissionpermanetly":{
+"description":"locationpermissionpermanetly"},
+"feelslike":"Feels Like:",
+"@feelslike":{
+"description":"feelslike"},
+"noselection":"No selection.",
+"@noselection":{
+"description":"noselection"},
+"plsselectaphoto":"Please select a profile photo.",
+"@plsselectaphoto":{
+"description":"plsselectaphoto"},
+"nodata":"You don't have any search data yet.",
+"@nodata":{
+"description":"nodata"},
+"connectiontimeout":"Connection Timeout\nYour internet connection may be bad,\nThe photo you uploaded may be of poor quality,\nSomething may have gone wrong or,\nAdd more photos.",
+"@connectiontimeout":{
+"description":"connectiontimeout"}
 
 }

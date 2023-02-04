@@ -49,18 +49,17 @@ class _FlowItemState extends State<FlowItem> {
               tileMode: TileMode.clamp),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 12.0, right: 12.0, top:100),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-          /*    IconButton(
-                padding: const EdgeInsets.all(0),
+            IconButton(
                   onPressed: (){
                     showSearch(context: context,
                         delegate: SearchDelegatee());
                   },
-                  icon: const Icon(Icons.search_sharp, color: Colors.white,)),*/
+                  icon: const Icon(Icons.search_sharp, color: Colors.black54,)),
               isLoading == true
                   ? Center(
                       child: SizedBox(
@@ -87,12 +86,20 @@ class _FlowItemState extends State<FlowItem> {
                       builder: (ctx, recentSnapshot) {
                         if(recentSnapshot.connectionState == ConnectionState.waiting){
                           return const CupertinoActivityIndicator(color: Colors.transparent,);
+                        }else if(recentSnapshot.data!.docs.isEmpty){
+                          return Padding(
+                            padding: EdgeInsets.only(top:MediaQuery.of(context).size.height/3  ),
+                            child:  Center(
+                              child: Text(AppLocalizations.of(context)!.youdonthaveanyroomyet, style: GoogleFonts.sourceSansPro(),),
+                            ),
+                          );
                         }
                         final recentDocs = recentSnapshot.data!.docs;
                         return Expanded(
                           child: FutureBuilder(
                             builder: (context, futureSnapshot) {
                               return ListView.builder(
+                                padding: EdgeInsets.zero,
                                   shrinkWrap: true,
                                   itemCount: recentDocs.length,
                                   itemBuilder: (context, index) {
@@ -118,114 +125,111 @@ class _FlowItemState extends State<FlowItem> {
                                           withNavBar: false,
                                           pageTransitionAnimation:PageTransitionAnimation.cupertino,
                                         );
-
                                       },
-                                      child: Padding(
-                                          padding: const EdgeInsets.all(0.0),
-                                          child: SizedBox(
-                                            height: 120,
-                                            child: Card(
-                                              elevation: 5,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15)),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Flexible(
-                                                    flex: 1,
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        Container(
-                                                          height: 80,
-                                                            decoration: BoxDecoration(
+                                      child: SizedBox(
+                                        height: 120,
+                                        child: Card(
+                                          elevation: 5,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(15)),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Flexible(
+                                                flex: 1,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      height: 80,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(15)
+                                                      ),
+                                                      padding: const EdgeInsets.only(left: 5),
+                                                      width: 80,
+                                                      child: Card(
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(15)
+                                                        ),
+                                                        elevation: 3,
+                                                        child:Card(
+                                                          margin: const EdgeInsets.all(0),
+                                                          elevation: 5,
+                                                          shape: RoundedRectangleBorder(
                                                               borderRadius: BorderRadius.circular(15)
-                                                            ),
-                                                          padding: const EdgeInsets.only(left: 5),
-                                                          width: 80,
-                                                          child: Card(
-                                                            shape: RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(15)
-                                                            ),
-                                                            elevation: 3,
-                                                            child:Card(
-                                                              margin: const EdgeInsets.all(0),
-                                                              elevation: 5,
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(15)
-                                                              ),
-                                                              child: ClipRRect(
-                                                                borderRadius: BorderRadius.circular(15),
-                                                                child: CachedNetworkImage(
-                                                                  height: 80,
-                                                                  width: 80,
-                                                                  fit: BoxFit.cover,
-                                                                  imageUrl: images[0],
-                                                                  placeholder: (context, url) =>
-                                                                  const CupertinoActivityIndicator(),
-                                                                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                                                                  fadeOutDuration: const Duration(seconds: 1),
-                                                                  fadeInDuration: const Duration(seconds: 2),
-                                                                ),
-                                                              ),
+                                                          ),
+                                                          child: ClipRRect(
+                                                            borderRadius: BorderRadius.circular(15),
+                                                            child: CachedNetworkImage(
+                                                              height: 80,
+                                                              width: 80,
+                                                              fit: BoxFit.cover,
+                                                              imageUrl: images[0],
+                                                              placeholder: (context, url) =>
+                                                              const CupertinoActivityIndicator(),
+                                                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                                                              fadeOutDuration: const Duration(seconds: 1),
+                                                              fadeInDuration: const Duration(seconds: 2),
                                                             ),
                                                           ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5,),
-                                                  Flexible(
-                                                    flex: 3,
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(recentDocs[index]["title"],maxLines: 2,
-                                                          overflow: TextOverflow.ellipsis,
-                                                          style: GoogleFonts.sourceSansPro(
-                                                          fontWeight: FontWeight.w600, fontSize: 16
-                                                        ),),
-                                                          const Padding(padding: EdgeInsets.symmetric(horizontal: 2),
-                                                          child: Divider(height: 2, thickness: 0.4,),
-                                                          ),
-                                                        Text(recentDocs[index]["subTitle"]+"   >>>",
-                                                          maxLines:2,
-                                                          textAlign: TextAlign.justify,
-                                                          overflow: TextOverflow.ellipsis,
-                                                          style: GoogleFonts.sourceSansPro(
-                                                            fontSize: 14,
-                                                            color: Colors.black54
-                                                        ),),
-                                                        const Padding(padding: EdgeInsets.symmetric(horizontal: 2),
-                                                          child: Divider(height: 5, thickness: 0.4,),
-                                                        ), Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            Text(recentDocs[index]["author"],
-                                                              style: GoogleFonts.sourceSansPro(
-                                                                  fontSize: 10,
-                                                                  fontStyle: FontStyle.italic,
-                                                                  color: Colors.black
-                                                              ),),
-                                                            Text("$date ${AppLocalizations.of(context)!.daysago}",
-                                                              style: GoogleFonts.sourceSansPro(
-                                                                  fontSize: 10,
-                                                                  fontStyle: FontStyle.italic,
-                                                                  color: Colors.black
-                                                              ),),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          )),
+                                              const SizedBox(width: 5,),
+                                              Flexible(
+                                                flex: 3,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(recentDocs[index]["title"],maxLines: 2,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: GoogleFonts.sourceSansPro(
+                                                          fontWeight: FontWeight.w600, fontSize: 16
+                                                      ),),
+                                                    const Padding(padding: EdgeInsets.symmetric(horizontal: 2),
+                                                      child: Divider(height: 2, thickness: 0.4,),
+                                                    ),
+                                                    Text(recentDocs[index]["subTitle"]+"   >>>",
+                                                      maxLines:2,
+                                                      textAlign: TextAlign.justify,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: GoogleFonts.sourceSansPro(
+                                                          fontSize: 14,
+                                                          color: Colors.black54
+                                                      ),),
+                                                    const Padding(padding: EdgeInsets.symmetric(horizontal: 2),
+                                                      child: Divider(height: 5, thickness: 0.4,),
+                                                    ), Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text(recentDocs[index]["author"],
+                                                          style: GoogleFonts.sourceSansPro(
+                                                              fontSize: 10,
+                                                              fontStyle: FontStyle.italic,
+                                                              color: Colors.black
+                                                          ),),
+                                                        Text("$date ${AppLocalizations.of(context)!.daysago}",
+                                                          style: GoogleFonts.sourceSansPro(
+                                                              fontSize: 10,
+                                                              fontStyle: FontStyle.italic,
+                                                              color: Colors.black
+                                                          ),),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     );
                                   });
                             },
@@ -266,7 +270,6 @@ class SearchDelegatee extends SearchDelegate{
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
     throw UnimplementedError();
   }
 
