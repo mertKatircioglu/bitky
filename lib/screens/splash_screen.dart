@@ -4,7 +4,9 @@ import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../globals/globals.dart';
@@ -65,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
   startTimer(BuildContext context)async{
     bool result = await InternetConnectionChecker().hasConnection;
     if(result == true){
-      Timer(const Duration(seconds: 3), () async {
+      Timer(const Duration(seconds: 6), () async {
         if(authUser.currentUser != null){
           Navigator.of(context).pushReplacement(_createRoute());
         }else{
@@ -87,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-     CustomAppBarWidget();
+     const CustomAppBarWidget();
     startTimer(context);
   }
 
@@ -96,16 +98,19 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child: Container(
+          decoration: const BoxDecoration(
+            /*   image: DecorationImage(
+            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),*/
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children:  [
-              Image.asset("images/plant.png", width: 70, height: 70,),
-            const Text("Bitky", style: TextStyle(fontSize: 18, color: kPrymaryColor),),
-             Text(AppLocalizations.of(context)!.splashtitle,style: TextStyle(fontSize: 12,)),
-            const SizedBox(height: 20,),
-            const CupertinoActivityIndicator(
-                radius: 15,
-              ),
+              Lottie.asset("images/splashLottie2.json", width: 400, height: 400),
+             Text("Bitky",  style: GoogleFonts.sourceSansPro(color: kPrymaryColor, fontSize: 22, fontWeight: FontWeight.bold),),
+             Text(AppLocalizations.of(context)!.splashtitle,style: GoogleFonts.sourceSansPro(color: Colors.black54,
+             fontWeight: FontWeight.w600
+             )),
+
             ],
           ),
         ),
