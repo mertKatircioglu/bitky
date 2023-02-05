@@ -67,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
   startTimer(BuildContext context)async{
     bool result = await InternetConnectionChecker().hasConnection;
     if(result == true){
-      Timer(const Duration(seconds: 6), () async {
+      Timer(const Duration(seconds: 4), () async {
         if(authUser.currentUser != null){
           Navigator.of(context).pushReplacement(_createRoute());
         }else{
@@ -99,8 +99,8 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: Container(
           decoration: const BoxDecoration(
-            /*   image: DecorationImage(
-            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),*/
+              image: DecorationImage(
+            image: AssetImage('images/banner.png'),alignment: Alignment.topCenter),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

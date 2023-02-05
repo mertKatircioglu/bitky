@@ -323,6 +323,9 @@
 "description":"nodata"},
 "connectiontimeout":"Connection Timeout\nYour internet connection may be bad,\nThe photo you uploaded may be of poor quality,\nSomething may have gone wrong or,\nAdd more photos.",
 "@connectiontimeout":{
-"description":"connectiontimeout"}
+"description":"connectiontimeout"},
+"yourplantishealty":"Your plant is healthy",
+"@yourplantishealty":{
+"description":"yourplantishealty"}
 
 }

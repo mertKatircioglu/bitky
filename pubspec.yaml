@@ -78,15 +78,6 @@ dependencies:
   widget_and_text_animator: ^1.0.9
   toast: ^0.2.9
 
-
-
-
-
-
-
-
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

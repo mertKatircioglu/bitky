@@ -200,9 +200,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                               .then((value) {
                             _diseases = value;
                           }).whenComplete(() {
-                            setState(() {
-                              connectionTimeOutMessage = "";
-                            });
+
                             List<String> disasNames =[];
                             if(_diseases.healthAssessment !=null){
                               _diseases.healthAssessment!.diseases!.forEach((element) {
@@ -397,9 +395,9 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(Icons.clear, size:
-                        15,color: Colors.white,),
+                        15,color: kPrymaryColor,),
                         const SizedBox(width: 2,),
-                        Text(AppLocalizations.of(context)!.clear, style: GoogleFonts.sourceSansPro(color: Colors.white),)
+                        Text(AppLocalizations.of(context)!.clear, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)
                       ],),),
                 )
 
@@ -568,12 +566,12 @@ class _DiagnosePageState extends State<DiagnosePage> {
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(AppLocalizations.of(context)!.nothealthy, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                                Text(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == false?
+                                AppLocalizations.of(context)!.nothealthy : AppLocalizations.of(context)!.yourplantishealty : AppLocalizations.of(context)!.nothealthy, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
                                 const SizedBox(height: 5,),
                                 Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
                                 "images/smile.png":"images/sad.png":"images/sad.png", width: 20,height: 20,),
                                 const SizedBox(height: 5,),
-
                               ],
                             ),
                           ),
