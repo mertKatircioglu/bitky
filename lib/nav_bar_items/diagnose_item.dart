@@ -6,6 +6,7 @@ import 'package:bitky/main.dart';
 import 'package:bitky/models/bitky_health_data_model.dart';
 import 'package:bitky/screens/recent_snaps.dart';
 import 'package:bitky/screens/see_all_screen.dart';
+import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:bitky/widgets/diagnose_solution_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
@@ -19,11 +20,13 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import '../globals/globals.dart';
 import '../l10n/app_localizations.dart';
+import '../models/weather_data_model.dart';
 import '../view_models/planet_view_model.dart';
 import '../widgets/primary_button_widget.dart';
 
 class DiagnosePage extends StatefulWidget {
-  const DiagnosePage({Key? key}) : super(key: key);
+  WeatherDataModel? dataModel;
+   DiagnosePage({Key? key, this.dataModel}) : super(key: key);
 
   @override
   State<DiagnosePage> createState() => _DiagnosePageState();
@@ -105,7 +108,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                           isLoading = true;
                         });
                         _bitkyViewModel!
-                            .getPlantHealthFromUi(base64ImgList, context).timeout(const Duration(seconds: 17),
+                            .getPlantHealthFromUi(base64ImgList, context).timeout(const Duration(seconds: 120),
                           onTimeout: ()async{
                             setState(() {
                               isLoading = false;
@@ -176,7 +179,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                           isLoading = true;
                         });
                           _bitkyViewModel!
-                              .getPlantHealthFromUi(base64ImgList, context).timeout(const Duration(seconds: 17),
+                              .getPlantHealthFromUi(base64ImgList, context).timeout(const Duration(seconds: 120),
                             onTimeout: ()async{
                               setState(() {
                                 isLoading = false;
@@ -358,87 +361,89 @@ class _DiagnosePageState extends State<DiagnosePage> {
             stops: [0.0, 1.0],
             tileMode: TileMode.clamp),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 100+20),
-        child: Column(
-          children: [
-            Visibility(
-              visible:messageShow == true ? false: true,
-              child: InkWell(
-                onTap: (){
-                  setState(() {
-                    messageShow = true;
-                  });
-                },
-                child: const Icon(Icons.info_rounded, size:25
-                  ,color: kPrymaryColor,),),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children:  [
-                Visibility(
-                  visible:_diseases.id !=null,
-                  child: InkWell(
-                    onTap: (){
-                      isLoading = true;
-                  setState(() {
-                    _diseases.id = null;
-                    _diseases = HealthDataModel();
-                    imagefiles!.clear();
-                    base64ImgList.clear();
-                    imagesPaths.clear();
-                    responseImages.clear();
-                    isLoading = false;
-                   });
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.clear, size:
-                        15,color: kPrymaryColor,),
-                        const SizedBox(width: 2,),
-                        Text(AppLocalizations.of(context)!.clear, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)
-                      ],),),
-                )
-
-              ],
-            ),
-
-            Center(
+      child: Column(
+        children: [
+          CustomAppBarWidget(dataModel: widget.dataModel,),
+          Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AnimatedOpacity(
-                    opacity: messageShow ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 900),
-                    child: Visibility(
-                      visible: visibleInfo,
-                      child: Container(
-                        decoration:  BoxDecoration(
-                            color: Colors.white24,
-                            borderRadius: BorderRadius.circular(20.0)
-                        ),
-                        padding: const EdgeInsets.all(12.00),
-                        child: Column(
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.diagnosesubtitle,
-                              style: GoogleFonts.sourceSansPro(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black54
-                              ),),
-                            Text(
-                              AppLocalizations.of(context)!.diagnosesubtitle2,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.sourceSansPro(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black54
-                              ),),
-                            Text(_start == 0 ? "" :_start.toString(),style: GoogleFonts.sourceSansPro())
-                          ],
+                  Visibility(
+                    visible:messageShow == true ? false: true,
+                    child: InkWell(
+                      onTap: (){
+                        setState(() {
+                          messageShow = true;
+                        });
+                      },
+                      child: const Icon(Icons.info_rounded, size:25
+                        ,color: kPrymaryColor,),),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children:  [
+                      Visibility(
+                        visible:_diseases.id !=null,
+                        child: InkWell(
+                          onTap: (){
+                            isLoading = true;
+                            setState(() {
+                              _diseases.id = null;
+                              _diseases = HealthDataModel();
+                              imagefiles!.clear();
+                              base64ImgList.clear();
+                              imagesPaths.clear();
+                              responseImages.clear();
+                              isLoading = false;
+                            });
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.clear, size:
+                              15,color: kPrymaryColor,),
+                              const SizedBox(width: 2,),
+                              Text(AppLocalizations.of(context)!.clear, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),)
+                            ],),),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(14.0),
+                    child: AnimatedOpacity(
+                      opacity: messageShow ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 900),
+                      child: Visibility(
+                        visible: visibleInfo,
+                        child: Container(
+                          decoration:  BoxDecoration(
+                              color: Colors.white24,
+                              borderRadius: BorderRadius.circular(20.0)
+                          ),
+                          padding: const EdgeInsets.all(12.00),
+                          child: Column(
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.diagnosesubtitle,
+                                style: GoogleFonts.sourceSansPro(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black54
+                                ),),
+                              Text(
+                                AppLocalizations.of(context)!.diagnosesubtitle2,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.sourceSansPro(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black54
+                                ),),
+                              Text(_start == 0 ? "" :_start.toString(),style: GoogleFonts.sourceSansPro())
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -489,27 +494,27 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       direction: Axis.horizontal,
                       children: List.generate(
                           (imagesPaths.length < 1 ? 1 : imagesPaths.length), (index) {
-                            if (imagesPaths.isNotEmpty) {
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    side: const BorderSide(
-                                        color: kPrymaryColor, width: 1.0)),
-                                elevation: 0,
-                                color: Colors.transparent,
-                                clipBehavior: Clip.antiAlias,
-                                child: Image.file(
-                                  File(imagesPaths[index]),
-                                  fit: BoxFit.cover,
-                                  width: 60,
-                                  height: 60,
-                                ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          }
-                          ),
+                        if (imagesPaths.isNotEmpty) {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: const BorderSide(
+                                    color: kPrymaryColor, width: 1.0)),
+                            elevation: 0,
+                            color: Colors.transparent,
+                            clipBehavior: Clip.antiAlias,
+                            child: Image.file(
+                              File(imagesPaths[index]),
+                              fit: BoxFit.cover,
+                              width: 60,
+                              height: 60,
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }
+                      ),
                     ),
                   ),
                   Text(connectionTimeOutMessage, textAlign: TextAlign.center,style: GoogleFonts.sourceSansPro(
@@ -521,63 +526,65 @@ class _DiagnosePageState extends State<DiagnosePage> {
                 ],
               ),
             ),
+          ),
 
-            (isLoading == true)
-                ? Column(
-              children: [
-                const SizedBox(
-                  height: 100,
-                ),
-                const CupertinoActivityIndicator(),
-                SizedBox(
-                  child: WavyAnimatedTextKit(
-                    textStyle: GoogleFonts.sourceSansPro(
-                        fontSize: 18,
-                    ),
-                    text: [
-                      AppLocalizations.of(context)!.plswait
-                    ],
-                    isRepeatingAnimation: true,
-                    speed: const Duration(milliseconds: 150),
+          (isLoading == true)
+              ? Column(
+            children: [
+              const SizedBox(
+                height: 100,
+              ),
+              const CupertinoActivityIndicator(),
+              SizedBox(
+                child: WavyAnimatedTextKit(
+                  textStyle: GoogleFonts.sourceSansPro(
+                    fontSize: 18,
                   ),
+                  text: [
+                    AppLocalizations.of(context)!.plswait
+                  ],
+                  isRepeatingAnimation: true,
+                  speed: const Duration(milliseconds: 150),
                 ),
+              ),
 
-              ],
-            )
-                : Container(
-              height: 0,
-            ),
-            Visibility(
-              visible: _diseases.id !=null,
-              child: Expanded(
-                  child: Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 10,),
-
-                          Container(
-                            padding: const EdgeInsets.only(left: 50.0,right: 50.0),
-                            decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == false?
-                                AppLocalizations.of(context)!.nothealthy : AppLocalizations.of(context)!.yourplantishealty : AppLocalizations.of(context)!.nothealthy, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
-                                const SizedBox(height: 5,),
-                                Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
-                                "images/smile.png":"images/sad.png":"images/sad.png", width: 20,height: 20,),
-                                const SizedBox(height: 5,),
-                              ],
-                            ),
-                          ),
-                        const SizedBox(height: 10,),
-                        Visibility(
-                          visible: true,
+            ],
+          )
+              : Container(
+            height: 0,
+          ),
+          Visibility(
+            visible: _diseases.id !=null,
+            child: Expanded(
+                child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10,),
+                      Container(
+                        padding: const EdgeInsets.only(left: 50.0,right: 50.0),
+                        decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == false?
+                            AppLocalizations.of(context)!.nothealthy : AppLocalizations.of(context)!.yourplantishealty : AppLocalizations.of(context)!.nothealthy, style: GoogleFonts.sourceSansPro(color: kPrymaryColor),),
+                            const SizedBox(height: 5,),
+                            Image.asset(_diseases.id !=null?_diseases.healthAssessment!.isHealthy == true?
+                            "images/smile.png":"images/sad.png":"images/sad.png", width: 20,height: 20,),
+                            const SizedBox(height: 5,),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10,),
+                      Visibility(
+                        visible: true,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children:  [
@@ -587,15 +594,15 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                               InkWell(
-                                onTap: (){
-                                  PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: SeeAllScreen(responseImages: responseImages, diseases: _diseases,),
-                                    withNavBar: false,
-                                    pageTransitionAnimation:PageTransitionAnimation.cupertino,
-                                  );
+                                  onTap: (){
+                                    PersistentNavBarNavigator.pushNewScreen(
+                                      context,
+                                      screen: SeeAllScreen(responseImages: responseImages, diseases: _diseases,),
+                                      withNavBar: false,
+                                      pageTransitionAnimation:PageTransitionAnimation.cupertino,
+                                    );
 
-                                },
+                                  },
                                   child: Text(
                                     AppLocalizations.of(context)!.seeall,
                                     style: GoogleFonts.sourceSansPro(color: kPrymaryColor),
@@ -603,119 +610,120 @@ class _DiagnosePageState extends State<DiagnosePage> {
                             ],
                           ),
                         ),
-                        const Divider(color: kPrymaryColor),
+                      ),
+                      const Divider(color: kPrymaryColor),
                       Visibility(
-                          visible: true,
-                          child: Expanded(
-                            child: Container(
-                              height: MediaQuery.of(context).size.height,
-                              decoration: const BoxDecoration(),
-                              child: GridView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount:responseImages.length,
-                                  gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 1,
-                                      crossAxisSpacing: 1,
-                                      mainAxisSpacing: 10),
-                                  itemBuilder: (ctx, index) {
-                                    return Bounce(
-                                      duration: const Duration(milliseconds: 200),
-                                      onPressed: () {
+                        visible: true,
+                        child: Expanded(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height,
+                            decoration: const BoxDecoration(),
+                            child: GridView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount:responseImages.length,
+                                gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 1,
+                                    crossAxisSpacing: 1,
+                                    mainAxisSpacing: 10),
+                                itemBuilder: (ctx, index) {
+                                  return Bounce(
+                                    duration: const Duration(milliseconds: 200),
+                                    onPressed: () {
 
-                                        if(_diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.prevention != null
-                                        ){
-                                          _scaleDialog(_dialog(context,
-                                              _diseases.healthAssessment!.diseases![index].name.toString(),
-                                              responseImages[index].toString(),
-                                              _diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.biological!,
-                                              _diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.prevention!
-                                          ));
-                                        }else{
-                                          final imageProvider = Image.network(responseImages[index]).image;
+                                      if(_diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.prevention != null
+                                      ){
+                                        _scaleDialog(_dialog(context,
+                                            _diseases.healthAssessment!.diseases![index].name.toString(),
+                                            responseImages[index].toString(),
+                                            _diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.biological!,
+                                            _diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.prevention!
+                                        ));
+                                      }else{
+                                        final imageProvider = Image.network(responseImages[index]).image;
                                         showImageViewer(context, imageProvider, onViewerDismissed: () {
                                           print("dismissed");
                                         });
-                                        }
+                                      }
 
-                                      },
-                                      child: Card(
-                                        shadowColor: kPrymaryColor,
-                                        elevation: 1,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(15.0)),
-                                        child: Stack(
-                                          children: [
-                                            ClipRRect(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    15),
-                                                child: Container(
-                                                    decoration:  BoxDecoration(
-                                                        image: DecorationImage(
-                                                            fit: BoxFit.fill,
-                                                            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.darken),
-                                                            image: NetworkImage(responseImages[index].toString()))
-                                                    ),
-                                                )),
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    _diseases.healthAssessment!.diseases![index].name.toString().toCapitalized(),
-                                                    textAlign: TextAlign.center,
-                                                    style:  GoogleFonts.sourceSansPro(
-                                                        fontSize: 12,
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.w600),
-                                                  ),
+                                    },
+                                    child: Card(
+                                      shadowColor: kPrymaryColor,
+                                      elevation: 1,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(15.0)),
+                                      child: Stack(
+                                        children: [
+                                          ClipRRect(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  15),
+                                              child: Container(
+                                                decoration:  BoxDecoration(
+                                                    image: DecorationImage(
+                                                        fit: BoxFit.fill,
+                                                        colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.darken),
+                                                        image: NetworkImage(responseImages[index].toString()))
                                                 ),
-
-                                                Padding(
-                                                  padding: const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    "${AppLocalizations.of(context)!.similarity}: %${_diseases.healthAssessment!.diseases![index].
-                                                    probability!.toStringAsFixed(2).substring(2).toString()}",
-                                                    textAlign: TextAlign.center,
-                                                    style:  GoogleFonts.sourceSansPro(
-                                                        fontSize: 12,
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.w600),
-                                                  ),
+                                              )),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  _diseases.healthAssessment!.diseases![index].name.toString().toCapitalized(),
+                                                  textAlign: TextAlign.center,
+                                                  style:  GoogleFonts.sourceSansPro(
+                                                      fontSize: 12,
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w600),
                                                 ),
+                                              ),
 
-                                                _diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.prevention != null ?  Padding(
-                                                    padding: const EdgeInsets.all(5.0),
-                                                child: SizedBox(
-                                                  height: 35,
-                                                  width: 35,
-                                                  child: Lottie.asset("images/info.json"),
-                                                )):Container(),
-                                              ],
-                                            )
-                                          ],
-                                        ),
+                                              Padding(
+                                                padding: const EdgeInsets.all(5.0),
+                                                child: Text(
+                                                  "${AppLocalizations.of(context)!.similarity}: %${_diseases.healthAssessment!.diseases![index].
+                                                  probability!.toStringAsFixed(2).substring(2).toString()}",
+                                                  textAlign: TextAlign.center,
+                                                  style:  GoogleFonts.sourceSansPro(
+                                                      fontSize: 12,
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w600),
+                                                ),
+                                              ),
+
+                                              _diseases.healthAssessment!.diseases![index].diseaseDetails!.treatment!.prevention != null ?  Padding(
+                                                  padding: const EdgeInsets.all(5.0),
+                                                  child: SizedBox(
+                                                    height: 35,
+                                                    width: 35,
+                                                    child: Lottie.asset("images/info.json"),
+                                                  )):Container(),
+                                            ],
+                                          )
+                                        ],
                                       ),
-                                    );
-                                  }),
-                            ),
+                                    ),
+                                  );
+                                }),
                           ),
-                        )
-                      ],
-                    ),
-                  )),
-            ),
-            const SizedBox(
-              height: 30,
-            )
-          ],
-        ),
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+          ),
+          const SizedBox(
+            height: 30,
+          )
+        ],
       ),
+
     );
   }
   

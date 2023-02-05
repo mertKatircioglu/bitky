@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/models/bitky_data_model.dart';
+import 'package:bitky/models/weather_data_model.dart';
 import 'package:bitky/screens/identify_result_screen.dart';
+import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,7 +40,8 @@ class CurvePainter extends CustomPainter {
 }
 
 class Search extends StatefulWidget {
-  const Search({Key? key}) : super(key: key);
+  WeatherDataModel? dataModel;
+  Search({Key? key, this.dataModel}) : super(key: key);
 
   @override
   State<Search> createState() => _SearchState();
@@ -219,10 +222,10 @@ class _SearchState extends State<Search> {
             stops: [0.0, 1.0],
             tileMode: TileMode.clamp),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 100+15),
-        child: Column(
+      child: Column(
           children: [
+            CustomAppBarWidget(dataModel: widget.dataModel,),
+            const SizedBox(height: 20,),
             Visibility(
               visible:messageShow == true ? false: true,
               child: InkWell(
@@ -234,34 +237,37 @@ class _SearchState extends State<Search> {
                 child: const Icon(Icons.info_rounded, size:25
                   ,color: kPrymaryColor,),),
             ),
-            AnimatedOpacity(
-              opacity: messageShow ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 900),
-              child: Container(
-                decoration:  BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(20.0)
-                ),
-                padding: const EdgeInsets.all(12.00),
-                child: Column(
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.searchpagesubtitle,
-                      style: GoogleFonts.sourceSansPro(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54
-                      ),),
-                    Text(
-                      AppLocalizations.of(context)!.searchpagesubtitle2,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.sourceSansPro(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black54
-                      ),),
-                    Text(_start == 0 ? "" :_start.toString(),style: GoogleFonts.sourceSansPro())
-                  ],
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: AnimatedOpacity(
+                opacity: messageShow ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 900),
+                child: Container(
+                  decoration:  BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(20.0)
+                  ),
+                  padding: const EdgeInsets.all(12.00),
+                  child: Column(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.searchpagesubtitle,
+                        style: GoogleFonts.sourceSansPro(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54
+                        ),),
+                      Text(
+                        AppLocalizations.of(context)!.searchpagesubtitle2,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.sourceSansPro(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black54
+                        ),),
+                      Text(_start == 0 ? "" :_start.toString(),style: GoogleFonts.sourceSansPro())
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -421,7 +427,7 @@ class _SearchState extends State<Search> {
                     isLoading = true;
                   });
                   _bitkyViewModel!
-                      .plantIdentifyFromUi(base64ImgList).timeout(const Duration(seconds: 17),
+                      .plantIdentifyFromUi(base64ImgList).timeout(const Duration(seconds: 120),
                     onTimeout: ()async{
                       setState(() {
                         isLoading = false;
@@ -479,7 +485,7 @@ class _SearchState extends State<Search> {
             ),
           ],
         ),
-      ),
+
     );
   }
 }

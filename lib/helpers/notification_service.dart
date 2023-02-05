@@ -232,6 +232,40 @@ Future<void> showNotification({required int id, required String title, required 
 
     );
   }
+  Future<void> showSchelduledNotificationmonthly({
+    required int id,
+    required String title,
+    required tz.TZDateTime time,
+    required int day,
+    required String body}) async{
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    var tzTime = tz.TZDateTime(tz.local, now.year, now.month, day, time.hour,time.minute);
+    print("Service:: "+tzTime.toString());
+    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails('channel_id', 'channel_name',
+        channelDescription: 'description',
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'ticker');
+    const NotificationDetails notificationDetails =
+    NotificationDetails(android: androidNotificationDetails, iOS: DarwinNotificationDetails(
+      sound: 'default.wav',
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    ));
+    await _localNotificationService.zonedSchedule(
+        id,
+        title,
+        body,
+        tzTime,
+        notificationDetails,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true,
+        matchDateTimeComponents:DateTimeComponents.dayOfMonthAndTime
+
+    );
+  }
 
 
   void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {

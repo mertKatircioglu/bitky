@@ -1,7 +1,9 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
+import 'package:bitky/models/weather_data_model.dart';
 import 'package:bitky/screens/open_blog_item.dart';
+import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,7 +13,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class FlowItem extends StatefulWidget {
-  const FlowItem({Key? key}) : super(key: key);
+  WeatherDataModel? dataModel;
+   FlowItem({Key? key, this.dataModel}) : super(key: key);
 
   @override
   State<FlowItem> createState() => _FlowItemState();
@@ -34,6 +37,9 @@ class _FlowItemState extends State<FlowItem> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      appBar: CustomAppBarWidget(dataModel: widget.dataModel,),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,

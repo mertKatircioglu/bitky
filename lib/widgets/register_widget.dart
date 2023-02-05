@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/screens/home_screen.dart';
+import 'package:bitky/screens/splash_screen.dart';
 import 'package:bitky/widgets/custom_textfield.dart';
 import 'package:bitky/widgets/primary_button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -115,7 +116,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
       pageBuilder: (context, animation, secondaryAnimation) {
         return ChangeNotifierProvider<BitkyViewModel>(
             create: (context)=>locator<BitkyViewModel>(),
-            child:const HomeScreen());
+            child: const SplashScreen());
       },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(0.0, 1.0);

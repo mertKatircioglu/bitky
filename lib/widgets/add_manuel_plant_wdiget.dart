@@ -100,7 +100,7 @@ class _AddPlantManuelWidgetState extends State<AddPlantManuelWidget> {
         "plantName": nameController.text.toCapitalized().trim(),
         "plantId": plantId,
         "location": roomName,
-        "reminder":false,
+        "reminderIsActive":false,
         "image": plantImageUrl,
         "createDate": DateTime.now()
       }).whenComplete(() {

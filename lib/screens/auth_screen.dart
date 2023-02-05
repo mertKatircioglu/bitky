@@ -1,4 +1,5 @@
 import 'package:bitky/l10n/app_localizations.dart';
+import 'package:bitky/screens/splash_screen.dart';
 import 'package:bitky/widgets/custom_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +36,7 @@ class _AuthScreenState extends State<AuthScreen> {
       pageBuilder: (context, animation, secondaryAnimation) {
         return ChangeNotifierProvider<BitkyViewModel>(
             create: (context)=>locator<BitkyViewModel>(),
-            child:const HomeScreen());
+            child: const SplashScreen());
       },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(0.0, 1.0);
@@ -147,7 +148,7 @@ class _AuthScreenState extends State<AuthScreen> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (c){
           return ChangeNotifierProvider<BitkyViewModel>(
               create: (context)=>locator<BitkyViewModel>(),
-              child:const HomeScreen());
+              child:const SplashScreen());
         })).whenComplete(() => Navigator.pop(context));
 
       }

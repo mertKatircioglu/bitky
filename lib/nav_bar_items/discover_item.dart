@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
+import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:bitky/widgets/swipe_item_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,10 +11,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
 import '../l10n/app_localizations.dart';
+import '../models/weather_data_model.dart';
 
 
 class DiscoverItemScreen extends StatefulWidget {
-  const DiscoverItemScreen({Key? key}) : super(key: key);
+  WeatherDataModel? dataModel;
+   DiscoverItemScreen({Key? key,this.dataModel}) : super(key: key);
 
   @override
   State<DiscoverItemScreen> createState() => _DiscoverItemScreenState();
@@ -113,6 +116,9 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        extendBodyBehindAppBar: true,
+        extendBody: true,
+      appBar: CustomAppBarWidget(dataModel: widget.dataModel,),
         body:Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,

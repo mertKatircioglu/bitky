@@ -1,14 +1,13 @@
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/helpers/notification_service.dart';
+import 'package:bitky/models/weather_data_model.dart';
 import 'package:bitky/nav_bar_items/discover_item.dart';
 import 'package:bitky/nav_bar_items/flow_item.dart';
 import 'package:bitky/nav_bar_items/my_garden_item.dart';
-import 'package:bitky/nav_bar_items/reminders_item.dart';
 import 'package:bitky/nav_bar_items/search_item.dart';
 import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -16,7 +15,8 @@ import '../l10n/app_localizations.dart';
 import '../nav_bar_items/diagnose_item.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  WeatherDataModel? dataModel;
+   HomeScreen({Key? key, this.dataModel}) : super(key: key);
 
 
   @override
@@ -44,11 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _buildScreens() {
     return [
-      const DiagnosePage(),
-      const Search(),
-      const DiscoverItemScreen(),
-      const FlowItem(),
-      const MyGarden(),
+       DiagnosePage(dataModel: widget.dataModel,),
+       Search(dataModel: widget.dataModel,),
+       DiscoverItemScreen(dataModel: widget.dataModel,),
+       FlowItem(dataModel: widget.dataModel,),
+       MyGarden(dataModel: widget.dataModel,),
       // const SettingsItem()
     ];
   }
@@ -110,7 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
-      appBar: const CustomAppBarWidget(),
       resizeToAvoidBottomInset: false,
       body: PersistentTabView(
         context,

@@ -1,7 +1,5 @@
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
-import 'package:bitky/models/bitky_data_model.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -14,10 +12,20 @@ import '../helpers/notification_service.dart';
 import 'custom_error_dialog.dart';
 
 class ReminderAddWidget extends StatefulWidget {
-  String? name;
-  String? image;
-  String? location;
-  ReminderAddWidget({Key? key, this.name, this.image, this.location}) : super(key: key);
+  final String? name;
+  final String? image;
+  final String? location;
+  final int? plantId;
+  final int? roomId;
+  final String? roomName;
+  ReminderAddWidget(
+      {Key? key,
+      this.name,
+      this.image,
+      this.location,
+      this.plantId,
+      this.roomId,
+      this.roomName}) : super(key: key);
 
   @override
   State<ReminderAddWidget> createState() => _ReminderAddWidgetState();
@@ -140,6 +148,9 @@ class _ReminderAddWidgetState extends State<ReminderAddWidget> {
                   room: locationController.text ?? "Room 1",
                   color: Colors.transparent,
                   title: nameController.text,
+                  plantId: widget.plantId!,
+                  roomId: widget.roomId!,
+                  roomName: widget.roomName!,
                   content: AppLocalizations.of(context)!.wateringtime)),
           const SizedBox(
             height: 50,
@@ -157,12 +168,18 @@ class NoteThumbnail extends StatefulWidget {
   final String room;
   final String imagE;
   final String content;
+  final int roomId;
+  final String roomName;
+  final int plantId;
 
   const NoteThumbnail(
       {Key? key,
+        required this.plantId,
       required this.color,
       required this.plantName,
       required this.imagE,
+        required this.roomName,
+        required this.roomId,
       required this.room,
       required this.title,
       required this.content})
@@ -183,7 +200,6 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
 
   Future _daily(BuildContext context) async {
     final notificationId = UniqueKey().hashCode;
-
     DatePicker.showTimePicker(context,
         showTitleActions: true,
         showSecondsColumn: false,
@@ -214,6 +230,40 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
         });
       });
     });
+  }
+
+  Future _monthly(BuildContext context) async {
+    final notificationId = UniqueKey().hashCode;
+    DatePicker.showDateTimePicker(context,
+        showTitleActions: true,
+        currentTime: DateTime.now(), onChanged: (date) {
+          setState(() {
+            time = "${date.hour.toString()}:${date.minute.toString()}";
+          });
+          print(time);
+        }, onConfirm: (date) {
+          time = "${date.hour.toString()}:${date.minute.toString()}";
+          var tzTime = tz.TZDateTime.parse(tz.local, date.toString());
+          formValidation(time!, date.day, "monthly", notificationId).whenComplete(() async {
+            await service
+                .showSchelduledNotificationmonthly(
+                id: notificationId,
+                title: widget.title,
+                body: widget.content,
+                time: tzTime,
+                day: date.day)
+                .whenComplete(() {
+              Navigator.pop(context);
+              showDialog(
+                  context: context,
+                  builder: (c) {
+                    return CustomErrorDialog(
+                      message: '${AppLocalizations.of(context)!.plant} ${widget.plantName} ${AppLocalizations.of(context)!.wateringalarmisset}',
+                    );
+                  });
+            });
+          });
+        });
   }
 
   Future _weakly(BuildContext context) async {
@@ -351,18 +401,15 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
       String time, int day, String type, int notificationId) async {
     if (widget.plantName.isNotEmpty) {
       FirebaseFirestore.instance
-          .collection("users/${authUser.currentUser!.uid}/reminders")
-          .doc(notificationId.toString())
-          .set({
+          .collection("users/${authUser.currentUser!.uid}/gardens/${widget.roomId}/${widget.roomName}").doc(widget.plantId.toString())
+          .update({
         "scheduleId": notificationId,
-        "isActive": true,
+        "reminderIsActive": true,
         "image": widget.imagE,
         "scheduleType": type,
-        "plantName": widget.plantName,
-        "room": widget.room.isEmpty ? "Oda-1" : widget.room,
-        "time": time,
-        "day": day,
-        "createDate": DateTime.now()
+        "reminderTime": time,
+        "reminderDay": day,
+        "reminderCreateDate": DateTime.now()
       });
     } else {
       showDialog(
@@ -379,6 +426,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
   void initState() {
     service = LocalNotificationService();
     service.initialize();
+    time="${DateTime.now().hour}:${DateTime.now().second}";
     super.initState();
   }
 
@@ -395,15 +443,25 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: kPrymaryColor),
-              onPressed: () => _daily(context),
-              child: Text(AppLocalizations.of(context)!.adddailyreminderbutton)),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrangeAccent),
-              onPressed: () => _weakly(context),
-              child: Text(AppLocalizations.of(context)!.addweeklyreminder))
+          Expanded(
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: kPrymaryColor),
+                onPressed: () => _daily(context),
+                child: Text(AppLocalizations.of(context)!.adddailyreminderbutton)),
+          ),
+          Expanded(
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: kPrymaryColor),
+                onPressed: () => _monthly(context),
+                child: Text("Aylık")),
+          ),
+          Expanded(
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrangeAccent),
+                onPressed: () => _weakly(context),
+                child: Text(AppLocalizations.of(context)!.addweeklyreminder)),
+          )
         ],
       ),
     );

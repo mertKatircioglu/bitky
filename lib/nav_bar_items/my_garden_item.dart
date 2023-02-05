@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:bitky/models/plant_data_model.dart';
 import 'package:bitky/widgets/add_room_widgets/add_room.dart';
 import 'package:bitky/widgets/add_room_widgets/plant_item_widget.dart';
 import 'package:bitky/widgets/primary_button_widget.dart';
@@ -15,18 +14,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 import '../globals/globals.dart';
 import '../l10n/app_localizations.dart';
 import '../models/bitky_data_model.dart';
+import '../models/weather_data_model.dart';
 import '../view_models/planet_view_model.dart';
 import '../widgets/add_manuel_plant_wdiget.dart';
 import '../widgets/custom_error_dialog.dart';
 
 class MyGarden extends StatefulWidget {
-  const MyGarden({Key? key}) : super(key: key);
+  WeatherDataModel? dataModel;
+
+  MyGarden({Key? key, this.dataModel}) : super(key: key);
 
   @override
   State<MyGarden> createState() => _MyGardenState();
@@ -34,123 +37,136 @@ class MyGarden extends StatefulWidget {
 
 class _MyGardenState extends State<MyGarden> {
   bool isLoading = false;
-  final _headerStyle =  GoogleFonts.sourceSansPro(
-      color: const Color(0xffffffff), fontSize: 15, fontWeight: FontWeight.bold);
+  final _headerStyle = GoogleFonts.sourceSansPro(
+      color: const Color(0xffffffff),
+      fontSize: 15,
+      fontWeight: FontWeight.bold);
   final ImagePicker imgpicker = ImagePicker();
   List<XFile>? imagefiles;
   BitkyViewModel? _bitkyViewModel;
   bool? datasContainer = false;
   TextEditingController nameController = TextEditingController();
   List<String> imagesPaths = [];
-  List<XFile>_imagesXfile=[];
-   BitkyDataModel _bitkyDataModel = BitkyDataModel();
+  List<XFile> _imagesXfile = [];
+  BitkyDataModel _bitkyDataModel = BitkyDataModel();
   List<String> base64ImgList = [];
 
-
-
-
-  _addFromGallery(String title, String id){
+  _addFromGallery(String title, String id) {
     _addImageFromGallery().whenComplete(() {
       setState(() {
         isLoading = true;
       });
-      if(base64ImgList.isNotEmpty){
+      if (base64ImgList.isNotEmpty) {
         _bitkyViewModel!.plantIdentifyFromUi(base64ImgList).then((value) {
           _bitkyDataModel = value;
         }).then((value) {
           base64ImgList.clear();
-          showDialog(context: context, builder: (ctx){
-            nameController.text = _bitkyDataModel.suggestions![0].plantDetails!.commonNames![0].toString().toCapitalized();
+          showDialog(
+              context: context,
+              builder: (ctx) {
+                nameController.text = _bitkyDataModel
+                    .suggestions![0].plantDetails!.commonNames![0]
+                    .toString()
+                    .toCapitalized();
 
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              elevation: 0,
-              title:Center(child: Text(title)) ,
-              content:Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)
-                    ),
-                    elevation: 4,
-                    child: Container(
-                        height: 120,
-                        width: 120,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: kPrymaryColor,
-                            width: 0,
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                          image:  DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(_bitkyDataModel.images![0].url!.toString())
-                          ),
-                        )
-                    ),
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  elevation: 0,
+                  title: Center(child: Text(title)),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        elevation: 4,
+                        child: Container(
+                            height: 120,
+                            width: 120,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: kPrymaryColor,
+                                width: 0,
+                              ),
+                              borderRadius: BorderRadius.circular(15),
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(_bitkyDataModel
+                                      .images![0].url!
+                                      .toString())),
+                            )),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      DottedBorder(
+                        padding: const EdgeInsets.only(right: 5, left: 5),
+                        strokeCap: StrokeCap.butt,
+                        color: kPrymaryColor,
+                        child: TextFormField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText:
+                                  AppLocalizations.of(context)!.plantname),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      CustomPrimaryButton(
+                        text: AppLocalizations.of(context)!.save,
+                        radius: 15,
+                        function: () {
+                          formValidation(context, id, title,
+                              _bitkyDataModel.images![0].url!.toString());
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 5,),
-                  DottedBorder(
-                    padding: const EdgeInsets.only(right: 5, left: 5),
-                    strokeCap: StrokeCap.butt,
-                    color: kPrymaryColor,
-                    child: TextFormField(
-                      controller: nameController,
-                      decoration:  InputDecoration(
-                          border: InputBorder.none, hintText: AppLocalizations.of(context)!.plantname),
-                    ),
-                  ),
-                  const SizedBox(height: 5,),
-                  CustomPrimaryButton(
-                    text: AppLocalizations.of(context)!.save,
-                    radius: 15,
-                    function:(){
-                      formValidation(context,id,title,_bitkyDataModel.images![0].url!.toString());
-                    },
-                  ),
-                ],
-              ),
-            );
-          });
+                );
+              });
 
           setState(() {
             isLoading = false;
           });
         });
-      }else{
+      } else {
         setState(() {
           isLoading = false;
         });
       }
-
     });
   }
 
-  Future<void> formValidation(BuildContext context, String id, String title, String url) async {
+  Future<void> formValidation(
+      BuildContext context, String id, String title, String url) async {
     final plantId = UniqueKey().hashCode;
 
     if (nameController.text.isNotEmpty) {
       FirebaseFirestore.instance
           .collection("users/${authUser.currentUser!.uid}/gardens")
-          .doc(id).collection(title).doc(plantId.toString())
+          .doc(id)
+          .collection(title)
+          .doc(plantId.toString())
           .set({
         "plantName": nameController.text.toCapitalized().trim(),
         "plantId": plantId,
+        "reminderIsActive": false,
         "location": title,
-        "reminder":false,
         "image": url,
         "createDate": DateTime.now()
       }).whenComplete(() {
         showDialog(
-            context: context,
-            builder: (c) {
-              return CustomErrorDialog(
-                message: AppLocalizations.of(context)!.addplantmessage,
-              );
-            }).whenComplete(() =>   Navigator.of(context, rootNavigator: true).pop("Discard")
-        );
+                context: context,
+                builder: (c) {
+                  return CustomErrorDialog(
+                    message: AppLocalizations.of(context)!.addplantmessage,
+                  );
+                })
+            .whenComplete(() =>
+                Navigator.of(context, rootNavigator: true).pop("Discard"));
       });
     } else {
       showDialog(
@@ -163,95 +179,104 @@ class _MyGardenState extends State<MyGarden> {
     }
   }
 
-  _addFromCamera(String title, String id){
+  _addFromCamera(String title, String id) {
     _imagePickerSourceCamera().whenComplete(() {
       setState(() {
         isLoading = true;
       });
-      if(base64ImgList.isNotEmpty){
+      if (base64ImgList.isNotEmpty) {
         _bitkyViewModel!.plantIdentifyFromUi(base64ImgList).then((value) {
           _bitkyDataModel = value;
         }).then((value) {
           base64ImgList.clear();
-          showDialog(context: context, builder: (ctx){
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              elevation: 0,
-              title:Center(child: Text(title)) ,
-              content:Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)
-                    ),
-                    elevation: 4,
-                    child:
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: CachedNetworkImage(
-                        height: 120,
-                        width: 120,
-                        fit: BoxFit.cover,
-                        imageUrl: _bitkyDataModel.images![0].url!.toString(),
-                        placeholder: (context, url) =>
-                        const CupertinoActivityIndicator(),
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
-                        fadeOutDuration: const Duration(seconds: 1),
-                        fadeInDuration: const Duration(seconds: 2),
+          showDialog(
+              context: context,
+              builder: (ctx) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  elevation: 0,
+                  title: Center(child: Text(title)),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        elevation: 4,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: CachedNetworkImage(
+                            height: 120,
+                            width: 120,
+                            fit: BoxFit.cover,
+                            imageUrl:
+                                _bitkyDataModel.images![0].url!.toString(),
+                            placeholder: (context, url) =>
+                                const CupertinoActivityIndicator(),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                            fadeOutDuration: const Duration(seconds: 1),
+                            fadeInDuration: const Duration(seconds: 2),
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      DottedBorder(
+                        padding: const EdgeInsets.only(right: 5, left: 5),
+                        strokeCap: StrokeCap.butt,
+                        color: kPrymaryColor,
+                        child: TextFormField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText:
+                                  AppLocalizations.of(context)!.plantname),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      CustomPrimaryButton(
+                        text: AppLocalizations.of(context)!.save,
+                        radius: 15,
+                        function: () {
+                          formValidation(context, id, title,
+                              _bitkyDataModel.images![0].url!.toString());
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 5,),
-                  DottedBorder(
-                    padding: const EdgeInsets.only(right: 5, left: 5),
-                    strokeCap: StrokeCap.butt,
-                    color: kPrymaryColor,
-                    child: TextFormField(
-                      controller: nameController,
-                      decoration:  InputDecoration(
-                          border: InputBorder.none, hintText: AppLocalizations.of(context)!.plantname),
-                    ),
-                  ),
-                  const SizedBox(height: 5,),
-                  CustomPrimaryButton(
-                    text: AppLocalizations.of(context)!.save,
-                    radius: 15,
-                    function:(){
-                      formValidation(context,id,title,_bitkyDataModel.images![0].url!.toString());
-                    },
-                  ),
-                ],
-              ),
-            );
-          });
+                );
+              });
 
           setState(() {
             isLoading = false;
           });
         });
-      }else{
+      } else {
         setState(() {
           isLoading = false;
         });
-
       }
-
     });
   }
+
   openImages(BuildContext context, String title, String id) async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             elevation: 0,
-            title:  Center(
+            title: Center(
                 child: Text(
-                  AppLocalizations.of(context)!.addpicture, style: GoogleFonts.sourceSansPro(),
-                )),
+              AppLocalizations.of(context)!.addpicture,
+              style: GoogleFonts.sourceSansPro(),
+            )),
             content: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -262,19 +287,22 @@ class _MyGardenState extends State<MyGarden> {
                   child: Padding(
                     padding: const EdgeInsets.all(6.0),
                     child: InkWell(
-                        onTap: (){
-                          _addFromCamera(title,id);
-                          Navigator.pop(context);
-                                 },
+                      onTap: () {
+                        _addFromCamera(title, id);
+                        Navigator.pop(context);
+                      },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                       const Icon(
-                              Icons.camera_alt_outlined,
-                              color: kPrymaryColor,
-                            ),
-                          Text(AppLocalizations.of(context)!.camera,textAlign: TextAlign.center, style: GoogleFonts.sourceSansPro(fontSize: 11),)
-
+                          const Icon(
+                            Icons.camera_alt_outlined,
+                            color: kPrymaryColor,
+                          ),
+                          Text(
+                            AppLocalizations.of(context)!.camera,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.sourceSansPro(fontSize: 11),
+                          )
                         ],
                       ),
                     ),
@@ -285,8 +313,8 @@ class _MyGardenState extends State<MyGarden> {
                       side: const BorderSide(color: kPrymaryColor, width: 1.0),
                       borderRadius: BorderRadius.circular(10)),
                   child: InkWell(
-                    onTap: () async{
-                      Future.delayed(const Duration(seconds: 0), (){
+                    onTap: () async {
+                      Future.delayed(const Duration(seconds: 0), () {
                         showGeneralDialog(
                           context: context,
                           barrierDismissible: true,
@@ -298,12 +326,15 @@ class _MyGardenState extends State<MyGarden> {
                             var curve = Curves.easeInOut.transform(a1.value);
                             return Transform.scale(
                               scale: curve,
-                              child:AlertDialog(
-                                contentPadding:const EdgeInsets.all(0.0),
+                              child: AlertDialog(
+                                contentPadding: const EdgeInsets.all(0.0),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15)),
                                 elevation: 0,
-                                content:AddPlantManuelWidget(roomId: id, roomName: title,),
+                                content: AddPlantManuelWidget(
+                                  roomId: id,
+                                  roomName: title,
+                                ),
                               ),
                             );
                           },
@@ -316,14 +347,17 @@ class _MyGardenState extends State<MyGarden> {
                     child: Padding(
                       padding: const EdgeInsets.all(6.0),
                       child: Column(
-                        mainAxisSize:MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                        const Icon(
-                              Icons.add,
-                              color: kPrymaryColor,
-                            ),
-
-                          Text("Manuel",textAlign: TextAlign.center, style: GoogleFonts.sourceSansPro(fontSize: 11),)
+                          const Icon(
+                            Icons.add,
+                            color: kPrymaryColor,
+                          ),
+                          Text(
+                            "Manuel",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.sourceSansPro(fontSize: 11),
+                          )
                         ],
                       ),
                     ),
@@ -336,19 +370,22 @@ class _MyGardenState extends State<MyGarden> {
                   child: Padding(
                     padding: const EdgeInsets.all(6.0),
                     child: InkWell(
-                        onTap: (){
-                          _addFromGallery(title, id);
-                          Navigator.pop(context);
-                          },
+                      onTap: () {
+                        _addFromGallery(title, id);
+                        Navigator.pop(context);
+                      },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                           const Icon(
-                              Icons.photo_library_outlined,
-                              color: kPrymaryColor,
-                            ),
-                          Text(AppLocalizations.of(context)!.gallery,textAlign: TextAlign.center, style: GoogleFonts.sourceSansPro(fontSize: 11),)
-
+                          const Icon(
+                            Icons.photo_library_outlined,
+                            color: kPrymaryColor,
+                          ),
+                          Text(
+                            AppLocalizations.of(context)!.gallery,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.sourceSansPro(fontSize: 11),
+                          )
                         ],
                       ),
                     ),
@@ -360,15 +397,18 @@ class _MyGardenState extends State<MyGarden> {
         });
   }
 
-
   Future _addImageFromGallery() async {
     try {
       var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 90);
-      if(pickedfiles.length>5){
-        showDialog(context: context, builder: (context){
-          return AlertDialog(content: Text(AppLocalizations.of(context)!.addpictureerror),);
-        });
-      }else{
+      if (pickedfiles.length > 5) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text(AppLocalizations.of(context)!.addpictureerror),
+              );
+            });
+      } else {
         if (pickedfiles.isNotEmpty) {
           imagefiles = pickedfiles;
           pickedfiles.forEach((element) async {
@@ -385,7 +425,6 @@ class _MyGardenState extends State<MyGarden> {
           // print("No image is selected.");
         }
       }
-
     } catch (e) {
       // print("error while picking file.");
     }
@@ -402,10 +441,8 @@ class _MyGardenState extends State<MyGarden> {
         base64ImgList.add(base64img);
       }
       setState(() {});
-    } catch (e) {
-    }
+    } catch (e) {}
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -413,46 +450,340 @@ class _MyGardenState extends State<MyGarden> {
 
     return Scaffold(
       body: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration:  const BoxDecoration(
-  /*          image: DecorationImage(
-                image: AssetImage('images/bt_banner.png',),
-                alignment: Alignment.bottomCenter),*/
-            gradient: LinearGradient(
-                colors: [
-                  Color(0xFFFFFFFF),
-                  Color(0xFFA5EFB0),
-                ],
-                begin: FractionalOffset(0.1, 1.0),
-                end: FractionalOffset(0.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListView(
-              children: [
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          image: DecorationImage(
+              fit: BoxFit.cover,
+              colorFilter:  ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
+              image: AssetImage(
+                widget.dataModel!.current!.isDay == 0
+                    ? 'images/night.png'
+                    : 'images/day.png',
+              ),
+              alignment: Alignment.center),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
 
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    const SizedBox(
-                      height: 5,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(1.0),
+                          decoration: BoxDecoration(
+                              color: kPrymaryColor,
+                              borderRadius: BorderRadius.circular(30)
+                          ),
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                              imageUrl: authUser.currentUser!.photoURL.toString(),
+                              placeholder: (context, url) =>
+                                  const CupertinoActivityIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                              fadeOutDuration: const Duration(seconds: 1),
+                              fadeInDuration: const Duration(seconds: 1),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                            "${authUser.currentUser!.displayName.toString()}",
+                            style: GoogleFonts.sourceSansPro(
+                                color: widget.dataModel!.current!.isDay == 0
+                                    ? Colors.white
+                                    : Colors.black87,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold)),
+
+                      ],
                     ),
-                    isLoading == true
-                        ? Center(
-                        child: SizedBox(
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+
+
+                  Text(
+                      "${widget.dataModel!.current!.tempC.toString()}°C",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.sourceSansPro(
+                          color:Colors.black87,
+                          fontSize: 55,
+                          shadows: <Shadow>[
+                             Shadow(
+                              offset: const Offset(1.0, 1.0),
+                              blurRadius: 9.0,
+                              color:widget.dataModel!.current!.isDay == 0?const Color.fromARGB(255, 255, 255, 255):const Color.fromARGB(255, 0, 0, 0),
+                            ),
+                          ],
+                          fontWeight: FontWeight.bold)),
+                  Text(
+                      widget.dataModel!.current!.condition!.text.toString(),
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.sourceSansPro(
+                          color:Colors.black87,
+                          fontSize: 25,
+                          shadows: <Shadow>[
+                            Shadow(
+                              offset: const Offset(1.0, 1.0),
+                              blurRadius: 9.0,
+                              color:widget.dataModel!.current!.isDay == 0?const Color.fromARGB(255, 255, 255, 255):const Color.fromARGB(255, 0, 0, 0),
+                            ),
+                          ],
+                          fontWeight: FontWeight.bold)),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.water_drop_outlined, color: Colors.black87, size: 16,),
+                        Text(
+                            "%${widget.dataModel!.current!.humidity.toString()}",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.sourceSansPro(
+                                color:Colors.black87,
+                                fontSize: 16,
+
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 10,),
+                        const Icon(Icons.wind_power, color: Colors.black87, size: 16,),
+                        Text(
+                            "${widget.dataModel!.current!.windKph.toString()} km/h",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.sourceSansPro(
+                                color:Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 10,),
+                        Text(
+                            "Max: ${widget.dataModel!.forecast!.forecastday![0].day!.maxtempC.toString()}°C",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.sourceSansPro(
+                                color:Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 10,),
+                        Text(
+                            "Min: ${widget.dataModel!.forecast!.forecastday![0].day!.mintempC.toString()}°C",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.sourceSansPro(
+                                color:Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 10,),
+                      ],
+                    ),
+                  ),
+
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration:  BoxDecoration(
+                        color:Colors.black54,
+                        borderRadius: BorderRadius.circular(20.0)
+                    ),
+                    padding: const EdgeInsets.all(12.00),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  Text(DateFormat('EEEE').format(DateTime.parse(widget.dataModel!.forecast!.forecastday![1].date.toString())),
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold)),
+                                  const Divider(height: 1,color: Colors.white,thickness: 1,),
+                                  CachedNetworkImage(
+                                    height: 45,
+                                    width: 45,
+                                    fit: BoxFit.cover,
+                                    imageUrl:
+                                    "https:${widget.dataModel!.forecast!.forecastday![1].day!.condition!.icon}",
+                                    placeholder: (context, url) =>
+                                    const CupertinoActivityIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                                    fadeOutDuration: const Duration(seconds: 1),
+                                    fadeInDuration: const Duration(seconds: 2),
+                                  ),
+                                  Text("Max: ${widget.dataModel!.forecast!.forecastday![1].day!.maxtempC}°C",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("Min: ${widget.dataModel!.forecast!.forecastday![1].day!.mintempC}°C",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${widget.dataModel!.forecast!.forecastday![1].day!.condition!.text}",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("Nem: ${widget.dataModel!.forecast!.forecastday![1].day!.avghumidity}",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold)),
+
+                                ],
+                              ),
+                            ),
+                            Flexible(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  Text(DateFormat('EEEE').format(DateTime.parse(widget.dataModel!.forecast!.forecastday![2].date.toString())),
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold)),
+                                  const Divider(height: 1,color: Colors.white,thickness: 1,),
+                                  CachedNetworkImage(
+                                    height: 45,
+                                    width: 45,
+                                    fit: BoxFit.cover,
+                                    imageUrl:
+                                    "https:${widget.dataModel!.forecast!.forecastday![2].day!.condition!.icon}",
+                                    placeholder: (context, url) =>
+                                    const CupertinoActivityIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                                    fadeOutDuration: const Duration(seconds: 1),
+                                    fadeInDuration: const Duration(seconds: 2),
+                                  ),
+                                  Text("Max: ${widget.dataModel!.forecast!.forecastday![2].day!.maxtempC}°C",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("Min: ${widget.dataModel!.forecast!.forecastday![2].day!.mintempC}°C",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${widget.dataModel!.forecast!.forecastday![2].day!.condition!.text}",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("Nem: ${widget.dataModel!.forecast!.forecastday![2].day!.avghumidity}",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+                            Flexible(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  Text(DateFormat('EEEE').format(DateTime.parse(widget.dataModel!.forecast!.forecastday![3].date.toString())),
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold)),
+                                  const Divider(height: 1,color: Colors.white,thickness: 1,),
+                                  CachedNetworkImage(
+                                    height: 45,
+                                    width: 45,
+                                    fit: BoxFit.cover,
+                                    imageUrl:
+                                    "https:${widget.dataModel!.forecast!.forecastday![3].day!.condition!.icon}",
+                                    placeholder: (context, url) =>
+                                    const CupertinoActivityIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                                    fadeOutDuration: const Duration(seconds: 1),
+                                    fadeInDuration: const Duration(seconds: 2),
+                                  ),
+                                  Text("Max: ${widget.dataModel!.forecast!.forecastday![3].day!.maxtempC}°C",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("Min: ${widget.dataModel!.forecast!.forecastday![3].day!.mintempC}°C",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${widget.dataModel!.forecast!.forecastday![3].day!.condition!.text}",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("Nem: ${widget.dataModel!.forecast!.forecastday![3].day!.avghumidity}",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.sourceSansPro(
+                                          color:Colors.white,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30,),
+                  Text(
+                      AppLocalizations.of(context)!.mygardentitle,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.sourceSansPro(
+                          color:Colors.black87,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  isLoading == true
+                      ? Center(
+                          child: SizedBox(
                           child: Padding(
-                            padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height / 3),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const CupertinoActivityIndicator(
-                                ),
+                                const CupertinoActivityIndicator(),
                                 WavyAnimatedTextKit(
-                                  textStyle: GoogleFonts.sourceSansPro(
-                                      fontSize: 18),
+                                  textStyle:
+                                      GoogleFonts.sourceSansPro(fontSize: 18),
                                   text: [AppLocalizations.of(context)!.plswait],
                                   isRepeatingAnimation: true,
                                   speed: const Duration(milliseconds: 150),
@@ -461,95 +792,139 @@ class _MyGardenState extends State<MyGarden> {
                             ),
                           ),
                         ))
-                        : StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('users/${authUser.currentUser!.uid}/gardens')
-                            .orderBy("createDate", descending: true)
-                            .snapshots(),
-                        builder: (ctx, recentSnapshot) {
-                          if(recentSnapshot.connectionState == ConnectionState.waiting){
-                            return const CupertinoActivityIndicator(color: Colors.transparent,);
-                          }else if(recentSnapshot.data!.docs.isEmpty){
-                            return Padding(
-                              padding: EdgeInsets.only(top:MediaQuery.of(context).size.height/3  ),
-                              child:  Center(
-                                child: Text(AppLocalizations.of(context)!.youdonthaveanyroomyet, style: GoogleFonts.sourceSansPro(color: Colors.black54),),
-                              ),
-                            );
-                          }
-                          final recentDocs = recentSnapshot.data!.docs;
-                          return  FutureBuilder(
-                            builder: (context, futureSnapshot) {
-                              return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: recentDocs.length,
-                                  itemBuilder: (context, index) {
-                                    var date = DateTime.now().day - DateTime.parse(recentDocs[index]["createDate"].toDate().toString()).day;
-                                    return Accordion(
-                                      paddingListBottom: 2.0,
-                                      paddingListTop: 2.0,
-                                      disableScrolling: true,
-                                      scrollIntoViewOfItems: 	ScrollIntoViewOfItems.fast,
-                                      maxOpenSections: 5,
-                                      headerBackgroundColorOpened: Colors.black54,
-                                      scaleWhenAnimating: true,
-                                      openAndCloseAnimation: true,
-                                      headerPadding:
-                                      const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
-                                      sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
-                                      sectionClosingHapticFeedback: SectionHapticFeedback.light,
-                                      children: [
-                                        AccordionSection(
-                                          isOpen: false,
-                                          contentVerticalPadding: 2,
-                                          leftIcon: const Icon(CupertinoIcons.leaf_arrow_circlepath, color: Colors.white),
-                                          headerBackgroundColor: Colors.black54,
-                                          headerBackgroundColorOpened: kPrymaryColor,
-                                          header: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(recentDocs[index]["roomName"], style: _headerStyle),
-                                              IconButton(onPressed: (){
-                                                openImages(context,recentDocs[index]["roomName"],recentDocs[index]["roomId"].toString());
-                                              }, icon: const Icon(Icons.add, color: Colors.white, )),
-                                            ],
+                      : StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection(
+                                  'users/${authUser.currentUser!.uid}/gardens')
+                              .orderBy("createDate", descending: true)
+                              .snapshots(),
+                          builder: (ctx, recentSnapshot) {
+                            if (recentSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CupertinoActivityIndicator(
+                                color: Colors.transparent,
+                              );
+                            } else if (recentSnapshot.data!.docs.isEmpty) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                    top:
+                                        MediaQuery.of(context).size.height / 3),
+                                child: Center(
+                                  child: Text(
+                                    AppLocalizations.of(context)!
+                                        .youdonthaveanyroomyet,
+                                    style: GoogleFonts.sourceSansPro(
+                                        color: Colors.black54),
+                                  ),
+                                ),
+                              );
+                            }
+                            final recentDocs = recentSnapshot.data!.docs;
+                            return FutureBuilder(
+                              builder: (context, futureSnapshot) {
+                                return ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: recentDocs.length,
+                                    itemBuilder: (context, index) {
+                                      var date = DateTime.now().day -
+                                          DateTime.parse(recentDocs[index]
+                                                      ["createDate"]
+                                                  .toDate()
+                                                  .toString())
+                                              .day;
+                                      return Accordion(
+                                        paddingListBottom: 2.0,
+                                        paddingListTop: 2.0,
+                                        contentBackgroundColor: Colors.white24,
+                                        contentBorderColor: Colors.transparent,
+                                        disableScrolling: true,
+                                        scrollIntoViewOfItems: ScrollIntoViewOfItems.fast,
+                                        maxOpenSections: 5,
+                                        headerBackgroundColorOpened:Colors.black54,
+                                        scaleWhenAnimating: true,
+                                        openAndCloseAnimation: true,
+                                        headerPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 7, horizontal: 15),
+                                        sectionOpeningHapticFeedback:
+                                            SectionHapticFeedback.heavy,
+                                        sectionClosingHapticFeedback:
+                                            SectionHapticFeedback.light,
+                                        children: [
+                                          AccordionSection(
+                                            isOpen: false,
+                                            contentVerticalPadding: 2,
+                                            leftIcon: const Icon(
+                                                CupertinoIcons
+                                                    .leaf_arrow_circlepath,
+                                                color: Colors.white),
+                                            headerBackgroundColor:
+                                                Colors.black54,
+                                            headerBackgroundColorOpened:
+                                                Colors.black54,
+                                            header: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                    recentDocs[index]
+                                                        ["roomName"],
+                                                    style: _headerStyle),
+                                                IconButton(
+                                                    onPressed: () {
+                                                      openImages(
+                                                          context,
+                                                          recentDocs[index]
+                                                              ["roomName"],
+                                                          recentDocs[index]
+                                                                  ["roomId"]
+                                                              .toString());
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.add,
+                                                      color: Colors.white,
+                                                    )),
+                                              ],
+                                            ),
+                                            content: PlantItemWidget(
+                                              roomName: recentDocs[index]
+                                                  ["roomName"],
+                                              roomId: recentDocs[index]
+                                                  ["roomId"],
+                                            ),
+                                            contentHorizontalPadding: 0,
                                           ),
-                                          content: PlantItemWidget(roomName: recentDocs[index]["roomName"], roomId:  recentDocs[index]["roomId"],),
-                                          contentHorizontalPadding: 3,
-                                          contentBorderWidth: 1,
-
-                                        ),
-                                      ],
-                                    );
-                                  });
-                            },
-                          );
-
-                        }),
-
-                  ],
-                )
-              ],
-            ),
-
-          ) ,
+                                        ],
+                                      );
+                                    });
+                              },
+                            );
+                          }),
+                ],
+              )
+            ],
+          ),
         ),
+      ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 18.0),
         child: FloatingActionButton(
           backgroundColor: kPrymaryColor,
-          onPressed: (){
+          onPressed: () {
             PersistentNavBarNavigator.pushNewScreen(
               context,
               screen: AddRoomWidget(),
               withNavBar: false,
-              pageTransitionAnimation:PageTransitionAnimation.cupertino,
+              pageTransitionAnimation: PageTransitionAnimation.cupertino,
             );
           },
-          child: const Icon(Icons.add,color: Colors.white,),
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
         ),
       ),
     );
-
   }
 }
