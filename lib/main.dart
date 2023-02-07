@@ -8,6 +8,7 @@ import 'package:bitky/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'l10n/l10.dart';
 import 'locator.dart';
 
@@ -29,6 +30,7 @@ Future<void> main() async {
   ));
   setupLocator();
   HttpOverrides.global = MyHttpOverrides();
+  sharedPreferences = await SharedPreferences.getInstance();
   runApp(RestartWidget(
     child: const MyApp(),
   ));

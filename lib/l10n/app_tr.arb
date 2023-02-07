@@ -40,7 +40,7 @@
   "healthy":"Sağlık Durumu",
   "uploads":"Yüklenenler",
   "searchpagesubtitle":"Araştır!",
-  "searchpagesubtitle2":"Mükemmel bitki ve sebzeleri, kamera kullanarak veya galeriden fotoğraf ekleyerek keşfedin.",
+  "searchpagesubtitle2":"Mükemmel bitki ve sebzeleri, telefon kamerasından fotoğraf çekerek veya galeriden fotoğraf ekleyerek keşfedin.",
   "typeaplantname":"Bitki ismi",
   "scientificnames":"Bilimsel İsimler",
   "descrip":"Tanımlar",
@@ -104,5 +104,8 @@
   "plsselectaphoto":"Lütfen bir profil fotoğrafı seçin.",
   "nodata":"Henüz hiç bir arama veriniz bulunmuyor.",
   "yourplantishealty":"Bitkiniz sağlıklı",
+  "selectcountry":"Hava durumu ve paylaşım verileri için ülke ve iletişim merkezini seçiniz",
+  "continuee":"Devam",
+  "logoutt":"Çıkış Yap",
   "connectiontimeout":"Bağlantı Zaman Aşımı\nİnternet bağlatınız kötü olabilir,\nYüklediğiniz fotoğraf kalitesiz olabilir,\nBir şeyler ters gitmiş olabilir veya,\nDaha fazla fotoğraf ekleyin."
 }

@@ -45,7 +45,6 @@ class _DiagnosePageState extends State<DiagnosePage> {
   Timer? _timer;
   int _start = 8;
   bool visibleInfo = true;
-  String connectionTimeOutMessage="";
 
   @override
   void dispose() {
@@ -76,7 +75,6 @@ class _DiagnosePageState extends State<DiagnosePage> {
       },
     );
   }
-
 
   openImages() async {
     showDialog(
@@ -335,6 +333,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
       });
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -348,18 +347,10 @@ class _DiagnosePageState extends State<DiagnosePage> {
     return  Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      decoration: const BoxDecoration(
-     /*   image: DecorationImage(
-            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),*/
-        gradient: LinearGradient(
-            colors: [
-              Color(0xFFFFFFFF),
-              Color(0xFFA5EFB0),
-            ],
-            begin: FractionalOffset(0.1, 1.0),
-            end: FractionalOffset(0.0, 0.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            fit: BoxFit.cover,
+            image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/night.png':'images/day.png',),alignment: Alignment.bottomCenter),
       ),
       child: Column(
         children: [
@@ -380,7 +371,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                         });
                       },
                       child: const Icon(Icons.info_rounded, size:25
-                        ,color: kPrymaryColor,),),
+                        ,color: Colors.white,),),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -517,18 +508,11 @@ class _DiagnosePageState extends State<DiagnosePage> {
                       ),
                     ),
                   ),
-                  Text(connectionTimeOutMessage, textAlign: TextAlign.center,style: GoogleFonts.sourceSansPro(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black54
-                  ))
-
                 ],
               ),
             ),
           ),
-
-          (isLoading == true)
+               (isLoading == true)
               ? Column(
             children: [
               const SizedBox(

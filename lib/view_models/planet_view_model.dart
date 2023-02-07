@@ -78,10 +78,10 @@ class BitkyViewModel with ChangeNotifier {
     return _bitkyDataModel!;
   }
 
-  Future<WeatherDataModel> getWeatherFromUi(double lat, double lon, BuildContext context) async {
+  Future<WeatherDataModel> getWeatherFromUi(double lat, double lon,String city, BuildContext context) async {
     try {
       state = DataState.loadingState;
-      _weatherDataModel = await _repository.weatherFromRepository(lat,lon, context);
+      _weatherDataModel = await _repository.weatherFromRepository(lat,lon,city, context);
       state = DataState.loadedState;
     } catch (e) {
       state = DataState.errorState;

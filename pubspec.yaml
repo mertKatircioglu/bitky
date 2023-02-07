@@ -77,6 +77,8 @@ dependencies:
   weather: ^2.0.1
   widget_and_text_animator: ^1.0.9
   toast: ^0.2.9
+  country_state_city_picker: ^1.2.8
+
 
 dev_dependencies:
   flutter_test:

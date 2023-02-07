@@ -108,15 +108,6 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
         ));
   }
 
-/*  Future<String> changeBackGorund(String code) async{
-
-    switch(code){
-
-      case
-    }
-
-  }*/
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -130,7 +121,7 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
         decoration:  BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
-                image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/night.png':'images/day.png',),alignment: Alignment.bottomCenter),
+                image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/tp_banner_night.png':'images/tp_banner.png',)),
             color: Colors.black,
             borderRadius: const BorderRadius.only(
             bottomRight: Radius.circular(25),

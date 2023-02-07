@@ -62,28 +62,28 @@ class _HomeScreenState extends State<HomeScreen> {
         title: (AppLocalizations.of(context)!.diagnosetitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
 
-        activeColorPrimary: kPrymaryColor,
+        activeColorPrimary:widget.dataModel!.current!.isDay == 0 ?Colors.white: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.search, size: 24,),
         title: (AppLocalizations.of(context)!.searchtitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
-        activeColorPrimary: kPrymaryColor,
+        activeColorPrimary:widget.dataModel!.current!.isDay == 0 ?Colors.white:kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.paperplane, size: 24),
         title: (AppLocalizations.of(context)!.discover),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
-        activeColorPrimary: kPrymaryColor,
+        activeColorPrimary:widget.dataModel!.current!.isDay == 0 ?Colors.white:kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(CupertinoIcons.flowchart, size: 24,),
         title: (AppLocalizations.of(context)!.flowtitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
-        activeColorPrimary: kPrymaryColor,
+        activeColorPrimary:widget.dataModel!.current!.isDay == 0 ?Colors.white:kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
 
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: const Icon(CupertinoIcons.leaf_arrow_circlepath, size: 24),
         title: (AppLocalizations.of(context)!.mygardentitle),
         textStyle: GoogleFonts.sourceSansPro(fontSize: 12),
-        activeColorPrimary: kPrymaryColor,
+        activeColorPrimary: widget.dataModel!.current!.isDay == 0 ?Colors.white: kPrymaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
 /*     PersistentBottomNavBarItem(
@@ -113,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: false,
       body: PersistentTabView(
         context,
+        backgroundColor: widget.dataModel!.current!.isDay == 0 ? Colors.black54 : CupertinoColors.white,
         controller: _controller,
         hideNavigationBar: _controller!.index.isNegative,
         screens: _buildScreens(),
@@ -134,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ] ,
           borderRadius: const BorderRadius.only(topLeft:Radius.circular( 20.0), topRight:Radius.circular( 20.0)),
-          colorBehindNavBar: Colors.white,
+          colorBehindNavBar:Colors.white,
 
         ),
         screenTransitionAnimation:const ScreenTransitionAnimation(

@@ -1,4 +1,5 @@
 import 'package:bitky/l10n/app_localizations.dart';
+import 'package:bitky/screens/home_screen.dart';
 import 'package:bitky/screens/splash_screen.dart';
 import 'package:bitky/widgets/custom_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,13 +14,14 @@ import 'package:provider/provider.dart';
 
 import '../globals/globals.dart';
 import '../locator.dart';
+import '../models/weather_data_model.dart';
 import '../view_models/planet_view_model.dart';
 import '../widgets/custom_error_dialog.dart';
 import '../widgets/register_widget.dart';
-import 'home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({Key? key}) : super(key: key);
+  WeatherDataModel? dataModel;
+   AuthScreen({Key? key, this.dataModel}) : super(key: key);
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -67,7 +69,7 @@ class _AuthScreenState extends State<AuthScreen> {
           showDialog(context: context, builder: (c){
             return CustomErrorDialog(message:AppLocalizations.of(context)!.usernotfound);
           });
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (c)=>const AuthScreen()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (c)=>const SplashScreen()));
 
         }
       }).catchError((err){
@@ -143,16 +145,22 @@ class _AuthScreenState extends State<AuthScreen> {
           "userEmail": user.email,
           "createDate": DateTime.now()
         });
-
         // ignore: use_build_context_synchronously
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (c){
           return ChangeNotifierProvider<BitkyViewModel>(
               create: (context)=>locator<BitkyViewModel>(),
-              child:const SplashScreen());
+              child: HomeScreen(dataModel: widget.dataModel,));
         })).whenComplete(() => Navigator.pop(context));
 
       }
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(widget.dataModel.toString());
   }
 
   @override

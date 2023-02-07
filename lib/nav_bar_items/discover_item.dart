@@ -122,16 +122,10 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
         body:Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  Color(0xFFFFFFFF),
-                  Color(0xFFA5EFB0),
-                ],
-                begin: FractionalOffset(0.1, 1.0),
-                end: FractionalOffset(0.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp),
+          decoration:  BoxDecoration(
+            image: DecorationImage(
+                fit: BoxFit.cover,
+                image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/night.png':'images/day.png',),alignment: Alignment.bottomCenter),
           ),
           child: Padding(
             padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 100+10),

@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:weather/weather.dart';
+import '../globals/globals.dart';
 import '../models/bitky_data_model.dart';
 import '../models/bitky_health_data_model.dart';
 
@@ -100,9 +101,15 @@ class BitkyApiClient {
     }
   }
 
-  Future<WeatherDataModel> getWeather(double lat, double lon,
+  Future<WeatherDataModel> getWeather(double lat, double lon,String city,
       BuildContext context) async {
-    String baseUrl = "http://api.weatherapi.com/v1/forecast.json?key=6724a24c2cf144b0b89165929230502&q=$lat,$lon&days=4&aqi=yes&alerts=yes&lang=tr";
+    String baseUrl = "";
+
+    if(sharedPreferences!.getBool("cityBool")==true){
+      baseUrl = "http://api.weatherapi.com/v1/forecast.json?key=6724a24c2cf144b0b89165929230502&q=$city&days=4&aqi=yes&alerts=yes&lang=tr";
+    }else{
+       baseUrl = "http://api.weatherapi.com/v1/forecast.json?key=6724a24c2cf144b0b89165929230502&q=$lat,$lon&days=4&aqi=yes&alerts=yes&lang=tr";
+    }
 
     Map<String, String> requestHeaders = {
       'Api-Key': '6724a24c2cf144b0b89165929230502',

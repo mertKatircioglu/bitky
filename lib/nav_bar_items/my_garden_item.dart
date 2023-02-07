@@ -1,11 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bitky/widgets/add_room_widgets/add_room.dart';
 import 'package:bitky/widgets/add_room_widgets/plant_item_widget.dart';
+import 'package:bitky/widgets/my_garden_widgets/current_weather_info.dart';
+import 'package:bitky/widgets/my_garden_widgets/future_weather_info_widget.dart';
+import 'package:bitky/widgets/my_garden_widgets/user_info_widget.dart';
 import 'package:bitky/widgets/primary_button_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,14 +15,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
-
 import '../globals/globals.dart';
 import '../l10n/app_localizations.dart';
 import '../models/bitky_data_model.dart';
 import '../models/weather_data_model.dart';
+import '../restart_app.dart';
 import '../view_models/planet_view_model.dart';
 import '../widgets/add_manuel_plant_wdiget.dart';
 import '../widgets/custom_error_dialog.dart';
@@ -47,7 +47,6 @@ class _MyGardenState extends State<MyGarden> {
   bool? datasContainer = false;
   TextEditingController nameController = TextEditingController();
   List<String> imagesPaths = [];
-  List<XFile> _imagesXfile = [];
   BitkyDataModel _bitkyDataModel = BitkyDataModel();
   List<String> base64ImgList = [];
 
@@ -139,9 +138,7 @@ class _MyGardenState extends State<MyGarden> {
       }
     });
   }
-
-  Future<void> formValidation(
-      BuildContext context, String id, String title, String url) async {
+  Future<void> formValidation(BuildContext context, String id, String title, String url) async {
     final plantId = UniqueKey().hashCode;
 
     if (nameController.text.isNotEmpty) {
@@ -178,7 +175,6 @@ class _MyGardenState extends State<MyGarden> {
           });
     }
   }
-
   _addFromCamera(String title, String id) {
     _imagePickerSourceCamera().whenComplete(() {
       setState(() {
@@ -263,7 +259,6 @@ class _MyGardenState extends State<MyGarden> {
       }
     });
   }
-
   openImages(BuildContext context, String title, String id) async {
     showDialog(
         context: context,
@@ -396,7 +391,6 @@ class _MyGardenState extends State<MyGarden> {
           );
         });
   }
-
   Future _addImageFromGallery() async {
     try {
       var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 90);
@@ -429,7 +423,6 @@ class _MyGardenState extends State<MyGarden> {
       // print("error while picking file.");
     }
   }
-
   Future _imagePickerSourceCamera() async {
     try {
       XFile? photos = await imgpicker.pickImage(
@@ -447,7 +440,6 @@ class _MyGardenState extends State<MyGarden> {
   @override
   Widget build(BuildContext context) {
     _bitkyViewModel = Provider.of<BitkyViewModel>(context);
-
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -456,7 +448,7 @@ class _MyGardenState extends State<MyGarden> {
           color: Colors.black,
           image: DecorationImage(
               fit: BoxFit.cover,
-              colorFilter:  ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
+              colorFilter: widget.dataModel!.current!.isDay == 0? ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop):null,
               image: AssetImage(
                 widget.dataModel!.current!.isDay == 0
                     ? 'images/night.png'
@@ -471,306 +463,42 @@ class _MyGardenState extends State<MyGarden> {
               Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  const SizedBox(height: 15,),
+                   UserInfoWidget(day: widget.dataModel!.current!.isDay,),
+                  const SizedBox(height: 5,),
+                  CurrentWeatherInfoWidget(dataModel: widget.dataModel,),
+                  FutureWeatherInfoWidget(dataModel: widget.dataModel,),
+                  const SizedBox(height: 30,),
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(1.0),
-                          decoration: BoxDecoration(
-                              color: kPrymaryColor,
-                              borderRadius: BorderRadius.circular(30)
-                          ),
-                          child: ClipOval(
-                            child: CachedNetworkImage(
-                              height: 50,
-                              width: 50,
-                              fit: BoxFit.cover,
-                              imageUrl: authUser.currentUser!.photoURL.toString(),
-                              placeholder: (context, url) =>
-                                  const CupertinoActivityIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                              fadeOutDuration: const Duration(seconds: 1),
-                              fadeInDuration: const Duration(seconds: 1),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
                         Text(
-                            "${authUser.currentUser!.displayName.toString()}",
+                            AppLocalizations.of(context)!.mygardentitle,
+                            textAlign: TextAlign.center,
                             style: GoogleFonts.sourceSansPro(
                                 color: widget.dataModel!.current!.isDay == 0
                                     ? Colors.white
                                     : Colors.black87,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
-
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-
-
-                  Text(
-                      "${widget.dataModel!.current!.tempC.toString()}°C",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.sourceSansPro(
-                          color:Colors.black87,
-                          fontSize: 55,
-                          shadows: <Shadow>[
-                             Shadow(
-                              offset: const Offset(1.0, 1.0),
-                              blurRadius: 9.0,
-                              color:widget.dataModel!.current!.isDay == 0?const Color.fromARGB(255, 255, 255, 255):const Color.fromARGB(255, 0, 0, 0),
-                            ),
-                          ],
-                          fontWeight: FontWeight.bold)),
-                  Text(
-                      widget.dataModel!.current!.condition!.text.toString(),
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.sourceSansPro(
-                          color:Colors.black87,
-                          fontSize: 25,
-                          shadows: <Shadow>[
-                            Shadow(
-                              offset: const Offset(1.0, 1.0),
-                              blurRadius: 9.0,
-                              color:widget.dataModel!.current!.isDay == 0?const Color.fromARGB(255, 255, 255, 255):const Color.fromARGB(255, 0, 0, 0),
-                            ),
-                          ],
-                          fontWeight: FontWeight.bold)),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.water_drop_outlined, color: Colors.black87, size: 16,),
-                        Text(
-                            "%${widget.dataModel!.current!.humidity.toString()}",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.sourceSansPro(
-                                color:Colors.black87,
-                                fontSize: 16,
-
-                                fontWeight: FontWeight.bold)),
-                        const SizedBox(width: 10,),
-                        const Icon(Icons.wind_power, color: Colors.black87, size: 16,),
-                        Text(
-                            "${widget.dataModel!.current!.windKph.toString()} km/h",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.sourceSansPro(
-                                color:Colors.black87,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold)),
-                        const SizedBox(width: 10,),
-                        Text(
-                            "Max: ${widget.dataModel!.forecast!.forecastday![0].day!.maxtempC.toString()}°C",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.sourceSansPro(
-                                color:Colors.black87,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold)),
-                        const SizedBox(width: 10,),
-                        Text(
-                            "Min: ${widget.dataModel!.forecast!.forecastday![0].day!.mintempC.toString()}°C",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.sourceSansPro(
-                                color:Colors.black87,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold)),
-                        const SizedBox(width: 10,),
-                      ],
-                    ),
-                  ),
-
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    decoration:  BoxDecoration(
-                        color:Colors.black54,
-                        borderRadius: BorderRadius.circular(20.0)
-                    ),
-                    padding: const EdgeInsets.all(12.00),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              flex: 1,
-                              child: Column(
-                                children: [
-                                  Text(DateFormat('EEEE').format(DateTime.parse(widget.dataModel!.forecast!.forecastday![1].date.toString())),
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold)),
-                                  const Divider(height: 1,color: Colors.white,thickness: 1,),
-                                  CachedNetworkImage(
-                                    height: 45,
-                                    width: 45,
-                                    fit: BoxFit.cover,
-                                    imageUrl:
-                                    "https:${widget.dataModel!.forecast!.forecastday![1].day!.condition!.icon}",
-                                    placeholder: (context, url) =>
-                                    const CupertinoActivityIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                                    fadeOutDuration: const Duration(seconds: 1),
-                                    fadeInDuration: const Duration(seconds: 2),
-                                  ),
-                                  Text("Max: ${widget.dataModel!.forecast!.forecastday![1].day!.maxtempC}°C",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("Min: ${widget.dataModel!.forecast!.forecastday![1].day!.mintempC}°C",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("${widget.dataModel!.forecast!.forecastday![1].day!.condition!.text}",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("Nem: ${widget.dataModel!.forecast!.forecastday![1].day!.avghumidity}",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold)),
-
-                                ],
-                              ),
-                            ),
-                            Flexible(
-                              flex: 1,
-                              child: Column(
-                                children: [
-                                  Text(DateFormat('EEEE').format(DateTime.parse(widget.dataModel!.forecast!.forecastday![2].date.toString())),
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold)),
-                                  const Divider(height: 1,color: Colors.white,thickness: 1,),
-                                  CachedNetworkImage(
-                                    height: 45,
-                                    width: 45,
-                                    fit: BoxFit.cover,
-                                    imageUrl:
-                                    "https:${widget.dataModel!.forecast!.forecastday![2].day!.condition!.icon}",
-                                    placeholder: (context, url) =>
-                                    const CupertinoActivityIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                                    fadeOutDuration: const Duration(seconds: 1),
-                                    fadeInDuration: const Duration(seconds: 2),
-                                  ),
-                                  Text("Max: ${widget.dataModel!.forecast!.forecastday![2].day!.maxtempC}°C",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("Min: ${widget.dataModel!.forecast!.forecastday![2].day!.mintempC}°C",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("${widget.dataModel!.forecast!.forecastday![2].day!.condition!.text}",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("Nem: ${widget.dataModel!.forecast!.forecastday![2].day!.avghumidity}",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ),
-                            Flexible(
-                              flex: 1,
-                              child: Column(
-                                children: [
-                                  Text(DateFormat('EEEE').format(DateTime.parse(widget.dataModel!.forecast!.forecastday![3].date.toString())),
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold)),
-                                  const Divider(height: 1,color: Colors.white,thickness: 1,),
-                                  CachedNetworkImage(
-                                    height: 45,
-                                    width: 45,
-                                    fit: BoxFit.cover,
-                                    imageUrl:
-                                    "https:${widget.dataModel!.forecast!.forecastday![3].day!.condition!.icon}",
-                                    placeholder: (context, url) =>
-                                    const CupertinoActivityIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                                    fadeOutDuration: const Duration(seconds: 1),
-                                    fadeInDuration: const Duration(seconds: 2),
-                                  ),
-                                  Text("Max: ${widget.dataModel!.forecast!.forecastday![3].day!.maxtempC}°C",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("Min: ${widget.dataModel!.forecast!.forecastday![3].day!.mintempC}°C",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("${widget.dataModel!.forecast!.forecastday![3].day!.condition!.text}",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("Nem: ${widget.dataModel!.forecast!.forecastday![3].day!.avghumidity}",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.sourceSansPro(
-                                          color:Colors.white,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ),
-                          ],
+                        InkWell(
+                          onTap: (){
+                            PersistentNavBarNavigator.pushNewScreen(
+                              context,
+                              screen: AddRoomWidget(),
+                              withNavBar: false,
+                              pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                            );
+                          },
+                          child:  Icon(Icons.add_home, size: 30,color:  widget.dataModel!.current!.isDay == 0
+                              ? Colors.white
+                              : Colors.black87,),
                         )
                       ],
                     ),
                   ),
-                  const SizedBox(height: 30,),
-                  Text(
-                      AppLocalizations.of(context)!.mygardentitle,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.sourceSansPro(
-                          color:Colors.black87,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
                   isLoading == true
                       ? Center(
                           child: SizedBox(
@@ -901,30 +629,35 @@ class _MyGardenState extends State<MyGarden> {
                               },
                             );
                           }),
+                  const SizedBox(height: 20,),
+                  InkWell(
+                    onTap: (){
+                      authUser.signOut().whenComplete(() {
+                        RestartWidget.restartApp(context);
+                      });
+                    },
+                    child: Container(
+                        margin: const EdgeInsets.all(3.0),
+                        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 40),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.white)
+                        ),
+                        child: Text(AppLocalizations.of(context)!.logoutt, style:GoogleFonts.sourceSansPro(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white
+                        ))),
+                  ),
+                  const SizedBox(height: 50,),
+
                 ],
               )
             ],
           ),
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 18.0),
-        child: FloatingActionButton(
-          backgroundColor: kPrymaryColor,
-          onPressed: () {
-            PersistentNavBarNavigator.pushNewScreen(
-              context,
-              screen: AddRoomWidget(),
-              withNavBar: false,
-              pageTransitionAnimation: PageTransitionAnimation.cupertino,
-            );
-          },
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-        ),
-      ),
+
     );
   }
 }

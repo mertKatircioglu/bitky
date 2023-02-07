@@ -209,10 +209,11 @@ class _SearchState extends State<Search> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      decoration: const BoxDecoration(
-   /*     image: DecorationImage(
-            image: AssetImage('images/bt_banner.png'),alignment: Alignment.bottomCenter),*/
-        gradient: LinearGradient(
+      decoration:  BoxDecoration(
+        image: DecorationImage(
+            fit: BoxFit.cover,
+            image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/night.png':'images/day.png',),alignment: Alignment.bottomCenter),
+   /*     gradient: LinearGradient(
             colors: [
               Color(0xFFFFFFFF),
               Color(0xFFA5EFB0),
@@ -220,7 +221,7 @@ class _SearchState extends State<Search> {
             begin: FractionalOffset(0.1, 1.0),
             end: FractionalOffset(0.0, 0.0),
             stops: [0.0, 1.0],
-            tileMode: TileMode.clamp),
+            tileMode: TileMode.clamp),*/
       ),
       child: Column(
           children: [
@@ -235,7 +236,7 @@ class _SearchState extends State<Search> {
                   });
                 },
                 child: const Icon(Icons.info_rounded, size:25
-                  ,color: kPrymaryColor,),),
+                  ,color: Colors.white,),),
             ),
             Padding(
               padding: const EdgeInsets.all(14.0),

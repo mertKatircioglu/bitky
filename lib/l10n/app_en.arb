@@ -326,6 +326,15 @@
 "description":"connectiontimeout"},
 "yourplantishealty":"Your plant is healthy",
 "@yourplantishealty":{
-"description":"yourplantishealty"}
+"description":"yourplantishealty"},
+"selectcountry":"Select country and contact center for weather and sharing data",
+"@selectcountry":{
+"description":"selectcountry"},
+"continuee":"Continue",
+"@continuee":{
+"description":"continuee"},
+"logoutt":"Logout",
+"@logoutt":{
+"description":"logoutt"}
 
 }
