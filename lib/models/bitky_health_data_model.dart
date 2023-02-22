@@ -176,7 +176,7 @@ class Diseases {
           similarImages!.map((v) => v.toJson()).toList();
     }
     if (this.diseaseDetails != null) {
-      data['disease_details'] = this.diseaseDetails!.toJson();
+      data['disease_details'] = diseaseDetails!.toJson();
     }
     return data;
   }

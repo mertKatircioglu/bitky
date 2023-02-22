@@ -456,7 +456,7 @@ class _SearchState extends State<Search> {
                     if(_bitkyDataModel.id !=null){
                       PersistentNavBarNavigator.pushNewScreen(
                         context,
-                        screen: IdentifyResultScreen(dataModel: _bitkyDataModel,),
+                        screen: IdentifyResultScreen(dataModel: _bitkyDataModel, weatherModel: widget.dataModel,),
                         withNavBar: false,
                         pageTransitionAnimation:PageTransitionAnimation.cupertino,
                       );

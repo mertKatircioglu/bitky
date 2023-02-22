@@ -47,7 +47,7 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
 
         cards.add(ExampleCard(
           title: doc.data()["title"],
-          subTile: doc.data()["subtitle"],
+          subTile: doc.data()["subTitle"],
           dateTame: date.toString(),
           imgUrl: doc.data()["imgUrl"],
           descrip: doc.data()["description"],

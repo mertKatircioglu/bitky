@@ -63,7 +63,7 @@ class FutureWeatherInfoWidget extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.sourceSansPro(
                             color:Colors.white,
-                            fontSize: 9,
+                            fontSize: 8,
                             fontWeight: FontWeight.bold)),
                     Text("Nem: ${dataModel!.forecast!.forecastday![1].day!.avghumidity}",
                         textAlign: TextAlign.center,
@@ -115,7 +115,7 @@ class FutureWeatherInfoWidget extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.sourceSansPro(
                             color:Colors.white,
-                            fontSize: 9,
+                            fontSize: 8,
                             fontWeight: FontWeight.bold)),
                     Text("Nem: ${dataModel!.forecast!.forecastday![2].day!.avghumidity}",
                         textAlign: TextAlign.center,
@@ -166,7 +166,7 @@ class FutureWeatherInfoWidget extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.sourceSansPro(
                             color:Colors.white,
-                            fontSize: 9,
+                            fontSize: 8,
                             fontWeight: FontWeight.bold)),
                     Text("Nem: ${dataModel!.forecast!.forecastday![3].day!.avghumidity}",
                         textAlign: TextAlign.center,

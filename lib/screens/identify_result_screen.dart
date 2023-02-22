@@ -1,21 +1,73 @@
+import 'dart:async';
+
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
 import 'package:bitky/widgets/primary_button_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/bitky_data_model.dart';
+import '../models/weather_data_model.dart';
+import '../widgets/custom_textfield.dart';
+
 
 class IdentifyResultScreen extends StatefulWidget {
   BitkyDataModel? dataModel;
-   IdentifyResultScreen({Key? key, this.dataModel}) : super(key: key);
+  WeatherDataModel? weatherModel;
+
+  IdentifyResultScreen({Key? key, this.dataModel, this.weatherModel}) : super(key: key);
   @override
   State<IdentifyResultScreen> createState() => _IdentifyResultScreenState();
 }
 
 class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
   List<String>? images=[];
+  bool isLoading = false;
+
+
+
+  Widget _dialog(BuildContext context, String plantName, String description){
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15)),
+      elevation: 0,
+      content: Padding(
+        padding: const EdgeInsets.all(1.0),
+        child: Container(
+          decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(
+                  Radius.circular(15))),
+          child: ShareWidget(dataModel: widget.dataModel!, plantName: plantName, description: description,),
+        ),
+      ),
+
+    );
+  }
+
+  void _scaleDialog(Widget dialog) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "go",
+      pageBuilder: (ctx, a1, a2) {
+        return Container();
+      },
+      transitionBuilder: (ctx, a1, a2, child) {
+        var curve = Curves.easeInOut.transform(a1.value);
+        return Transform.scale(
+          scale: curve,
+          child:dialog,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+  }
+
 
 
   @override
@@ -138,8 +190,7 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                 ),
                               ),
                             ),
-
-                            widget.dataModel!.suggestions![index].plantDetails!.watering! !=null ? Padding(
+                            widget.dataModel!.suggestions![index].plantDetails!.watering !=null ? Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: Container(
                                 height: 100,
@@ -308,12 +359,14 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                                 ),
                               ),
                             ),
-
                             Center(
                               child: CustomPrimaryButton(
                                 text: "${AppLocalizations.of(context)!.similarity}: %${widget.dataModel!.suggestions![index].probability!.toStringAsFixed(2).substring(2).toString()} Paylaş",
                                 radius: 15.0,
-                                function: ()=>print("tıklandı"),
+                                function: ()=>_scaleDialog(_dialog(context,widget.dataModel!.suggestions![index].plantDetails!.commonNames == null ?
+                                widget.dataModel!.suggestions![index].plantName! : widget.dataModel!.suggestions![index].plantDetails!.commonNames![0].toString(),
+                                    widget.dataModel!.suggestions![index].plantDetails!.wikiDescription!.value! ))
+
                               ),
                             ),
                             const Divider(height: 20, color: kPrymaryColor,)
@@ -322,6 +375,190 @@ class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
                       );
                     }),
               ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+
+class ShareWidget extends StatefulWidget {
+  BitkyDataModel dataModel;
+  String plantName;
+  String description;
+   ShareWidget({required this.dataModel, required this.plantName, required this.description});
+
+  @override
+  State<ShareWidget> createState() => _ShareWidgetState();
+}
+
+class _ShareWidgetState extends State<ShareWidget> {
+   TextEditingController subTitleController = TextEditingController();
+   TextEditingController descriptionController = TextEditingController();
+   LocationPermission? permission;
+   bool location = false;
+   double? long = 1.1;
+   double? lat=1.1;
+   Position? position;
+   String? adress;
+   String loadingText="";
+   bool isLoading = false;
+   bool isLoadingLoc = false;
+   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+
+
+   saveData( double long, double lat){
+     setState(() {
+       loadingText ="Paylaşılıyor...";
+       isLoading = true;
+     });
+    final id = UniqueKey().hashCode;
+    if(subTitleController.text.isNotEmpty){
+      FirebaseFirestore.instance.collection("discover").doc(id.toString()).
+      set({
+        "id":id,
+        "imgUrl": widget.dataModel.images![0].url.toString(),
+        "title":widget.plantName,
+        "subTitle":subTitleController.text.trim().toString(),
+        "description":widget.description,
+        "createDate": DateTime.now(),
+        "user":authUser.currentUser!.displayName,
+        "userId":authUser.currentUser!.uid,
+        "approve":0,
+        "long":long,
+        "lat":lat
+      }).whenComplete(() {
+        Navigator.pop(context);
+        setState(() {
+          isLoading=false;
+        });
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+     location = false;
+     long = 1.1;
+     lat=1.1;
+     isLoading = false;
+    isLoadingLoc=false;
+  }
+  @override
+  void initState() {
+        super.initState();
+        descriptionController.text = widget.description;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(widget.plantName.toString().toCapitalized(), style: GoogleFonts.sourceSansPro( fontSize: 16, fontWeight: FontWeight.w600,color: Colors.deepOrange),),
+          const SizedBox(height: 5,),
+          CircleAvatar(
+              radius: 80,
+              backgroundImage:NetworkImage(widget.dataModel.images![0].url!) ,),
+          const SizedBox(height: 20,),
+          Text("Ne Olduğunu Düşünüyorsun?", style: GoogleFonts.sourceSansPro( fontSize: 16, color: Colors.deepOrange),),
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Card(
+                  child: CustomTextField(
+                    iconData: Icons.label_important_outline,
+                    controller:subTitleController,
+                    isObscreen: false,
+                    height: 25,
+                  ),
+                ),
+                Text("Tanım", style: GoogleFonts.sourceSansPro( fontSize: 16, color: Colors.deepOrange),),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
+                    child: TextFormField(
+                      keyboardType:TextInputType.multiline,
+                      controller: descriptionController,
+                      minLines:3,
+                      textAlign: TextAlign.justify,
+                      maxLines:10,
+                      cursorColor: Theme.of(context).primaryColor,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusColor: Theme.of(context).primaryColor,
+                          hintStyle: const TextStyle(fontSize: 12)
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Konum Bilgisi", style: GoogleFonts.sourceSansPro( fontSize: 16, color: Colors.deepOrange),),
+              isLoadingLoc == true ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CupertinoActivityIndicator(),
+                  Text(loadingText,style: GoogleFonts.sourceSansPro( fontSize: 12))
+                ],
+              ) : Switch(
+                  value: location,
+                  onChanged:(bool val) async{
+                setState(() {
+                  isLoadingLoc= val;
+                  loadingText ="Konum bilgisi ekleniyor...";
+                  location = val;
+                });
+                if(val==true) {
+                  permission = await Geolocator.checkPermission();
+                  if (permission == LocationPermission.denied) {
+                    permission = await Geolocator.requestPermission();
+                    if (permission == LocationPermission.denied) {
+                      return Future.error('Konum İzinleri Reddedildi.');
+                    }
+                  }
+                  if (permission == LocationPermission.deniedForever) {
+                    return Future.error(
+                        'Konum İzinleri Kalıcı Olarak Reddedildi.');
+                  }
+                  Position newPosition = await Geolocator.getCurrentPosition(
+                      desiredAccuracy: LocationAccuracy.medium
+                  );
+                  position = newPosition;
+                  setState(() {
+                    long = position!.longitude;
+                    lat = position!.latitude;
+                    isLoadingLoc= false;
+                  });
+                } }),
+            ],
+          ),
+          const SizedBox(height: 20,),
+          isLoading == true ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CupertinoActivityIndicator(),
+              Text(loadingText,style: GoogleFonts.sourceSansPro( fontSize: 16))
+            ],
+          ): Container(
+            width: MediaQuery.of(context).size.width /1.5,
+            child: CustomPrimaryButton(
+              text: "Paylaş",
+              radius: 18.0,
+              function:()=> saveData(long!,lat!),
             ),
           )
         ],

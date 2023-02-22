@@ -197,11 +197,9 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                 });
 
                             },
-                          )
-                              .then((value) {
+                          ).then((value) {
                             _diseases = value;
                           }).whenComplete(() {
-
                             List<String> disasNames =[];
                             if(_diseases.healthAssessment !=null){
                               _diseases.healthAssessment!.diseases!.forEach((element) {
@@ -213,6 +211,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                               FirebaseFirestore.instance.collection("users/${authUser.currentUser!.uid}/recent_search").doc(DateTime.now().toString()).
                               set({
                                 "uploadedImages": _diseases.images!.map((e) => e.toJson()).toList(),
+                                "disasesDetails1":_diseases.healthAssessment!.diseases!.map((e) => e.toJson()).toList(),
                                 "problemName":disasNames,
                                 "createdAt": DateTime.now(),
                                 "isHealty":_diseases.healthAssessment!.isHealthy
@@ -223,7 +222,6 @@ class _DiagnosePageState extends State<DiagnosePage> {
                                 isLoading = false;
                               });
                             }else{
-
                               setState(() {
                                 isLoading = false;
                               });
@@ -419,6 +417,7 @@ class _DiagnosePageState extends State<DiagnosePage> {
                             children: [
                               Text(
                                 AppLocalizations.of(context)!.diagnosesubtitle,
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.sourceSansPro(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,

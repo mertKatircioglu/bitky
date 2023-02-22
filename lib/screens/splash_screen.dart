@@ -33,7 +33,6 @@ class _SplashScreenState extends State<SplashScreen> {
   bool prefBool=false;
 
 
-
   Widget _dialog(BuildContext context){
     return AlertDialog(
       contentPadding: const EdgeInsets.all(4),
@@ -183,7 +182,6 @@ class _SplashScreenState extends State<SplashScreen> {
       _determinePosition().then((value) {
         _bitkyViewModel.getWeatherFromUi(value.latitude, value.longitude,prefCity, context).then((value) {
           _weatherDataModel = value;
-
         });
       });
     }
