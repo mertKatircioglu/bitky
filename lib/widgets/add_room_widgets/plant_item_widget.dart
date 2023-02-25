@@ -238,7 +238,7 @@ class _PlantItemWidgetState extends State<PlantItemWidget> {
                                                       "reminderDay": 0,
                                                     });
                                                     showTopSnackBar(
-                                                      Overlay.of(context)!,
+                                                      Overlay.of(context),
                                                       CustomSnackBar.error(
                                                         message:
                                                         "${recentDocs[index]["plantName"]}, ${AppLocalizations.of(context)!.reminderisdeleted}.",

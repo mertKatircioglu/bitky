@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
+import 'package:bitky/globals/globals.dart';
 import 'package:bitky/widgets/custom_appbar_widget.dart';
 import 'package:bitky/widgets/swipe_item_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,7 +17,8 @@ import '../models/weather_data_model.dart';
 
 class DiscoverItemScreen extends StatefulWidget {
   WeatherDataModel? dataModel;
-   DiscoverItemScreen({Key? key,this.dataModel}) : super(key: key);
+  List<DiscoverSwipeCard>? cards;
+   DiscoverItemScreen({Key? key,this.dataModel, this.cards}) : super(key: key);
 
   @override
   State<DiscoverItemScreen> createState() => _DiscoverItemScreenState();
@@ -26,42 +28,28 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
   final AppinioSwiperController controller = AppinioSwiperController();
 
   bool isLoading = false;
-  List<ExampleCard> cards = [];
   bool? isOkey;
+  List<DiscoverSwipeCard> _list = [];
   bool showOkey= false;
+
 
   @override
   void initState() {
-    getData();
     super.initState();
-  }
-
-  getData() async {
-    await FirebaseFirestore.instance
-        .collection('discover').orderBy("createDate", descending: false)
-        .snapshots()
-        .listen((event) {
-      final data = event.docs;
-      for (var doc in data) {
-        var date = DateTime.now().day - DateTime.parse(doc.data()["createDate"].toDate().toString()).day;
-
-        cards.add(ExampleCard(
-          title: doc.data()["title"],
-          subTile: doc.data()["subTitle"],
-          dateTame: date.toString(),
-          imgUrl: doc.data()["imgUrl"],
-          descrip: doc.data()["description"],
-          user: doc.data()["user"],
-          approveCount: doc.data()["approve"].toString(),
-        ));
-      }
-      setState(() {});
+    widget.cards!.forEach((element) {
+      _list.add(element);
     });
   }
 
-
   void _swipe(int index, AppinioSwiperDirection direction) {
     if(direction == AppinioSwiperDirection.right){
+      FirebaseFirestore.instance.collection("discover").doc(widget.cards![index].iD.toString()).update({
+      "approve":FieldValue.increment(1),
+        "approveUsers":FieldValue.arrayUnion([{"id":authUser.currentUser!.uid,"approveType":1}]),
+      }).whenComplete(() {
+        widget.cards!.removeAt(index);
+      });
+
       showDialog(context: context,
           barrierDismissible: false,
           builder: (c){
@@ -79,8 +67,12 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
               child: Lottie.asset("images/done.json", repeat: false)),
         );
       });
-
     }else if(direction == AppinioSwiperDirection.left){
+      FirebaseFirestore.instance.collection("discover").doc(widget.cards![index].iD.toString()).update({
+        "approveUsers":FieldValue.arrayUnion([{"id":authUser.currentUser!.uid,"approveType":0}]),
+      }).whenComplete(() {
+        widget.cards!.removeAt(index);
+      });
       showDialog(context: context,
           barrierDismissible: false,
           builder: (c){
@@ -102,11 +94,13 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
     log("the card was swiped to the: ${direction.name}");
   }
 
+ void _onEnd(){
+
+ }
+
   void _unswipe(bool unswiped) {
     if (unswiped) {
-      setState(() {
-        showOkey = false;
-      });
+
       log("SUCCESS: card was unswiped");
     } else {
       log("FAIL: no card left to unswipe");
@@ -131,7 +125,6 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
             padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 100+10),
             child: Column(
               children: [
-
                 isLoading == true
                     ? Center(
                     child: SizedBox(
@@ -151,13 +144,14 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
                       ),
                     )):
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.65,
+                  height: MediaQuery.of(context).size.height * 0.70,
                   child: AppinioSwiper(
                     duration: const Duration(milliseconds: 600),
+                    threshold: 100,
                     unlimitedUnswipe: true,
                     controller: controller,
                     unswipe: _unswipe,
-                    cards: cards,
+                    cards: _list,
                     onSwipe: _swipe,
                     padding: const EdgeInsets.only(
                       left: 25,

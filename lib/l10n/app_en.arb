@@ -335,6 +335,27 @@
 "description":"continuee"},
 "logoutt":"Logout",
 "@logoutt":{
-"description":"logoutt"}
+"description":"logoutt"},
+"beingshare":"Being shared...",
+"@beingshare":{
+"description":"beingshare"},
+"shareisokey":"Shared",
+"@shareisokey":{
+"description":"shareisokey"},
+"whatdoyouthinkis":"What Do You Think Is?",
+"@whatdoyouthinkis":{
+"description":"whatdoyouthinkis"},
+"defination":"Defination",
+"@defination":{
+"description":"defination"},
+"location":"Add Location Information",
+"@location":{
+"description":"location"},
+"share":"Share",
+"@share":{
+"description":"share"},
+"locatinInfoAdding":"Adding location information...",
+"@locatinInfoAdding":{
+"description":"locatinInfoAdding"}
 
 }

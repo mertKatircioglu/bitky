@@ -12,6 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/bitky_data_model.dart';
 import '../models/weather_data_model.dart';
+import '../widgets/custom_error_dialog.dart';
 import '../widgets/custom_textfield.dart';
 
 
@@ -412,7 +413,7 @@ class _ShareWidgetState extends State<ShareWidget> {
 
    saveData( double long, double lat){
      setState(() {
-       loadingText ="Paylaşılıyor...";
+       loadingText =AppLocalizations.of(context)!.beingshare;
        isLoading = true;
      });
     final id = UniqueKey().hashCode;
@@ -428,13 +429,22 @@ class _ShareWidgetState extends State<ShareWidget> {
         "user":authUser.currentUser!.displayName,
         "userId":authUser.currentUser!.uid,
         "approve":0,
+        "userAvatarUrl":authUser.currentUser!.photoURL,
+        "approveUsers":[{"id":authUser.currentUser!.uid,"approveType":1}],
         "long":long,
         "lat":lat
       }).whenComplete(() {
-        Navigator.pop(context);
         setState(() {
           isLoading=false;
         });
+        showDialog(
+            context: context,
+            builder: (c) {
+              return CustomErrorDialog(
+                message: AppLocalizations.of(context)!.addplantmessage,
+              );
+            }).whenComplete(() => Navigator.of(context).pop());
+
       });
     }
   }
@@ -467,7 +477,7 @@ class _ShareWidgetState extends State<ShareWidget> {
               radius: 80,
               backgroundImage:NetworkImage(widget.dataModel.images![0].url!) ,),
           const SizedBox(height: 20,),
-          Text("Ne Olduğunu Düşünüyorsun?", style: GoogleFonts.sourceSansPro( fontSize: 16, color: Colors.deepOrange),),
+          Text(AppLocalizations.of(context)!.whatdoyouthinkis, style: GoogleFonts.sourceSansPro( fontSize: 16, color: Colors.deepOrange),),
           Form(
             key: _formKey,
             child: Column(
@@ -480,7 +490,7 @@ class _ShareWidgetState extends State<ShareWidget> {
                     height: 25,
                   ),
                 ),
-                Text("Tanım", style: GoogleFonts.sourceSansPro( fontSize: 16, color: Colors.deepOrange),),
+                Text(AppLocalizations.of(context)!.defination, style: GoogleFonts.sourceSansPro( fontSize: 16, color: Colors.deepOrange),),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
@@ -505,7 +515,7 @@ class _ShareWidgetState extends State<ShareWidget> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Konum Bilgisi", style: GoogleFonts.sourceSansPro( fontSize: 16, color: Colors.deepOrange),),
+              Text(AppLocalizations.of(context)!.location, style: GoogleFonts.sourceSansPro( fontSize: 16, color: Colors.deepOrange),),
               isLoadingLoc == true ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -518,7 +528,7 @@ class _ShareWidgetState extends State<ShareWidget> {
                   onChanged:(bool val) async{
                 setState(() {
                   isLoadingLoc= val;
-                  loadingText ="Konum bilgisi ekleniyor...";
+                  loadingText =AppLocalizations.of(context)!.locatinInfoAdding;
                   location = val;
                 });
                 if(val==true) {
@@ -526,12 +536,12 @@ class _ShareWidgetState extends State<ShareWidget> {
                   if (permission == LocationPermission.denied) {
                     permission = await Geolocator.requestPermission();
                     if (permission == LocationPermission.denied) {
-                      return Future.error('Konum İzinleri Reddedildi.');
+                      return Future.error(AppLocalizations.of(context)!.locationpermissionaredenied);
                     }
                   }
                   if (permission == LocationPermission.deniedForever) {
                     return Future.error(
-                        'Konum İzinleri Kalıcı Olarak Reddedildi.');
+                        AppLocalizations.of(context)!.locationpermissionpermanetly);
                   }
                   Position newPosition = await Geolocator.getCurrentPosition(
                       desiredAccuracy: LocationAccuracy.medium
@@ -556,7 +566,7 @@ class _ShareWidgetState extends State<ShareWidget> {
           ): Container(
             width: MediaQuery.of(context).size.width /1.5,
             child: CustomPrimaryButton(
-              text: "Paylaş",
+              text: AppLocalizations.of(context)!.share,
               radius: 18.0,
               function:()=> saveData(long!,lat!),
             ),

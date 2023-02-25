@@ -5,7 +5,7 @@ import 'package:bitky/nav_bar_items/discover_item.dart';
 import 'package:bitky/nav_bar_items/flow_item.dart';
 import 'package:bitky/nav_bar_items/my_garden_item.dart';
 import 'package:bitky/nav_bar_items/search_item.dart';
-import 'package:bitky/widgets/custom_appbar_widget.dart';
+import 'package:bitky/widgets/swipe_item_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,7 +16,8 @@ import '../nav_bar_items/diagnose_item.dart';
 
 class HomeScreen extends StatefulWidget {
   WeatherDataModel? dataModel;
-   HomeScreen({Key? key, this.dataModel}) : super(key: key);
+  List<DiscoverSwipeCard>? cards;
+   HomeScreen({Key? key, this.dataModel, this.cards}) : super(key: key);
 
 
   @override
@@ -44,9 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _buildScreens() {
     return [
+      if(widget.dataModel !=null)
        DiagnosePage(dataModel: widget.dataModel,),
        Search(dataModel: widget.dataModel,),
-       DiscoverItemScreen(dataModel: widget.dataModel,),
+       DiscoverItemScreen(dataModel: widget.dataModel,cards: widget.cards,),
        FlowItem(dataModel: widget.dataModel,),
        MyGarden(dataModel: widget.dataModel,),
       // const SettingsItem()

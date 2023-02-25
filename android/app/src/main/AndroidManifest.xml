@@ -9,7 +9,7 @@
        android:label="bitky"
         android:icon="@mipmap/ic_launcher">
        <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyCEuddEUTRs7CCLImBYeATHCEXM8u8SK-8"/>
+           android:value="AIzaSyCNISCck2m6Y-ppchNqk6U_EdaYhqMoWRM"/>
        <meta-data
            android:name="firebase_messaging_auto_init_enabled"
            android:value="false" />

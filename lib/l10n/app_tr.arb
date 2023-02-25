@@ -107,5 +107,12 @@
   "selectcountry":"Hava durumu ve paylaşım verileri için ülke ve iletişim merkezini seçiniz",
   "continuee":"Devam",
   "logoutt":"Çıkış Yap",
+  "beingshare":"Paylaşılıyor...",
+  "shareisokey":"Paylaşıldı.",
+  "whatdoyouthinkis":"Ne Olduğunu Düşünüyorsun?",
+  "defination":"Tanım",
+  "location":"Konum Bilgisi Ekle",
+  "share":"Paylaş",
+  "locatinInfoAdding":"Konum bilgisi ekleniyor...",
   "connectiontimeout":"Bağlantı Zaman Aşımı\nİnternet bağlatınız kötü olabilir,\nYüklediğiniz fotoğraf kalitesiz olabilir,\nBir şeyler ters gitmiş olabilir veya,\nDaha fazla fotoğraf ekleyin."
 }

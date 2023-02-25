@@ -122,7 +122,18 @@ class LocalNotificationService{
   LocalNotificationService();
   final _localNotificationService = FlutterLocalNotificationsPlugin();
 
+
+
   Future<void> initialize() async{
+    // await _localNotificationService.cancelAll();
+
+    final List<PendingNotificationRequest> pendingNotificationRequests =
+    await _localNotificationService.pendingNotificationRequests();
+
+    for(var a in pendingNotificationRequests){
+      print(a.title);
+    }
+
     tz.initializeTimeZones();
     const AndroidInitializationSettings androidInitializationSettings = AndroidInitializationSettings(
     'ic_stat_alarm'
@@ -278,4 +289,6 @@ Future<void> showNotification({required int id, required String title, required 
       MaterialPageRoute<void>(builder: (context) => const SplashScreen()),
     );*/
   }
+
+
 }

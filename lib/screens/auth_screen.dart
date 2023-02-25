@@ -237,7 +237,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(height: 20,),
             SignInButton(
               Buttons.Google,
               onPressed: () {

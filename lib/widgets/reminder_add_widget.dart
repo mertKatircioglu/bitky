@@ -1,6 +1,7 @@
 import 'package:bitky/globals/globals.dart';
 import 'package:bitky/l10n/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date_time_format/date_time_format.dart';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
@@ -211,7 +212,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
     }, onConfirm: (date) {
       time = "${date.hour.toString()}:${date.minute.toString()}";
       var tzTime = tz.TZDateTime.parse(tz.local, date.toString());
-      formValidation(time!, 50, "daily", notificationId).whenComplete(() async {
+      formValidation(time!, 50, "daily", notificationId, tzTime).whenComplete(() async {
         await service
             .showSchelduledNotificationDaily(
                 id: notificationId,
@@ -244,7 +245,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
         }, onConfirm: (date) {
           time = "${date.hour.toString()}:${date.minute.toString()}";
           var tzTime = tz.TZDateTime.parse(tz.local, date.toString());
-          formValidation(time!, date.day, "monthly", notificationId).whenComplete(() async {
+          formValidation(time!, date.day, "monthly", notificationId, tzTime).whenComplete(() async {
             await service
                 .showSchelduledNotificationmonthly(
                 id: notificationId,
@@ -372,7 +373,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
       }, onConfirm: (date) {
         print(date.toString());
         var tzTime = tz.TZDateTime.parse(tz.local, date.toString());
-        formValidation(time!, day!, "weekly", notificationId)
+        formValidation(time!, day!, "weekly", notificationId, tzTime)
             .whenComplete(() async {
           await service
               .showSchelduledNotificationWeakly(
@@ -398,7 +399,7 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
   }
 
   Future<void> formValidation(
-      String time, int day, String type, int notificationId) async {
+      String time, int day, String type, int notificationId, tz.TZDateTime tzDateTime) async {
     if (widget.plantName.isNotEmpty) {
       FirebaseFirestore.instance
           .collection("users/${authUser.currentUser!.uid}/gardens/${widget.roomId}/${widget.roomName}").doc(widget.plantId.toString())
@@ -407,6 +408,8 @@ class _NoteThumbnailState extends State<NoteThumbnail> {
         "reminderIsActive": true,
         "image": widget.imagE,
         "scheduleType": type,
+        "content": widget.content,
+        "tzTime": tzDateTime,
         "reminderTime": time,
         "reminderDay": day,
         "reminderCreateDate": DateTime.now()

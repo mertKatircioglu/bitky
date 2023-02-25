@@ -59,7 +59,7 @@ class BitkyApiClient {
     final responseJson = (jsonDecode(res.body));
     // debugPrint(res.body, wrapWidth: 1024);
     if (res.statusCode == 200) {
-       debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
+      // debugPrint("SORGUDAN GELEN CEVAP**********: ${responseJson.toString()}", wrapWidth: 1024);
       var son = await responseJson;
       return BitkyDataModel.fromJson(son);
     } else {

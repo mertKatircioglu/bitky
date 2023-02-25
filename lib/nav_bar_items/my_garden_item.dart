@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -13,6 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -632,9 +634,8 @@ class _MyGardenState extends State<MyGarden> {
                   const SizedBox(height: 20,),
                   InkWell(
                     onTap: (){
-                      authUser.signOut().whenComplete(() {
-                        RestartWidget.restartApp(context);
-                      });
+                      authUser.signOut();
+                      SystemNavigator.pop();
                     },
                     child: Container(
                         margin: const EdgeInsets.all(3.0),

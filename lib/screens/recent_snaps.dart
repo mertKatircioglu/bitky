@@ -146,7 +146,7 @@ class RecentSnapsScreen extends StatelessWidget {
                                                   borderRadius:
                                                   BorderRadius
                                                       .circular(
-                                                      10.0)),
+                                                      14.0)),
                                               child: ClipRRect(
                                                   borderRadius: BorderRadius.circular(10),
                                                   child: InkWell(
@@ -188,8 +188,8 @@ class RecentSnapsScreen extends StatelessWidget {
                                     Row(
                                       children: [
                                         Expanded(
-                                          child: Text("${recentDocs[index]['disasesDetails1']
-                                          [0]["disease_details"]["treatment"]["biological"][0].toString().toCapitalized()}",style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600) ),
+                                          child: Text(recentDocs[index]['disasesDetails1']
+                                          [0]["disease_details"]["treatment"]["biological"][0].toString().toCapitalized(),style: GoogleFonts.sourceSansPro( fontWeight: FontWeight.w600) ),
                                         ),
                                       ],
                                     ),

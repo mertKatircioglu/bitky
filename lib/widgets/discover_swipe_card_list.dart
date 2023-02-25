@@ -52,7 +52,7 @@ class _DiscoverSwipteCardListState extends State<DiscoverSwipteCardList> {
                 itemCount: recentDocs.length,
                 itemBuilder: (context, index) {
 
-                  return ExampleCard(
+                  return DiscoverSwipeCard(
                     title: recentDocs[index]["title"],
                     subTile: recentDocs[index]["subtitle"],
                     imgUrl: recentDocs[index]["imgUrl"],

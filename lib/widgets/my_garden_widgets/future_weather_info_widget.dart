@@ -47,6 +47,12 @@ class FutureWeatherInfoWidget extends StatelessWidget {
                       fadeOutDuration: const Duration(seconds: 1),
                       fadeInDuration: const Duration(seconds: 2),
                     ),
+                    Text("${dataModel!.forecast!.forecastday![1].day!.condition!.text}",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.sourceSansPro(
+                          color:Colors.white,
+                          fontSize: 8,
+                        )),
                     Text("Max: ${dataModel!.forecast!.forecastday![1].day!.maxtempC}°C",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.sourceSansPro(
@@ -59,12 +65,7 @@ class FutureWeatherInfoWidget extends StatelessWidget {
                             color:Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold)),
-                    Text("${dataModel!.forecast!.forecastday![1].day!.condition!.text}",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.sourceSansPro(
-                            color:Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.bold)),
+
                     Text("Nem: ${dataModel!.forecast!.forecastday![1].day!.avghumidity}",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.sourceSansPro(
@@ -99,6 +100,11 @@ class FutureWeatherInfoWidget extends StatelessWidget {
                       fadeOutDuration: const Duration(seconds: 1),
                       fadeInDuration: const Duration(seconds: 2),
                     ),
+                    Text("${dataModel!.forecast!.forecastday![2].day!.condition!.text}",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.sourceSansPro(
+                            color:Colors.white,
+                            fontSize: 8)),
                     Text("Max: ${dataModel!.forecast!.forecastday![2].day!.maxtempC}°C",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.sourceSansPro(
@@ -111,12 +117,7 @@ class FutureWeatherInfoWidget extends StatelessWidget {
                             color:Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold)),
-                    Text("${dataModel!.forecast!.forecastday![2].day!.condition!.text}",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.sourceSansPro(
-                            color:Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.bold)),
+
                     Text("Nem: ${dataModel!.forecast!.forecastday![2].day!.avghumidity}",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.sourceSansPro(
@@ -150,6 +151,11 @@ class FutureWeatherInfoWidget extends StatelessWidget {
                       fadeOutDuration: const Duration(seconds: 1),
                       fadeInDuration: const Duration(seconds: 2),
                     ),
+                    Text("${dataModel!.forecast!.forecastday![3].day!.condition!.text}",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.sourceSansPro(
+                          color:Colors.white,
+                          fontSize: 8,)),
                     Text("Max: ${dataModel!.forecast!.forecastday![3].day!.maxtempC}°C",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.sourceSansPro(
@@ -162,12 +168,7 @@ class FutureWeatherInfoWidget extends StatelessWidget {
                             color:Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold)),
-                    Text("${dataModel!.forecast!.forecastday![3].day!.condition!.text}",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.sourceSansPro(
-                            color:Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.bold)),
+
                     Text("Nem: ${dataModel!.forecast!.forecastday![3].day!.avghumidity}",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.sourceSansPro(
