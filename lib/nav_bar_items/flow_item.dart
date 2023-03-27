@@ -95,7 +95,7 @@ class _FlowItemState extends State<FlowItem> {
                       builder: (ctx, recentSnapshot) {
                         if(recentSnapshot.connectionState == ConnectionState.waiting){
                           return const CupertinoActivityIndicator(color: Colors.transparent,);
-                        }else if(recentSnapshot.data!.docs.isEmpty){
+                        }else if(recentSnapshot.data == null){
                           return Padding(
                             padding: EdgeInsets.only(top:MediaQuery.of(context).size.height/3  ),
                             child:  Center(

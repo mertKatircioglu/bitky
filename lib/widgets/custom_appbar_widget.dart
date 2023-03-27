@@ -23,18 +23,30 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
 
   Widget _appBarContent() {
     return Container(
-      height: 90,
+decoration:  BoxDecoration(
+            // image: DecorationImage(
+            //   fit: BoxFit.cover,
+            //     image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/tp_banner_night.png':'images/tp_banner.png',)),
+            color: Colors.black.withOpacity(0.5),
+            borderRadius: const BorderRadius.only(
+            bottomRight: Radius.circular(25),
+              bottomLeft: Radius.circular(25)
+            )
+        ),      height: 105,
       width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
+      child: Padding(padding: const EdgeInsets.only(left: 8,right: 8, top: 55),
       child: Column(
         children: [
 
-          _userInfo(),
+          //_userInfo(),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Card(
+             _weatherInfo(),
+              Row(
+                children: [
+                  Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)
@@ -60,11 +72,16 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
                       color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.bold)),
+                ],
+              ),
+            _weatherIcon(),
+
             ],
           ),
         ],
       ),
-    );
+    ),
+      );
   }
 
   Widget _userInfo() {
@@ -76,6 +93,7 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _weatherInfo(),
+
             _weatherIcon(),
           ],
         ),
@@ -117,12 +135,12 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25), bottomRight: Radius.circular(25))
       ),
       child: Container(
-        padding: const EdgeInsets.only(top: 5),
+        padding: const EdgeInsets.only(top: 0),
         decoration:  BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-                image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/tp_banner_night.png':'images/tp_banner.png',)),
-            color: Colors.black,
+            // image: DecorationImage(
+            //   fit: BoxFit.cover,
+            //     image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/tp_banner_night.png':'images/tp_banner.png',)),
+            color: Colors.black.withOpacity(0.5),
             borderRadius: const BorderRadius.only(
             bottomRight: Radius.circular(25),
               bottomLeft: Radius.circular(25)

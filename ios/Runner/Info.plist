@@ -54,6 +54,19 @@
 	<string>Bitkilerin görselleri için kameraya ihtiyacımız var.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string></string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.507808919373-0qb49ka82q8osqdpcvamfuroknte0eas</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
+		</dict>
+	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Bitkilerin görselleri için galeri erişimine ihtiyacımız var.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: false,
       body: PersistentTabView(
         context,
-        backgroundColor: widget.dataModel!.current!.isDay == 0 ? Colors.black54 : CupertinoColors.white,
+        backgroundColor: widget.dataModel!.current!.isDay == 0 ? Colors.black87 : CupertinoColors.white,
         controller: _controller,
         hideNavigationBar: _controller!.index.isNegative,
         screens: _buildScreens(),
@@ -130,10 +130,10 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: NavBarDecoration(
           boxShadow:[
             BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 2), // changes position of shadow
+              color: Colors.white.withOpacity(0.5),
+              spreadRadius: 0.1,
+              blurRadius: 0.1,
+              offset: const Offset(0, 0), // changes position of shadow
             )
           ] ,
           borderRadius: const BorderRadius.only(topLeft:Radius.circular( 20.0), topRight:Radius.circular( 20.0)),

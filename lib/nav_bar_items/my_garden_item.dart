@@ -534,7 +534,7 @@ class _MyGardenState extends State<MyGarden> {
                               return const CupertinoActivityIndicator(
                                 color: Colors.transparent,
                               );
-                            } else if (recentSnapshot.data!.docs.isEmpty) {
+                            } else if (recentSnapshot.data==null) {
                               return Padding(
                                 padding: EdgeInsets.only(
                                     top:

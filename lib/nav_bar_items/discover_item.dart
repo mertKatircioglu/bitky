@@ -36,9 +36,12 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
   @override
   void initState() {
     super.initState();
-    widget.cards!.forEach((element) {
+    if(widget.cards !=null){
+   widget.cards!.forEach((element) {
       _list.add(element);
     });
+    }
+ 
   }
 
   void _swipe(int index, AppinioSwiperDirection direction) {
@@ -119,7 +122,7 @@ class _DiscoverItemScreenState extends State<DiscoverItemScreen> {
           decoration:  BoxDecoration(
             image: DecorationImage(
                 fit: BoxFit.cover,
-                image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/night.png':'images/day.png',),alignment: Alignment.bottomCenter),
+                image:  AssetImage(widget.dataModel!.current!.isDay==0?'images/night.png':'images/night.png',),alignment: Alignment.bottomCenter),
           ),
           child: Padding(
             padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 100+10),
